@@ -1,0 +1,20 @@
+name: envs563
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy>=1.26
+  - scipy>=1.11
+  - pandas>=2.1
+  - plotly>=5.18
+  - pyyaml>=6.0
+  - pytest>=7.4
+  - jupyter>=1.0
+  - networkx>=3.2
+  - pip
+  - pip:
+      - build123d>=0.7.0
+      - trimesh>=4.0.0
+      - manifold3d>=2.5.0
+      - pygltflib>=1.16.0

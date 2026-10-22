@@ -1,0 +1,258 @@
+---
+title: "Design Showcase: a Rotary-Percussive Bite Drill for the Moon and Mars"
+subtitle: "How a 45 kg lander takes 1 m ice-bearing samples with no drilling fluid. The design story in five minutes; every parameter is based on or derived from physics."
+author: "Jay Tilak P."
+date: 2022-09-07
+date-format: "MMMM DD, YYYY"
+number-sections: false
+toc-depth: 2
+---
+
+```{python}
+#| output: asis
+import sys
+from pathlib import Path
+
+root = Path("..").resolve()
+sys.path.insert(0, str(root))
+from src.showcase import ICEBREAKER, benchmark_rows, load
+
+import json
+import plotly.graph_objects as go
+
+f = load()
+V, E, led = f["V"], f["E"], f["led"]
+mo, ma = E["moon"], E["mars"]
+des = f["des"]
+rnd = json.loads((root / "exports" / "renders" / "renders.json").read_text())
+dwg = json.loads((root / "exports" / "drawings" / "drawings.json").read_text())
+
+def emit_html(h: str) -> None:
+    print(f"\n```{{=html}}\n{h.strip()}\n```\n")
+
+def fig_img(name: str, cls: str = "") -> str:
+    r = rnd[name]
+    return (f'<figure class="sc-fig {cls}"><img src="assets/renders/{r["file"]}" alt="{r["caption"]}" loading="lazy">'
+            f'<figcaption>{r["caption"]}</figcaption></figure>')
+
+def kpi(label, val, sub, cls=""):
+    return (f'<div class="kpi-card {cls}"><div class="kpi-label">{label}</div><div class="kpi-value">{val}</div>'
+            f'<div class="kpi-sub">{sub}</div></div>')
+
+emit_html(fig_img("rig_deployed", "sc-hero"))
+emit_html('<div class="kpi-grid">' + "".join([
+    kpi("Depth", f"{mo['A_reached_depth_m']:.2f} m", f"{mo['A_num_bites']} bites of {mo['A_bite_increment_m'] * 100:.0f} cm, Moon and Mars"),
+    kpi("Mission time", f"{mo['B_total_operational_duration_hr']:.2f} / {ma['B_total_operational_duration_hr']:.2f} h",
+        "Moon / Mars, including warm-up and sample transfer"),
+    kpi("Weight on bit", f"{mo['C_operational_wob_setpoint_n']:.0f} / {ma['C_operational_wob_setpoint_n']:.0f} N",
+        "Moon / Mars: lander weight / 1.4", "mars"),
+    kpi("Drilling power", f"{mo['D_mean_drilling_power_w']:.0f} / {ma['D_mean_drilling_power_w']:.0f} W",
+        "Moon / Mars mean while drilling", "mars"),
+]) + "</div>")
+emit_html("""<div class="sc-actions">
+  <a class="sc-btn" href="#engineering-drawings">Engineering drawings</a>
+  <a class="sc-btn" href="digital_twin.html">Interactive digital twin</a>
+  <a class="sc-btn" href="theory_and_sizing.html">Full derivations</a>
+</div>""")
+```
+
+## The problem
+
+Water ice in the top metre of the lunar south pole and of Mars's northern plains is both a resource for future crews and a record of how volatiles got there. A science lander needs to bring it up **in labelled depth intervals, without melting or sublimating the ice on the way**. Terrestrial drilling relies on heavy rigs, tens of kN of weight on bit and drilling mud. None of that is available here.
+
+This project designs the complete drill system, from the carbide cutter edge to the solar wings, for a `{python} f"{f['lander_kg']:.0f}"` kg lander at two sites: the lunar south pole (sun ~1.5° above the horizon) and Mars at 68° N.
+
+## Four constraints that drive everything
+
+```{python}
+#| output: asis
+cards = [
+    ("Low gravity", f"{V('wob_lift_off_moon_n'):.0f} N",
+     "is all the lander can push on the Moon before it lifts off. Ice-cemented regolith needs more than that to start rotary cutting."),
+    ("No drilling fluid", f"{V('conveying_lift_ratio_moon'):.2f}",
+     "lift ratio for cuttings on a spinning auger (Moon). Below 1, the flights cannot carry cuttings to the surface."),
+    ("Heat", f"{V('critical_bit_temp_moon_k'):.0f} K",
+     "bit temperature above which ice in the cuttings sublimates into vacuum (Moon). On Mars the limit is melting, at "
+     f"{V('critical_bit_temp_mars_k'):.0f} K."),
+    ("Low sun", "~1.5°",
+     "sun elevation at the lunar south pole. Flat panels collect almost nothing, so the solar array has to stand up and track."),
+]
+emit_html('<div class="sc-constraints">' + "".join(
+    f'<div class="sc-con"><div class="sc-con-title">{t}</div><div class="sc-con-num">{n}</div><p>{d}</p></div>'
+    for t, n, d in cards) + "</div>")
+```
+
+The lift-off limit is simply the lander's weight in local gravity. The heat limit comes from the vapour pressure of ice [@murphy2005]: above it, the ice in a 25 µm cuttings grain is lost to vacuum within one bite. At the lunar south pole the sun stays within a few degrees of the horizon [@paige2010; @moonvillage2020].
+
+The design rule was **no tuned numbers**. A *tuned number* is a value picked or adjusted until the answer looks right: a fudge factor, a coefficient fitted to the result you want, or a size chosen by eye. None is used here. Every input carries one of four tags, each with its source:
+
+- **Environment fact**: gravity, temperature, regolith strength and density [@carrier1991; @shaw2009].
+- **Design choice**: for example the 10 cm bite or the 150 rpm spindle speed, each with its stated reason.
+- **Literature coefficient**: for example a friction coefficient, taken from a published range.
+- **Safety criterion**: a factor of safety or margin from a standard [@nasastd5001].
+
+Everything else (`{python} f"{f['n_ledger']}"` derived quantities in the design ledger) is calculated from well-known engineering models:
+
+- Teale's mechanical specific energy and the Detournay–Defourny drag-bit model for rock cutting [@teale1965concept; @detournay1992; @richard2012]
+- Lundberg's one-dimensional stress-wave model for percussion [@lundberg1982]
+- Hertz contact theory for the cutter edge [@johnson1985]
+- Goodman and Wahl fatigue checks for shafts and springs [@shigley], and the IIW FAT classes for welds [@hobbacher2016]
+- Cycloidal cam motion and the 30° pressure-angle limit [@norton2009cam]
+- AGMA gear contact stress and ISO 281 bearing life [@agma2101; @iso281]
+- Euler–Bernoulli beam modes and Euler buckling for the drill string and mast [@rao2017; @shigley]
+- Rankine earth pressure and Janssen silo pressure for packed cuttings [@das2014; @janssen1895versuche]
+- Hertz–Knudsen sublimation of ice [@murphy2005]
+- ECSS motorisation factors and AIAA mass-growth allowances for the mechanisms [@ecss3301; @aiaa120]
+
+A second-by-second mission simulation then checks the whole design.
+
+## Key design decisions
+
+### 1. The bit: two carbide chisels, not an oilfield PDC
+
+```{python}
+#| output: asis
+emit_html('<div class="sc-split">' + fig_img("bit_closeup") + fig_img("bit_exploded") + "</div>")
+```
+
+- **Concentrated load.** With only `{python} f"{mo['C_operational_wob_setpoint_n']:.0f}"` N on the Moon, the load has to go into as few edges as possible. Two WC-10Co chisel inserts give a line load of `{python} f"{V('bit_edge_line_load_n_mm'):.0f}"` N/mm, enough to crush the hardest layer by a factor of `{python} f"{V('bit_crushing_ratio'):.0f}"`. In drag-bit cutting models, a cutter only removes rock once its contact stress beats the rock strength [@detournay1992; @richard2012]. With so little weight available, spreading it over many cutters would leave each one below that threshold.
+- **Edge sized by contact mechanics.** The worst case is a blow landing on a basalt clast. A Hertz line-contact check sets the edge hone at R`{python} f"{V('bit_edge_radius_mm'):.1f}"` mm (FOS `{python} f"{V('bit_edge_contact_fos'):.1f}"` on carbide). Carbide is very strong in compression but weak in tension. The −10° (negative) rake keeps the cutting edge in compression, the same reason oilfield PDC cutters are set at negative rake [@bellin2010pdc].
+- **Indexing.** The bit turns `{python} f"{V('bit_index_angle_deg'):.0f}"`° between blows, so each blow lands on fresh rock `{python} f"{V('bit_index_spacing_gauge_mm'):.1f}"` mm from the last crater. Hitting the same crater again only re-grinds crushed material, which wastes energy and raises the specific energy of drilling [@teale1965concept; @lundberg1982].
+- **Why not PDC.** PDC cutters are made for continuous shearing with drilling fluid flowing over them. Their thin diamond layer chips under impact, and the cobalt binder degrades the diamond above about 750 °C if the cutter is not cooled [@bellin2010pdc]. Under `{python} f"{V('blow_frequency_hz'):.0f}"` Hz hammering and with no fluid, solid WC-Co carbide is the safer choice. Percussive rock-drill bits use tungsten-carbide button inserts for the same reason [@sme1981percussion].
+
+### 2. The drill head: a cam-and-spring hammer around a hollow spindle
+
+```{python}
+#| output: asis
+emit_html('<div class="sc-split sc-split-wide">' + fig_img("head_section") +
+          f"""<div class="sc-facts"><div class="sc-facts-title">Derived, not chosen</div><ul>
+<li>Impact energy <b>{V('impact_energy_j'):.2f} J</b> at <b>{V('blow_frequency_hz'):.0f} Hz</b>; peak force {V('impact_peak_force_n') / 1e3:.1f} kN (1-D stress-wave model)</li>
+<li>Hammer spring: {V('hammer_spring_wire_mm'):.0f} mm 17-7PH wire, fatigue FOS {V('hammer_spring_fatigue_fos'):.2f}; spring rate puts the hammer at {V('hammer_spring_natural_hz'):.0f} Hz, above 2&times; the blow rate so it re-seats every cycle</li>
+<li>Barrel cam: cycloidal rise, pressure angle {V('cam_pressure_angle_deg'):.1f}&deg; (limit 30&deg;)</li>
+<li>Rotary drive: frameless BLDC through a {V('planetary_teeth')} planetary and a 12T/24T spur; spur contact stress {V('spur_contact_mpa'):.0f} MPa on carburised 9310</li>
+<li>Spindle bearing pair L10 {V('spindle_bearing_l10_h'):,.0f} h; WOB measured by a {V('load_cell_capacity_n'):.0f} N load cell</li>
+<li>Head stack {V('drill_head_height_mm'):.0f} mm, sealed by labyrinth, PTFE lip seals and bellows</li>
+</ul></div>""" + "</div>")
+```
+
+Rotary cutting alone stalls in ice-cemented regolith at this weight on bit. The **hammer** solves this by breaking rock with impact energy instead of steady force. The bit only has to stay seated, which takes `{python} f"{V('percussive_min_wob_n'):.0f}"` N, below the Moon set-point. A two-lobe barrel cam lifts the hammer, then drops it off a cliff in the cam profile onto the anvil. The rotary train runs through the hollow spindle beside it. The controller turns percussion on only when the measured torque and penetration rate show that rotary cutting has stopped working.
+
+Each item in the card above comes from a standard method:
+
+- **Impact energy and force.** The blow is modelled as a stress wave travelling through the hammer, anvil and bit [@lundberg1982]. Percussion is the established answer to low weight on bit in planetary drilling. Both Icebreaker and TRIDENT use rotary-percussive heads [@zacny2008drilling; @zacny2013icebreaker; @zacny2022trident].
+- **Hammer spring.** It is sized with the Wahl stress factor and checked against Zimmerli fatigue data using the Goodman criterion [@shigley]. The spring's natural frequency must stay above twice the blow rate. Otherwise the hammer cannot settle back onto the cam before the next lift.
+- **Barrel cam.** A cycloidal rise has zero acceleration at both ends, so the follower sees no shock loads. The pressure angle is kept below the usual 30° limit so the follower does not jam [@norton2009cam].
+- **Gears and bearings.** The spur gear contact stress is checked against the AGMA allowable [@agma2101]. The spindle bearing life follows ISO 281 [@iso281].
+- **Margins.** Structural factors of safety follow NASA-STD-5001 [@nasastd5001].
+
+### 3. Auger + brushing station: drilling in bites
+
+```{python}
+#| output: asis
+emit_html('<div class="sc-split sc-split-eq">' + fig_img("brush_exploded") + fig_img("mast_deployed") + "</div>")
+```
+
+- **Bite drilling.** With no drilling fluid, the only way out of the hole for cuttings is up the auger flights. A cutting climbs the flight only if the friction from the borehole wall, which the spin presses it against (centrifugal force), is larger than its weight. In other words, the lift ratio $\mu_w \omega^2 r / g$ must exceed 1. Rotation speed is what governs dry auger conveying [@zacny2008drilling]. At the `{python} f"{V('bit_index_angle_deg') * 60 * V('blow_frequency_hz') / 360:.0f}"` rpm spindle speed this ratio is only `{python} f"{V('conveying_lift_ratio_moon'):.2f}"` on the Moon and `{python} f"{V('conveying_lift_ratio_mars'):.2f}"` on Mars. Continuous conveying would need more than `{python} led['conveying_lift_ratio_moon']['note'].split('> ')[-1]` on the Moon and `{python} led['conveying_lift_ratio_mars']['note'].split('> ')[-1]` on Mars.
+
+    Spinning that fast is the wrong trade for this drill. The speed was set low (0.16 m/s at the gauge) to limit frictional heat at the bit, which has to stay below `{python} f"{V('critical_bit_temp_moon_k'):.0f}"` K on the Moon or the ice sublimates out of the sample [@murphy2005]. A faster spin would also open the index angle between hammer blows. Dry augers in lunar regolith also tend to bind: the Apollo 15 crew had great difficulty drilling past about 1 m [@zacny2008drilling].
+
+    The drill therefore works in **bites**, like Icebreaker and TRIDENT [@zacny2013icebreaker; @zacny2022trident]. It drills a short interval, pulls the whole string out, and brushes the cuttings into a cup. The deep **sampling flutes** hold the cuttings from one bite. They fill completely after `{python} f"{V('choking_onset_bite_m') * 100:.1f}"` cm of penetration, so the bite is set at `{python} f"{mo['A_bite_increment_m'] * 100:.0f}"` cm. Each bite is a depth-labelled sample, and the auger never has to carry cuttings the full depth, so it cannot choke.
+- **Flights machined integral.** Welded flights fail IIW weld-toe fatigue under hammer-wave inertia (`{python} f"{V('flight_weld_fatigue_life_cycles'):.0e}"` cycles against a `{python} f"{V('flight_required_cycles'):.1e}"` requirement). Under the IIW recommendations, a fillet-welded attachment falls in fatigue class FAT 63, which is far too weak for this load [@hobbacher2016]. A flight machined from the same bar, with a root fillet, has no weld toe. It gives a Goodman factor of safety of `{python} f"{V('flight_root_fatigue_fos'):.1f}"` [@shigley].
+- **Guide bushing.** Without it, the string's first lateral mode falls to `{python} f"{V('string_lateral_no_bushing_hz'):.0f}"` Hz, inside the blow-rate band. With it, the mode is `{python} f"{V('string_lateral_f1_hz'):.0f}"` Hz. A structure driven near its natural frequency resonates, so every mode is kept out of a ±20 % band around each forcing frequency [@rao2017].
+- **Passive brush.** The brush is a `{python} V('brush_tuft_count')`-tuft wheel that meshes with the flights like a worm wheel, so the retracting auger drives it with no extra motor. The 0.1 mm bristles push at `{python} f"{V('bristle_tip_pressure_kpa'):.0f}"` kPa, `{python} f"{V('bristle_tip_pressure_kpa') / V('cuttings_passive_pressure_kpa'):.0f}"`× the cuttings' passive pressure. The cuttings' resistance is taken as Rankine passive earth pressure [@das2014], using lunar regolith cohesion [@carrier1991]. A `{python} f"{V('chute_angle_deg'):.0f}"`° chute then delivers the cuttings into a cup sized for 120 % of one bite. Each bite has its own cup: `{python} f"{V('carousel_stations') - 1}"` sealed cups ride on an indexing carousel under the mast foot plate, so every depth interval is kept as a separate, sealed sample. The chute is steeper than the wall-friction angle, so dry cuttings slide in any gravity. Brushing cuttings off the auger into a sample cup is also how Icebreaker delivers its samples [@zacny2013icebreaker].
+
+### 4. Deployable side-mounted mast
+
+```{python}
+#| output: asis
+emit_html('<div class="sc-split sc-split-eq">' + fig_img("rig_stowed", "sc-fig-fill") + f"""<div class="sc-facts"><div class="sc-facts-title">Launch and deploy</div><ul>
+<li>Spine <b>{V('mast_section')}</b>, the lightest of {f['mast_candidates'][0]} feasible designs out of {f['mast_candidates'][1]} searched (material &times; section &times; brackets &times; latch height)</li>
+<li>Stowed first mode {V('mast_stowed_f1_hz'):.0f} Hz against a 50 Hz launch requirement; {V('hold_down_bolt')} A-286 frangible bolts released by SMA actuators (low-shock, non-pyrotechnic)</li>
+<li>Deployed first mode {f['mast_f_lo']:.0f}–{f['mast_f_hi']:.0f} Hz over the stroke, placed between the cam and blow-rate bands</li>
+<li>Deploy actuator {V('deploy_actuator_torque_nm'):.0f} N&middot;m (ECSS motorisation factors) through a 100:1 strain-wave gear</li>
+<li>Bit position error {V('bit_alignment_error_1m_mm'):.1f} mm at 1 m depth</li>
+</ul></div>""" + "</div>")
+```
+
+A `{python} f"{f['man']['layout']['mast_top_mm'] / 1e3:.1f}"` m mast does not fit on the lander upright for launch. It folds aft over the deck on a hinge, with two hold-downs carrying the 15 g launch load, and swings up on the surface. Mounting it on the side keeps the borehole clear of the lander's own footprint and exhaust-disturbed soil. The price is that the lander **tilts before it lifts**, which costs some WOB margin (see the limitations below).
+
+The reasons behind the card above:
+
+- **Launch stiffness.** A stowed payload must have its first mode above the launcher's minimum so that it does not couple with the launch-vehicle dynamics. Launch loads are taken as the larger of the quasi-static load and the Miles random-vibration estimate [@wijker2008].
+- **Hold-down release.** A shape-memory-alloy (SMA) actuator breaks a notched frangible bolt in tension. It produces far less release shock than a pyrotechnic bolt, which matters for the drill head's bearings and sensors, and it can be tested and reset on the ground [@busch1992frangibolt]. The bolt preload is sized with standard joint equations [@shigley].
+- **Deployment.** The deploy actuator is sized with the ECSS motorisation factors: twice the resistive torques (gravity, friction and harness) plus 1.25 times the inertial torque [@ecss3301].
+- **Mass.** All masses carry a 20 % mass-growth allowance [@aiaa120], and structural factors follow NASA-STD-5001 [@nasastd5001].
+- **Deployed modes.** These are kept between the rotary, cam and blow-rate bands, for the same resonance reason as the drill string [@rao2017].
+
+### 5. Power: standing, tracking solar wings
+
+```{python}
+#| output: asis
+cfg = f["solar"]
+labels = f["solar_labels"]
+fig = go.Figure()
+for env, col, name in (("moon", "#0284c7", "Moon (south pole)"), ("mars", "#ea580c", "Mars (68° N)")):
+    fig.add_trace(go.Bar(y=[labels[k].replace(", ", "<br>").replace(" (", "<br>(") for k in cfg], x=[cfg[k][env]["mean_w"] for k in cfg], name=name,
+                         orientation="h", marker_color=col))
+fig.update_layout(template="plotly_white", height=420, barmode="group", xaxis_title="Day-mean power (W)",
+                  yaxis=dict(autorange="reversed", automargin=True),
+                  legend=dict(orientation="h", yanchor="top", y=-0.22, x=0.5, xanchor="center"),
+                  margin=dict(l=10, r=15, t=10, b=90))
+emit_html(fig.to_html(full_html=False, include_plotlyjs=False, include_mathjax=False,
+                      config={"displayModeBar": False, "responsive": True}))
+```
+
+All five array layouts were simulated against the real sun track at each site. The **`{python} f['solar_sel'].lower()`** wings deliver `{python} f"{cfg['E_track_2axis']['moon']['mean_w']:.0f}"` W on the Moon and `{python} f"{cfg['E_track_2axis']['mars']['mean_w']:.0f}"` W on Mars (dust and the thin atmosphere included). That is at least twice the `{python} f"{max(mo['D_mean_electrical_power_w'], ma['D_mean_electrical_power_w']):.0f}"` W mission-mean load, so the battery never runs down during a mission. The array has to stand vertical and track because the polar sun moves around the horizon instead of rising overhead [@paige2010; @moonvillage2020]. Irradiance uses the measured solar constant [@kopp2011]. On Mars, dust settling on the panels was measured by Pathfinder at about 0.3 % per day, and that loss is included [@landis2000dust].
+
+## Comparison with a field-tested prototype
+
+Honeybee Robotics' Icebreaker drill is the closest working prototype. Its field tests reported "1-1-100-100": about 1 m in about 1 hour, with under 100 N on the bit and about 100 W [@zacny2013icebreaker]. No coefficient in this model was fitted to that benchmark.
+
+```{python}
+#| output: asis
+rows = benchmark_rows(f)
+body = "".join(
+    f"<tr><td><strong>{r['metric']}</strong> ({r['unit']})</td><td>{r['fmt'].format(r['ib'])}</td>"
+    f"<td class='moon'>{r['fmt'].format(r['moon'])}</td><td class='mars'>{r['fmt'].format(r['mars'])}</td>"
+    f"<td>{r['verdict']}</td></tr>" for r in rows)
+emit_html(f"""<div class="mbse-table-wrap"><table class="mbse-table sc-bench"><thead><tr><th>Metric</th><th>Icebreaker</th>
+<th>Moon</th><th>Mars</th><th>vs benchmark</th></tr></thead><tbody>{body}</tbody></table></div>""")
+```
+
+The results are the same order of magnitude as the hardware. The Mars weight on bit is above 100 N by design. The set-point is lander weight / 1.4, and Mars gravity is 2.3× the Moon's. Mars spends longer actually drilling (`{python} f"{ma['B_pure_drilling_time_min']:.0f}"` vs `{python} f"{mo['B_pure_drilling_time_min']:.0f}"` min) because its ice-rich layers start shallower. The Moon mission is still longer overall, because the drill first has to warm from 100 K, which takes `{python} f"{V('warmup_duration_moon_s') / 60:.0f}"` min. The bite-by-bite results and the full telemetry are on the [digital twin](digital_twin.html) and [control](autonomous_control.html) pages.
+
+## Engineering drawings
+
+The views are hidden-line projections of the same B-rep solids exported as STEP. Dimensions come from the design parameters or are measured from those solids, so the drawings regenerate whenever the design changes.
+
+```{python}
+#| output: asis
+cards = []
+for key, stem in (("bit", "DRL-001_drill_bit"), ("head", "DRL-002_drill_head")):
+    d = dwg[key]
+    cards.append(f"""<div class="sc-dwg"><a href="assets/drawings/{stem}.svg" target="_blank" rel="noopener">
+<img src="assets/drawings/{stem}.svg" alt="{d['number']} {d['title']} engineering drawing" loading="lazy"></a>
+<div class="sc-dwg-cap"><strong>{d['number']}</strong> {d['title']} &middot;
+<a href="assets/drawings/{stem}.pdf">PDF</a> &middot; <a href="assets/drawings/{stem}.svg">SVG</a></div></div>""")
+emit_html('<div class="sc-dwgs">' + "".join(cards) + "</div>")
+```
+
+## Honest limitations and next steps
+
+- **The mast mode is close to a forcing band.** The deployed mast's first mode (`{python} f"{f['mast_f_lo']:.0f}–{f['mast_f_hi']:.0f}"` Hz) sits only `{python} f"{f['mast_band_margin_pct']:.0f}"` % from the edge of the blow-rate band. The first changes to test are a stiffer spine or a small shift in the blow rate.
+- **Side mounting costs stability.** The lander tips about its far legs before it lifts. The tilt margin at the WOB set-point is `{python} f"{f['tilt_margin']:.2f}"`, against 1.4 for a centred drill.
+- **Mass.** The rotating mast assembly weighs `{python} f"{V('mast_rotating_mass_kg'):.0f}"` kg, and the steel rails are the largest single item. Lighter rails or a composite spine are the obvious next trade.
+- **Sample transfer is slow.** Brushing takes `{python} f"{V('transfer_duration_s'):.0f}"` s per bite (`{python} f"{mo['B_time_breakdown_min']['TRANSFER']:.0f}"` min per mission). It is limited by the low bristle force a 1.2 m cantilevered string can take.
+- **The models are uncalibrated.** Rock-cutting specific energy and the heat partition come from literature ranges. The sweeps on the [derivations page](theory_and_sizing.html) show their effect: Mars mission time ranges from `{python} f"{min(s['mars']['duration_h'] for s in f['abcd']['sensitivity']):.2f}"` to `{python} f"{max(s['mars']['duration_h'] for s in f['abcd']['sensitivity']):.2f}"` h. Drilling tests in a cryogenic vacuum chamber are the next step.
+
+## How it was built
+
+A single parameter file feeds a chain of Python models: design derivations, solar geometry, terramechanics, the six-state controller simulation and parametric build123d CAD. They export STEP, GLB, still renders and the drawings above. This site and the PDF summary are generated from those outputs, and automated tests check the physics and the exports. Change one input, and every number, model, render and drawing regenerates.
+
+```{python}
+#| output: asis
+emit_html("""<div class="sc-actions">
+  <a class="sc-btn sc-btn-primary" href="assets/handout/design_summary.pdf">Download the one-page summary</a>
+  <a class="sc-btn" href="cad_architecture.html">3D CAD (STEP / GLB)</a>
+</div>""")
+```

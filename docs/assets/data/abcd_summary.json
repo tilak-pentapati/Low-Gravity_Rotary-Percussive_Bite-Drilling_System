@@ -1,0 +1,1101 @@
+{
+  "system_name": "Autonomous Low-Gravity Rotary-Percussive Bite-Drilling System",
+  "lander_mass_kg": 45.0,
+  "solar_configuration": "2-axis tracking (azimuth + elevation)",
+  "environments": {
+    "moon": {
+      "environment_name": "Lunar South Pole (ice-stable terrain near the Shackleton rim)",
+      "A_target_depth_m": 1.0,
+      "A_reached_depth_m": 1.0,
+      "A_bite_increment_m": 0.1,
+      "A_num_bites": 10,
+      "B_total_operational_duration_hr": 0.962,
+      "B_total_operational_duration_min": 57.7,
+      "B_pure_drilling_time_min": 7.32,
+      "B_time_breakdown_min": {
+        "IDLE": 0.52,
+        "ACTIVE": 18.87,
+        "SEARCH": 8.83,
+        "DRILL": 7.32,
+        "RETRACTION": 6.5,
+        "TRANSFER": 15.67
+      },
+      "C_wob_max_limit_n": 72.9,
+      "C_operational_wob_setpoint_n": 52.07,
+      "D_mean_electrical_power_w": 73.3,
+      "D_mean_drilling_power_w": 67.9,
+      "D_peak_electrical_power_w": 130.0,
+      "D_total_mission_energy_wh": 70.5,
+      "D_mean_solar_power_w": 857.4,
+      "D_net_solar_power_margin_w": 784.1,
+      "D_min_battery_wh": 1375.0,
+      "D_max_depth_of_discharge_pct": 0.0,
+      "solar_day_mean_w": 796.6,
+      "num_faults": 0,
+      "fault_events": [],
+      "max_bit_temp_k": 120.1,
+      "critical_bit_temp_k": 163.5,
+      "percussion_time_fraction": 0.273,
+      "storage_trade_study": {
+        "Ni_H2": {
+          "name": "Nickel-Hydrogen (Individual Pressure Vessel)",
+          "specific_energy_wh_kg": 55.0,
+          "pack_mass_kg": 25.0,
+          "round_trip_efficiency": 0.82,
+          "solar_energy_to_refill_wh": 0.0,
+          "min_operating_temp_k": 233.0
+        },
+        "Regen_H2_FC": {
+          "name": "Regenerative H2/O2 PEM Fuel Cell System",
+          "specific_energy_wh_kg": 250.0,
+          "pack_mass_kg": 5.5,
+          "round_trip_efficiency": 0.58,
+          "solar_energy_to_refill_wh": 0.0,
+          "min_operating_temp_k": 253.0
+        },
+        "Space_Li_Ion": {
+          "name": "Space-Grade Low-Temp Li-Ion (NCA)",
+          "specific_energy_wh_kg": 145.0,
+          "pack_mass_kg": 9.48,
+          "round_trip_efficiency": 0.92,
+          "solar_energy_to_refill_wh": 0.0,
+          "min_operating_temp_k": 223.0
+        }
+      },
+      "bite_breakdown": [
+        {
+          "bite_number": 1,
+          "z_range_m": [
+            0.005,
+            0.1
+          ],
+          "layer_name": "Surficial Regolith Fluff (desiccated)",
+          "rop_mm_s": 5.0,
+          "drill_duration_s": 20,
+          "cycle_duration_s": 143,
+          "mean_bite_power_w": 46.2,
+          "peak_torque_nm": 0.111,
+          "mse_mj_m3": 1.15,
+          "percussion_fraction": 0.0,
+          "max_bit_temp_k": 100.1,
+          "faults": []
+        },
+        {
+          "bite_number": 2,
+          "z_range_m": [
+            0.105,
+            0.2
+          ],
+          "layer_name": "Compacted Dry Regolith",
+          "rop_mm_s": 5.0,
+          "drill_duration_s": 20,
+          "cycle_duration_s": 149,
+          "mean_bite_power_w": 46.2,
+          "peak_torque_nm": 0.111,
+          "mse_mj_m3": 1.15,
+          "percussion_fraction": 0.0,
+          "max_bit_temp_k": 100.4,
+          "faults": []
+        },
+        {
+          "bite_number": 3,
+          "z_range_m": [
+            0.205,
+            0.3
+          ],
+          "layer_name": "Compacted Dry Regolith",
+          "rop_mm_s": 5.0,
+          "drill_duration_s": 20,
+          "cycle_duration_s": 165,
+          "mean_bite_power_w": 46.2,
+          "peak_torque_nm": 0.112,
+          "mse_mj_m3": 1.15,
+          "percussion_fraction": 0.0,
+          "max_bit_temp_k": 100.5,
+          "faults": []
+        },
+        {
+          "bite_number": 4,
+          "z_range_m": [
+            0.305,
+            0.4
+          ],
+          "layer_name": "Compacted Dry Regolith",
+          "rop_mm_s": 5.0,
+          "drill_duration_s": 20,
+          "cycle_duration_s": 181,
+          "mean_bite_power_w": 46.2,
+          "peak_torque_nm": 0.112,
+          "mse_mj_m3": 1.15,
+          "percussion_fraction": 0.0,
+          "max_bit_temp_k": 100.6,
+          "faults": []
+        },
+        {
+          "bite_number": 5,
+          "z_range_m": [
+            0.405,
+            0.5
+          ],
+          "layer_name": "Low-Ice Cemented Regolith (~3 wt%)",
+          "rop_mm_s": 5.0,
+          "drill_duration_s": 20,
+          "cycle_duration_s": 197,
+          "mean_bite_power_w": 46.2,
+          "peak_torque_nm": 0.112,
+          "mse_mj_m3": 1.15,
+          "percussion_fraction": 0.0,
+          "max_bit_temp_k": 100.6,
+          "faults": []
+        },
+        {
+          "bite_number": 6,
+          "z_range_m": [
+            0.501,
+            0.6
+          ],
+          "layer_name": "Low-Ice Cemented Regolith (~3 wt%)",
+          "rop_mm_s": 1.383,
+          "drill_duration_s": 73,
+          "cycle_duration_s": 266,
+          "mean_bite_power_w": 48.0,
+          "peak_torque_nm": 0.227,
+          "mse_mj_m3": 7.56,
+          "percussion_fraction": 0.0,
+          "max_bit_temp_k": 102.2,
+          "faults": []
+        },
+        {
+          "bite_number": 7,
+          "z_range_m": [
+            0.601,
+            0.7
+          ],
+          "layer_name": "Low-Ice Cemented Regolith (~3 wt%)",
+          "rop_mm_s": 1.383,
+          "drill_duration_s": 73,
+          "cycle_duration_s": 282,
+          "mean_bite_power_w": 48.0,
+          "peak_torque_nm": 0.227,
+          "mse_mj_m3": 7.56,
+          "percussion_fraction": 0.0,
+          "max_bit_temp_k": 103.0,
+          "faults": []
+        },
+        {
+          "bite_number": 8,
+          "z_range_m": [
+            0.701,
+            0.8
+          ],
+          "layer_name": "Icy Regolith (~8 wt%)",
+          "rop_mm_s": 1.383,
+          "drill_duration_s": 73,
+          "cycle_duration_s": 298,
+          "mean_bite_power_w": 48.0,
+          "peak_torque_nm": 0.227,
+          "mse_mj_m3": 7.56,
+          "percussion_fraction": 0.0,
+          "max_bit_temp_k": 103.3,
+          "faults": []
+        },
+        {
+          "bite_number": 9,
+          "z_range_m": [
+            0.802,
+            0.9
+          ],
+          "layer_name": "Icy Regolith (~8 wt%)",
+          "rop_mm_s": 1.689,
+          "drill_duration_s": 60,
+          "cycle_duration_s": 301,
+          "mean_bite_power_w": 122.1,
+          "peak_torque_nm": 0.112,
+          "mse_mj_m3": 63.11,
+          "percussion_fraction": 1.0,
+          "max_bit_temp_k": 116.0,
+          "faults": []
+        },
+        {
+          "bite_number": 10,
+          "z_range_m": [
+            0.902,
+            1.0
+          ],
+          "layer_name": "Icy Regolith (~8 wt%)",
+          "rop_mm_s": 1.689,
+          "drill_duration_s": 60,
+          "cycle_duration_s": 328,
+          "mean_bite_power_w": 122.1,
+          "peak_torque_nm": 0.112,
+          "mse_mj_m3": 63.11,
+          "percussion_fraction": 1.0,
+          "max_bit_temp_k": 120.1,
+          "faults": []
+        }
+      ]
+    },
+    "mars": {
+      "environment_name": "Martian Northern High Latitudes (68 N, Phoenix analog)",
+      "A_target_depth_m": 1.0,
+      "A_reached_depth_m": 1.0,
+      "A_bite_increment_m": 0.1,
+      "A_num_bites": 10,
+      "B_total_operational_duration_hr": 0.757,
+      "B_total_operational_duration_min": 45.4,
+      "B_pure_drilling_time_min": 10.28,
+      "B_time_breakdown_min": {
+        "IDLE": 0.52,
+        "ACTIVE": 3.62,
+        "SEARCH": 8.83,
+        "DRILL": 10.28,
+        "RETRACTION": 6.5,
+        "TRANSFER": 15.67
+      },
+      "C_wob_max_limit_n": 166.95,
+      "C_operational_wob_setpoint_n": 119.25,
+      "D_mean_electrical_power_w": 62.3,
+      "D_mean_drilling_power_w": 104.6,
+      "D_peak_electrical_power_w": 130.0,
+      "D_total_mission_energy_wh": 47.2,
+      "D_mean_solar_power_w": 248.6,
+      "D_net_solar_power_margin_w": 186.3,
+      "D_min_battery_wh": 1375.0,
+      "D_max_depth_of_discharge_pct": 0.0,
+      "solar_day_mean_w": 143.4,
+      "num_faults": 0,
+      "fault_events": [],
+      "max_bit_temp_k": 205.1,
+      "critical_bit_temp_k": 263.15,
+      "percussion_time_fraction": 0.71,
+      "storage_trade_study": {
+        "Ni_H2": {
+          "name": "Nickel-Hydrogen (Individual Pressure Vessel)",
+          "specific_energy_wh_kg": 55.0,
+          "pack_mass_kg": 25.0,
+          "round_trip_efficiency": 0.82,
+          "solar_energy_to_refill_wh": 0.0,
+          "min_operating_temp_k": 233.0
+        },
+        "Regen_H2_FC": {
+          "name": "Regenerative H2/O2 PEM Fuel Cell System",
+          "specific_energy_wh_kg": 250.0,
+          "pack_mass_kg": 5.5,
+          "round_trip_efficiency": 0.58,
+          "solar_energy_to_refill_wh": 0.0,
+          "min_operating_temp_k": 253.0
+        },
+        "Space_Li_Ion": {
+          "name": "Space-Grade Low-Temp Li-Ion (NCA)",
+          "specific_energy_wh_kg": 145.0,
+          "pack_mass_kg": 9.48,
+          "round_trip_efficiency": 0.92,
+          "solar_energy_to_refill_wh": 0.0,
+          "min_operating_temp_k": 223.0
+        }
+      },
+      "bite_breakdown": [
+        {
+          "bite_number": 1,
+          "z_range_m": [
+            0.005,
+            0.1
+          ],
+          "layer_name": "Pore-Ice Cemented Ground (ICG)",
+          "rop_mm_s": 2.858,
+          "drill_duration_s": 35,
+          "cycle_duration_s": 158,
+          "mean_bite_power_w": 101.9,
+          "peak_torque_nm": 0.253,
+          "mse_mj_m3": 42.26,
+          "percussion_fraction": 0.69,
+          "max_bit_temp_k": 199.2,
+          "faults": []
+        },
+        {
+          "bite_number": 2,
+          "z_range_m": [
+            0.102,
+            0.2
+          ],
+          "layer_name": "Pore-Ice Cemented Ground (ICG)",
+          "rop_mm_s": 1.877,
+          "drill_duration_s": 54,
+          "cycle_duration_s": 183,
+          "mean_bite_power_w": 125.5,
+          "peak_torque_nm": 0.253,
+          "mse_mj_m3": 60.42,
+          "percussion_fraction": 1.0,
+          "max_bit_temp_k": 204.4,
+          "faults": []
+        },
+        {
+          "bite_number": 3,
+          "z_range_m": [
+            0.202,
+            0.3
+          ],
+          "layer_name": "Pore-Ice Cemented Ground (ICG)",
+          "rop_mm_s": 1.877,
+          "drill_duration_s": 54,
+          "cycle_duration_s": 199,
+          "mean_bite_power_w": 125.5,
+          "peak_torque_nm": 0.253,
+          "mse_mj_m3": 60.42,
+          "percussion_fraction": 1.0,
+          "max_bit_temp_k": 205.1,
+          "faults": []
+        },
+        {
+          "bite_number": 4,
+          "z_range_m": [
+            0.302,
+            0.4
+          ],
+          "layer_name": "Pore-Ice Cemented Ground (ICG)",
+          "rop_mm_s": 1.877,
+          "drill_duration_s": 54,
+          "cycle_duration_s": 215,
+          "mean_bite_power_w": 125.5,
+          "peak_torque_nm": 0.253,
+          "mse_mj_m3": 60.42,
+          "percussion_fraction": 1.0,
+          "max_bit_temp_k": 205.1,
+          "faults": []
+        },
+        {
+          "bite_number": 5,
+          "z_range_m": [
+            0.402,
+            0.5
+          ],
+          "layer_name": "Dense Ice-Cemented Ground",
+          "rop_mm_s": 1.877,
+          "drill_duration_s": 54,
+          "cycle_duration_s": 231,
+          "mean_bite_power_w": 125.5,
+          "peak_torque_nm": 0.253,
+          "mse_mj_m3": 60.42,
+          "percussion_fraction": 1.0,
+          "max_bit_temp_k": 204.9,
+          "faults": []
+        },
+        {
+          "bite_number": 6,
+          "z_range_m": [
+            0.501,
+            0.6
+          ],
+          "layer_name": "Dense Ice-Cemented Ground",
+          "rop_mm_s": 1.535,
+          "drill_duration_s": 66,
+          "cycle_duration_s": 259,
+          "mean_bite_power_w": 125.4,
+          "peak_torque_nm": 0.253,
+          "mse_mj_m3": 73.77,
+          "percussion_fraction": 1.0,
+          "max_bit_temp_k": 205.1,
+          "faults": []
+        },
+        {
+          "bite_number": 7,
+          "z_range_m": [
+            0.602,
+            0.7
+          ],
+          "layer_name": "Dense Ice-Cemented Ground",
+          "rop_mm_s": 1.535,
+          "drill_duration_s": 66,
+          "cycle_duration_s": 275,
+          "mean_bite_power_w": 125.4,
+          "peak_torque_nm": 0.253,
+          "mse_mj_m3": 73.77,
+          "percussion_fraction": 1.0,
+          "max_bit_temp_k": 205.1,
+          "faults": []
+        },
+        {
+          "bite_number": 8,
+          "z_range_m": [
+            0.702,
+            0.8
+          ],
+          "layer_name": "Excess (Nearly Pure) Ground Ice",
+          "rop_mm_s": 1.535,
+          "drill_duration_s": 66,
+          "cycle_duration_s": 291,
+          "mean_bite_power_w": 125.4,
+          "peak_torque_nm": 0.253,
+          "mse_mj_m3": 73.77,
+          "percussion_fraction": 1.0,
+          "max_bit_temp_k": 204.9,
+          "faults": []
+        },
+        {
+          "bite_number": 9,
+          "z_range_m": [
+            0.801,
+            0.9
+          ],
+          "layer_name": "Excess (Nearly Pure) Ground Ice",
+          "rop_mm_s": 1.194,
+          "drill_duration_s": 84,
+          "cycle_duration_s": 325,
+          "mean_bite_power_w": 53.8,
+          "peak_torque_nm": 0.492,
+          "mse_mj_m3": 19.0,
+          "percussion_fraction": 0.0,
+          "max_bit_temp_k": 201.1,
+          "faults": []
+        },
+        {
+          "bite_number": 10,
+          "z_range_m": [
+            0.901,
+            1.0
+          ],
+          "layer_name": "Excess (Nearly Pure) Ground Ice",
+          "rop_mm_s": 1.194,
+          "drill_duration_s": 84,
+          "cycle_duration_s": 352,
+          "mean_bite_power_w": 53.8,
+          "peak_torque_nm": 0.492,
+          "mse_mj_m3": 19.0,
+          "percussion_fraction": 0.0,
+          "max_bit_temp_k": 194.8,
+          "faults": []
+        }
+      ]
+    }
+  },
+  "off_nominal": {
+    "description": "Bite length 15 cm > choking onset z_crit = 0.122 m",
+    "moon": {
+      "environment_name": "Lunar South Pole (ice-stable terrain near the Shackleton rim)",
+      "A_target_depth_m": 1.0,
+      "A_reached_depth_m": 1.0,
+      "A_bite_increment_m": 0.15,
+      "A_num_bites": 7,
+      "B_total_operational_duration_hr": 0.811,
+      "B_total_operational_duration_min": 48.7,
+      "B_pure_drilling_time_min": 7.13,
+      "B_time_breakdown_min": {
+        "IDLE": 0.52,
+        "ACTIVE": 18.87,
+        "SEARCH": 6.23,
+        "DRILL": 7.13,
+        "RETRACTION": 4.95,
+        "TRANSFER": 10.97
+      },
+      "C_wob_max_limit_n": 72.9,
+      "C_operational_wob_setpoint_n": 52.07,
+      "D_mean_electrical_power_w": 79.8,
+      "D_mean_drilling_power_w": 71.6,
+      "D_peak_electrical_power_w": 266.2,
+      "D_total_mission_energy_wh": 64.7,
+      "D_mean_solar_power_w": 857.4,
+      "D_net_solar_power_margin_w": 777.6,
+      "D_min_battery_wh": 1375.0,
+      "D_max_depth_of_discharge_pct": 0.0,
+      "solar_day_mean_w": 796.6,
+      "num_faults": 3,
+      "fault_events": [
+        {
+          "time_s": 1207.0,
+          "depth_m": 0.15,
+          "bite": 1,
+          "fault": "TORQUE_OVERLOAD",
+          "bit_temp_k": 100.26,
+          "torque_nm": 7.958,
+          "layer": "Surficial Regolith Fluff (desiccated)"
+        },
+        {
+          "time_s": 1804.0,
+          "depth_m": 0.6,
+          "bite": 4,
+          "fault": "TORQUE_OVERLOAD",
+          "bit_temp_k": 103.11,
+          "torque_nm": 6.9433,
+          "layer": "Low-Ice Cemented Regolith (~3 wt%)"
+        },
+        {
+          "time_s": 2430.0,
+          "depth_m": 0.9,
+          "bite": 6,
+          "fault": "TORQUE_OVERLOAD",
+          "bit_temp_k": 116.12,
+          "torque_nm": 5.7426,
+          "layer": "Icy Regolith (~8 wt%)"
+        }
+      ],
+      "max_bit_temp_k": 120.2,
+      "critical_bit_temp_k": 163.5,
+      "percussion_time_fraction": 0.29,
+      "storage_trade_study": {
+        "Ni_H2": {
+          "name": "Nickel-Hydrogen (Individual Pressure Vessel)",
+          "specific_energy_wh_kg": 55.0,
+          "pack_mass_kg": 25.0,
+          "round_trip_efficiency": 0.82,
+          "solar_energy_to_refill_wh": 0.0,
+          "min_operating_temp_k": 233.0
+        },
+        "Regen_H2_FC": {
+          "name": "Regenerative H2/O2 PEM Fuel Cell System",
+          "specific_energy_wh_kg": 250.0,
+          "pack_mass_kg": 5.5,
+          "round_trip_efficiency": 0.58,
+          "solar_energy_to_refill_wh": 0.0,
+          "min_operating_temp_k": 253.0
+        },
+        "Space_Li_Ion": {
+          "name": "Space-Grade Low-Temp Li-Ion (NCA)",
+          "specific_energy_wh_kg": 145.0,
+          "pack_mass_kg": 9.48,
+          "round_trip_efficiency": 0.92,
+          "solar_energy_to_refill_wh": 0.0,
+          "min_operating_temp_k": 223.0
+        }
+      },
+      "bite_breakdown": [
+        {
+          "bite_number": 1,
+          "z_range_m": [
+            0.005,
+            0.15
+          ],
+          "layer_name": "Surficial Regolith Fluff (desiccated)",
+          "rop_mm_s": 5.0,
+          "drill_duration_s": 30,
+          "cycle_duration_s": 157,
+          "mean_bite_power_w": 53.3,
+          "peak_torque_nm": 7.958,
+          "mse_mj_m3": 4.21,
+          "percussion_fraction": 0.0,
+          "max_bit_temp_k": 100.3,
+          "faults": [
+            "TORQUE_OVERLOAD"
+          ]
+        },
+        {
+          "bite_number": 2,
+          "z_range_m": [
+            0.155,
+            0.3
+          ],
+          "layer_name": "Compacted Dry Regolith",
+          "rop_mm_s": 5.0,
+          "drill_duration_s": 30,
+          "cycle_duration_s": 171,
+          "mean_bite_power_w": 48.4,
+          "peak_torque_nm": 2.252,
+          "mse_mj_m3": 2.09,
+          "percussion_fraction": 0.0,
+          "max_bit_temp_k": 100.5,
+          "faults": []
+        },
+        {
+          "bite_number": 3,
+          "z_range_m": [
+            0.305,
+            0.45
+          ],
+          "layer_name": "Compacted Dry Regolith",
+          "rop_mm_s": 5.0,
+          "drill_duration_s": 30,
+          "cycle_duration_s": 195,
+          "mean_bite_power_w": 48.4,
+          "peak_torque_nm": 2.252,
+          "mse_mj_m3": 2.09,
+          "percussion_fraction": 0.0,
+          "max_bit_temp_k": 100.6,
+          "faults": []
+        },
+        {
+          "bite_number": 4,
+          "z_range_m": [
+            0.455,
+            0.6
+          ],
+          "layer_name": "Low-Ice Cemented Regolith (~3 wt%)",
+          "rop_mm_s": 1.985,
+          "drill_duration_s": 78,
+          "cycle_duration_s": 267,
+          "mean_bite_power_w": 53.7,
+          "peak_torque_nm": 6.943,
+          "mse_mj_m3": 9.11,
+          "percussion_fraction": 0.04,
+          "max_bit_temp_k": 103.1,
+          "faults": [
+            "TORQUE_OVERLOAD"
+          ]
+        },
+        {
+          "bite_number": 5,
+          "z_range_m": [
+            0.601,
+            0.75
+          ],
+          "layer_name": "Low-Ice Cemented Regolith (~3 wt%)",
+          "rop_mm_s": 1.452,
+          "drill_duration_s": 104,
+          "cycle_duration_s": 317,
+          "mean_bite_power_w": 50.6,
+          "peak_torque_nm": 2.947,
+          "mse_mj_m3": 8.85,
+          "percussion_fraction": 0.02,
+          "max_bit_temp_k": 104.0,
+          "faults": []
+        },
+        {
+          "bite_number": 6,
+          "z_range_m": [
+            0.751,
+            0.9
+          ],
+          "layer_name": "Icy Regolith (~8 wt%)",
+          "rop_mm_s": 1.571,
+          "drill_duration_s": 96,
+          "cycle_duration_s": 333,
+          "mean_bite_power_w": 97.3,
+          "peak_torque_nm": 5.743,
+          "mse_mj_m3": 46.5,
+          "percussion_fraction": 0.61,
+          "max_bit_temp_k": 116.1,
+          "faults": [
+            "TORQUE_OVERLOAD"
+          ]
+        },
+        {
+          "bite_number": 7,
+          "z_range_m": [
+            0.902,
+            1.0
+          ],
+          "layer_name": "Icy Regolith (~8 wt%)",
+          "rop_mm_s": 1.689,
+          "drill_duration_s": 60,
+          "cycle_duration_s": 328,
+          "mean_bite_power_w": 122.1,
+          "peak_torque_nm": 0.112,
+          "mse_mj_m3": 63.11,
+          "percussion_fraction": 1.0,
+          "max_bit_temp_k": 120.2,
+          "faults": []
+        }
+      ]
+    },
+    "mars": {
+      "environment_name": "Martian Northern High Latitudes (68 N, Phoenix analog)",
+      "A_target_depth_m": 1.0,
+      "A_reached_depth_m": 1.0,
+      "A_bite_increment_m": 0.15,
+      "A_num_bites": 7,
+      "B_total_operational_duration_hr": 0.92,
+      "B_total_operational_duration_min": 55.2,
+      "B_pure_drilling_time_min": 10.1,
+      "B_time_breakdown_min": {
+        "IDLE": 0.52,
+        "ACTIVE": 3.62,
+        "SEARCH": 11.98,
+        "DRILL": 10.1,
+        "RETRACTION": 8.6,
+        "TRANSFER": 20.37
+      },
+      "C_wob_max_limit_n": 166.95,
+      "C_operational_wob_setpoint_n": 119.25,
+      "D_mean_electrical_power_w": 59.1,
+      "D_mean_drilling_power_w": 109.2,
+      "D_peak_electrical_power_w": 504.3,
+      "D_total_mission_energy_wh": 54.4,
+      "D_mean_solar_power_w": 249.6,
+      "D_net_solar_power_margin_w": 190.5,
+      "D_min_battery_wh": 1374.9,
+      "D_max_depth_of_discharge_pct": 0.01,
+      "solar_day_mean_w": 143.4,
+      "num_faults": 6,
+      "fault_events": [
+        {
+          "time_s": 322.0,
+          "depth_m": 0.147,
+          "bite": 1,
+          "fault": "TORQUE_OVERLOAD",
+          "bit_temp_k": 202.74,
+          "torque_nm": 8.2882,
+          "layer": "Pore-Ice Cemented Ground (ICG)"
+        },
+        {
+          "time_s": 659.0,
+          "depth_m": 0.2964,
+          "bite": 2,
+          "fault": "TORQUE_OVERLOAD",
+          "bit_temp_k": 205.3,
+          "torque_nm": 7.0144,
+          "layer": "Pore-Ice Cemented Ground (ICG)"
+        },
+        {
+          "time_s": 1044.0,
+          "depth_m": 0.4464,
+          "bite": 3,
+          "fault": "TORQUE_OVERLOAD",
+          "bit_temp_k": 205.29,
+          "torque_nm": 7.0144,
+          "layer": "Pore-Ice Cemented Ground (ICG)"
+        },
+        {
+          "time_s": 1488.0,
+          "depth_m": 0.5959,
+          "bite": 4,
+          "fault": "TORQUE_OVERLOAD",
+          "bit_temp_k": 205.35,
+          "torque_nm": 6.6781,
+          "layer": "Dense Ice-Cemented Ground"
+        },
+        {
+          "time_s": 1987.0,
+          "depth_m": 0.7459,
+          "bite": 5,
+          "fault": "TORQUE_OVERLOAD",
+          "bit_temp_k": 205.36,
+          "torque_nm": 6.6781,
+          "layer": "Dense Ice-Cemented Ground"
+        },
+        {
+          "time_s": 2544.0,
+          "depth_m": 0.895,
+          "bite": 6,
+          "fault": "TORQUE_OVERLOAD",
+          "bit_temp_k": 196.61,
+          "torque_nm": 18.2468,
+          "layer": "Excess (Nearly Pure) Ground Ice"
+        }
+      ],
+      "max_bit_temp_k": 205.4,
+      "critical_bit_temp_k": 263.15,
+      "percussion_time_fraction": 0.721,
+      "storage_trade_study": {
+        "Ni_H2": {
+          "name": "Nickel-Hydrogen (Individual Pressure Vessel)",
+          "specific_energy_wh_kg": 55.0,
+          "pack_mass_kg": 25.0,
+          "round_trip_efficiency": 0.82,
+          "solar_energy_to_refill_wh": 0.1,
+          "min_operating_temp_k": 233.0
+        },
+        "Regen_H2_FC": {
+          "name": "Regenerative H2/O2 PEM Fuel Cell System",
+          "specific_energy_wh_kg": 250.0,
+          "pack_mass_kg": 5.5,
+          "round_trip_efficiency": 0.58,
+          "solar_energy_to_refill_wh": 0.1,
+          "min_operating_temp_k": 253.0
+        },
+        "Space_Li_Ion": {
+          "name": "Space-Grade Low-Temp Li-Ion (NCA)",
+          "specific_energy_wh_kg": 145.0,
+          "pack_mass_kg": 9.48,
+          "round_trip_efficiency": 0.92,
+          "solar_energy_to_refill_wh": 0.1,
+          "min_operating_temp_k": 223.0
+        }
+      },
+      "bite_breakdown": [
+        {
+          "bite_number": 1,
+          "z_range_m": [
+            0.005,
+            0.15
+          ],
+          "layer_name": "Pore-Ice Cemented Ground (ICG)",
+          "rop_mm_s": 2.431,
+          "drill_duration_s": 62,
+          "cycle_duration_s": 317,
+          "mean_bite_power_w": 118.5,
+          "peak_torque_nm": 8.288,
+          "mse_mj_m3": 57.46,
+          "percussion_fraction": 0.82,
+          "max_bit_temp_k": 202.7,
+          "faults": [
+            "TORQUE_OVERLOAD"
+          ]
+        },
+        {
+          "bite_number": 2,
+          "z_range_m": [
+            0.152,
+            0.3
+          ],
+          "layer_name": "Pore-Ice Cemented Ground (ICG)",
+          "rop_mm_s": 1.877,
+          "drill_duration_s": 80,
+          "cycle_duration_s": 373,
+          "mean_bite_power_w": 129.7,
+          "peak_torque_nm": 7.014,
+          "mse_mj_m3": 65.17,
+          "percussion_fraction": 1.0,
+          "max_bit_temp_k": 205.3,
+          "faults": [
+            "TORQUE_OVERLOAD"
+          ]
+        },
+        {
+          "bite_number": 3,
+          "z_range_m": [
+            0.302,
+            0.45
+          ],
+          "layer_name": "Pore-Ice Cemented Ground (ICG)",
+          "rop_mm_s": 1.877,
+          "drill_duration_s": 80,
+          "cycle_duration_s": 421,
+          "mean_bite_power_w": 129.7,
+          "peak_torque_nm": 7.014,
+          "mse_mj_m3": 65.17,
+          "percussion_fraction": 1.0,
+          "max_bit_temp_k": 205.3,
+          "faults": [
+            "TORQUE_OVERLOAD"
+          ]
+        },
+        {
+          "bite_number": 4,
+          "z_range_m": [
+            0.452,
+            0.6
+          ],
+          "layer_name": "Dense Ice-Cemented Ground",
+          "rop_mm_s": 1.636,
+          "drill_duration_s": 92,
+          "cycle_duration_s": 481,
+          "mean_bite_power_w": 129.4,
+          "peak_torque_nm": 6.678,
+          "mse_mj_m3": 75.45,
+          "percussion_fraction": 1.0,
+          "max_bit_temp_k": 205.3,
+          "faults": [
+            "TORQUE_OVERLOAD"
+          ]
+        },
+        {
+          "bite_number": 5,
+          "z_range_m": [
+            0.602,
+            0.75
+          ],
+          "layer_name": "Dense Ice-Cemented Ground",
+          "rop_mm_s": 1.535,
+          "drill_duration_s": 98,
+          "cycle_duration_s": 535,
+          "mean_bite_power_w": 129.1,
+          "peak_torque_nm": 6.678,
+          "mse_mj_m3": 79.03,
+          "percussion_fraction": 1.0,
+          "max_bit_temp_k": 205.4,
+          "faults": [
+            "TORQUE_OVERLOAD"
+          ]
+        },
+        {
+          "bite_number": 6,
+          "z_range_m": [
+            0.751,
+            0.9
+          ],
+          "layer_name": "Excess (Nearly Pure) Ground Ice",
+          "rop_mm_s": 1.373,
+          "drill_duration_s": 110,
+          "cycle_duration_s": 595,
+          "mean_bite_power_w": 81.7,
+          "peak_torque_nm": 18.247,
+          "mse_mj_m3": 38.32,
+          "percussion_fraction": 0.33,
+          "max_bit_temp_k": 202.3,
+          "faults": [
+            "TORQUE_OVERLOAD"
+          ]
+        },
+        {
+          "bite_number": 7,
+          "z_range_m": [
+            0.901,
+            1.0
+          ],
+          "layer_name": "Excess (Nearly Pure) Ground Ice",
+          "rop_mm_s": 1.194,
+          "drill_duration_s": 84,
+          "cycle_duration_s": 352,
+          "mean_bite_power_w": 53.8,
+          "peak_torque_nm": 0.492,
+          "mse_mj_m3": 19.0,
+          "percussion_fraction": 0.0,
+          "max_bit_temp_k": 194.7,
+          "faults": []
+        }
+      ]
+    }
+  },
+  "sensitivity": [
+    {
+      "parameter": "percussive_se_to_ucs",
+      "value": 1.0,
+      "moon": {
+        "duration_h": 0.939,
+        "drilling_min": 5.98,
+        "mean_drilling_w": 55.8,
+        "faults": 0,
+        "max_bit_temp_k": 108.1
+      },
+      "mars": {
+        "duration_h": 0.678,
+        "drilling_min": 5.57,
+        "mean_drilling_w": 87.5,
+        "faults": 0,
+        "max_bit_temp_k": 197.9
+      }
+    },
+    {
+      "parameter": "percussive_se_to_ucs",
+      "value": 3.0,
+      "moon": {
+        "duration_h": 0.962,
+        "drilling_min": 7.32,
+        "mean_drilling_w": 67.9,
+        "faults": 0,
+        "max_bit_temp_k": 120.1
+      },
+      "mars": {
+        "duration_h": 0.757,
+        "drilling_min": 10.28,
+        "mean_drilling_w": 104.6,
+        "faults": 0,
+        "max_bit_temp_k": 205.1
+      }
+    },
+    {
+      "parameter": "percussive_se_to_ucs",
+      "value": 5.0,
+      "moon": {
+        "duration_h": 0.983,
+        "drilling_min": 8.62,
+        "mean_drilling_w": 76.0,
+        "faults": 0,
+        "max_bit_temp_k": 129.3
+      },
+      "mars": {
+        "duration_h": 0.836,
+        "drilling_min": 15.03,
+        "mean_drilling_w": 111.0,
+        "faults": 0,
+        "max_bit_temp_k": 210.6
+      }
+    },
+    {
+      "parameter": "heat_to_bit_fraction",
+      "value": 0.15,
+      "moon": {
+        "duration_h": 0.962,
+        "drilling_min": 7.32,
+        "mean_drilling_w": 67.9,
+        "faults": 0,
+        "max_bit_temp_k": 112.1
+      },
+      "mars": {
+        "duration_h": 0.757,
+        "drilling_min": 10.28,
+        "mean_drilling_w": 104.6,
+        "faults": 0,
+        "max_bit_temp_k": 199.9
+      }
+    },
+    {
+      "parameter": "heat_to_bit_fraction",
+      "value": 0.25,
+      "moon": {
+        "duration_h": 0.962,
+        "drilling_min": 7.32,
+        "mean_drilling_w": 67.9,
+        "faults": 0,
+        "max_bit_temp_k": 120.1
+      },
+      "mars": {
+        "duration_h": 0.757,
+        "drilling_min": 10.28,
+        "mean_drilling_w": 104.6,
+        "faults": 0,
+        "max_bit_temp_k": 205.1
+      }
+    },
+    {
+      "parameter": "heat_to_bit_fraction",
+      "value": 0.35,
+      "moon": {
+        "duration_h": 0.962,
+        "drilling_min": 7.32,
+        "mean_drilling_w": 67.9,
+        "faults": 0,
+        "max_bit_temp_k": 128.2
+      },
+      "mars": {
+        "duration_h": 0.757,
+        "drilling_min": 10.28,
+        "mean_drilling_w": 104.6,
+        "faults": 0,
+        "max_bit_temp_k": 210.4
+      }
+    },
+    {
+      "parameter": "cuttings_bulking_factor",
+      "value": 1.3,
+      "moon": {
+        "duration_h": 0.937,
+        "drilling_min": 7.32,
+        "mean_drilling_w": 67.9,
+        "faults": 0,
+        "max_bit_temp_k": 120.1
+      },
+      "mars": {
+        "duration_h": 0.732,
+        "drilling_min": 10.28,
+        "mean_drilling_w": 104.6,
+        "faults": 0,
+        "max_bit_temp_k": 205.2
+      }
+    },
+    {
+      "parameter": "cuttings_bulking_factor",
+      "value": 1.5,
+      "moon": {
+        "duration_h": 0.962,
+        "drilling_min": 7.32,
+        "mean_drilling_w": 67.9,
+        "faults": 0,
+        "max_bit_temp_k": 120.1
+      },
+      "mars": {
+        "duration_h": 0.757,
+        "drilling_min": 10.28,
+        "mean_drilling_w": 104.6,
+        "faults": 0,
+        "max_bit_temp_k": 205.1
+      }
+    },
+    {
+      "parameter": "cuttings_bulking_factor",
+      "value": 1.6,
+      "moon": {
+        "duration_h": 0.976,
+        "drilling_min": 7.32,
+        "mean_drilling_w": 67.9,
+        "faults": 0,
+        "max_bit_temp_k": 120.1
+      },
+      "mars": {
+        "duration_h": 0.771,
+        "drilling_min": 10.28,
+        "mean_drilling_w": 104.6,
+        "faults": 0,
+        "max_bit_temp_k": 205.1
+      }
+    }
+  ]
+}

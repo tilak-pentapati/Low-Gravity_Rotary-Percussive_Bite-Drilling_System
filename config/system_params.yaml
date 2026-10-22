@@ -1,0 +1,540 @@
+# ==============================================================================
+# SINGLE SOURCE OF TRUTH - PRIMARY INPUTS ONLY
+# Autonomous Low-Gravity Rotary-Percussive Bite-Drilling System
+#
+# This file holds only *primary* inputs. Every performance number, limit and
+# derived dimension (WOB set-point, flute depth, sampling length, pitches, critical
+# bit temperatures, warm-up time, solar output, mission duration, power...) is
+# COMPUTED by src/design.py, src/solar.py, src/terramechanics.py and
+# src/state_machine.py and written to exports/data/*.json.
+#
+# Every entry is tagged:
+#   [ENV]  environment / physical constant, with source
+#   [DES]  design choice (what we decided to build), with rationale
+#   [COEF] model coefficient from literature, with source and plausible range
+#   [CRIT] engineering acceptance criterion / safety factor, with source
+# ==============================================================================
+
+system:
+  name: "Autonomous Low-Gravity Rotary-Percussive Bite-Drilling System"
+  lander_mass_kg: 45.0             # [DES] total deployed mass reacting WOB (Phase-1 report)
+  target_depth_m: 1.00             # [DES] "1-m class" single-string drill (Phase-1 report Sec. 3.2)
+  bite_depth_m: 0.10               # [DES] 10 cm sample bites (Phase-2 report; Zacny et al. 2013)
+  dt_s: 1.0                        # [DES] controller / simulation step
+
+criteria:
+  wob_lift_off_fos: 1.4            # [CRIT] WOB set-point = m*g / FOS (keeps 40 % margin to lander lift-off;
+                                   #        1.4 = NASA-STD-5001 ultimate factor applied to the reaction load)
+  structural_fos_fatigue: 1.5      # [CRIT] Goodman fatigue factor for the auger root (NASA-STD-5001 practice)
+  structural_fos_yield: 1.25       # [CRIT] yield factor, NASA-STD-5001B (tested flight hardware)
+  gear_bending_fos: 1.5            # [CRIT] AGMA S_F on tooth bending (AGMA 2001 practice 1.3-2.0)
+  gear_contact_fos: 1.25           # [CRIT] AGMA S_H on pitting (AGMA 2001 practice 1.0-1.3)
+  bearing_static_fos: 2.0          # [CRIT] s0 = C0/P0 >= 2 for smooth, quiet running (SKF catalogue guidance)
+  mechanism_life_factor: 4.0       # [CRIT] predicted life >= 4 x required life (ECSS-E-ST-33-01C life factor)
+  cam_max_pressure_angle_deg: 30.0 # [CRIT] translating roller follower, keep phi <= 30 deg (Norton, Cam Design)
+  hammer_fall_time_margin: 2.0     # [CRIT] cam dwell lasts >= 2 x the hammer's spring-driven fall time
+  spring_min_active_coils: 3.0     # [CRIT] fewer than ~3 active coils gives a non-linear rate (SMI design handbook)
+  spring_clash_allowance: 0.15     # [CRIT] xi: free length leaves 15 % of the working deflection before solid (Shigley 10-7)
+  spring_surge_ratio: 15.0         # [CRIT] coil surge frequency >= 15 x forcing frequency (Shigley Sec. 10-9)
+  load_cell_overload_factor: 2.0   # [CRIT] rated capacity >= 2 x the largest static WOB (impact/dynamic content)
+  torque_fault_fraction: 0.85      # [CRIT] trip at 85 % of the motor torque limit to protect the string
+  cuttings_retention_margin: 1.20  # [CRIT] sampling flutes must hold 120 % of one bite of bulked cuttings
+  brush_passes_per_flute: 3.0      # [CRIT] each flute point must pass the brush on >= 3 auger revolutions
+  moon_ice_loss_fraction: 0.01     # [CRIT] max sublimation loss of ice from a 50 um cuttings grain per bite
+  moon_grain_radius_m: 25.0e-6     # [CRIT] representative cuttings grain radius (fine regolith; Carrier 1991)
+  mars_melt_margin_k: 10.0         # [CRIT] keep bit >= 10 K below 273.15 K to avoid melt / refreeze sticking
+  lubricant_min_temp_k: 193.0      # [ENV]  Braycote 601EF lower operating limit (-80 C, manufacturer data)
+  actuator_warmup_margin_k: 20.0   # [CRIT] warm actuators to lubricant limit + 20 K before motion
+  structural_fos_ultimate: 1.4     # [CRIT] ultimate factor, NASA-STD-5001B (tested flight hardware; also on buckling)
+  launch_quasi_static_g: 15.0      # [CRIT] limit load factor, each axis in turn: small-payload rideshare guides quote
+                                   #        ~10-13 g quasi-static; 15 g envelopes them and the MAC for < 20 kg items
+  launch_min_frequency_hz: 50.0    # [CRIT] stowed first mode: rideshare guides ask > 35-40 Hz at the spacecraft interface;
+                                   #        deck-mounted instruments are held to >= 50 Hz to stay clear of the lander's own modes
+  random_vibration_psd: [[20.0, 0.026], [50.0, 0.16], [800.0, 0.16], [2000.0, 0.026]]
+                                   # [CRIT] GSFC-STD-7000 (GEVS) component qualification random vibration, g^2/Hz (14.1 g rms)
+  random_vibration_q: 10.0         # [COEF] Miles' equation amplification of a bolted metallic structure, Q = 10 (5-20 typical)
+  motorisation_static_factor: 2.0  # [CRIT] actuator torque >= 2 x resistive (gravity, friction, harness) torques ...
+  motorisation_inertial_factor: 1.25  # [CRIT] ... + 1.25 x inertial torque (ECSS-E-ST-33-01C motorisation factor)
+  leadscrew_speed_fraction: 0.8    # [CRIT] run a screw at <= 80 % of its whirl critical speed (THK / Rexroth screw practice)
+  joint_separation_fos: 1.2        # [CRIT] bolted-joint separation factor, NASA-STD-5020A (non-safety-critical joint)
+  thermal_resume_margin_k: 15.0    # [CRIT] after a thermal fault, resume only when T_bit < T_crit - 15 K
+
+materials:
+  auger_steel:                     # [ENV] 17-4PH H1025 stainless (MMPDS / AK Steel data sheet)
+    density_kg_m3: 7800.0
+    youngs_modulus_pa: 197.0e+9
+    ultimate_strength_pa: 1070.0e+6
+    yield_strength_pa: 1000.0e+6
+    specific_heat_j_kgk: 460.0
+    poisson: 0.272                 # [ENV] MMPDS
+    endurance_factor_surface: 0.75 # [COEF] Marin surface factor, machined (Shigley)
+    endurance_factor_reliability: 0.814  # [COEF] 99 % reliability (Shigley Table 6-5)
+  hammer_spring_wire:              # [ENV] 17-7PH CH900 spring wire, torsional allowable (SMI handbook)
+    allowable_shear_pa: 690.0e+6
+    shear_modulus_pa: 75.8e+9      # [ENV] 17-7PH, G = 11.0 Mpsi (Shigley Table 10-5)
+    density_kg_m3: 7650.0          # [ENV]
+    youngs_modulus_pa: 203.4e+9    # [ENV] 17-7PH, E = 29.5 Mpsi (Shigley Table 10-5); also the brush bristle wire
+    ultimate_tensile_pa: 1620.0e+6 # [ENV] SMI handbook min. ~235 ksi at 6 mm wire; finer wire is stronger (conservative)
+    zimmerli_ssa_pa: 241.0e+6      # [COEF] Zimmerli unpeened endurance, alternating component (Shigley Eq. 10-28)
+    zimmerli_ssm_pa: 379.0e+6      # [COEF] Zimmerli unpeened endurance, mean component
+  mast_aluminium:                  # [ENV] 6061-T6 extruded tube (MMPDS-17, A-basis)
+    youngs_modulus_pa: 68.9e+9
+    density_kg_m3: 2700.0
+    yield_strength_pa: 241.0e+6
+    ultimate_strength_pa: 262.0e+6
+  mast_titanium:                   # [ENV] Ti-6Al-4V annealed (MMPDS-17); also the lugs, posts and hinge clevises
+    youngs_modulus_pa: 110.3e+9
+    density_kg_m3: 4430.0
+    yield_strength_pa: 827.0e+6
+    ultimate_strength_pa: 896.0e+6
+  feed_steel:                      # [ENV] AISI 1045 hot-rolled leadscrew and induction-hardened rail shafts (Shigley Table A-20)
+    youngs_modulus_pa: 205.0e+9
+    density_kg_m3: 7850.0
+    yield_strength_pa: 310.0e+6
+  bolt_a286:                       # [ENV] A-286 bolts, AMS 5737 aged (hold-down frangible bolts)
+    yield_strength_pa: 655.0e+6
+    ultimate_strength_pa: 965.0e+6
+  gear_steel:                      # [ENV] AISI 9310 carburised & hardened, 58-62 HRC (also cam track and anvil faces)
+    youngs_modulus_pa: 205.0e+9
+    poisson: 0.29
+    bending_strength_pa: 380.0e+6  # [ENV] AGMA St, carburised grade 1 (AGMA 2001-D04; Shigley Table 14-3)
+    contact_strength_pa: 1240.0e+6 # [ENV] AGMA Sc, carburised grade 1 (Shigley Table 14-6)
+    elastic_coeff_sqrt_pa: 191.0e+3  # [ENV] Z_E steel on steel, 191 sqrt(MPa) (Shigley Table 14-8)
+
+drill_bit:
+  # Primary inputs for the bit crown. Edge radius, slot size, indexing and all checks are DERIVED (src/design.py).
+  insert_grade: "WC-10Co cemented carbide (ISO K20)"
+  insert_compressive_strength_pa: 5.0e+9   # [ENV] WC-10Co compressive strength 5-6 GPa (Sandvik / Kennametal data)
+  insert_youngs_modulus_pa: 600.0e+9       # [ENV]
+  insert_poisson: 0.22                     # [ENV]
+  carbide_contact_fos: 2.0                 # [CRIT] factor on carbide compressive strength at the edge
+  clast_youngs_modulus_pa: 70.0e+9         # [ENV] design case: blow lands on a basalt clast larger than the hole
+  clast_poisson: 0.25                      # [ENV]
+  rock_modulus_ratio: 300.0                # [COEF] E / UCS for the drilled layers, 200-500 (Deere & Miller 1966)
+  rock_poisson: 0.3                        # [COEF]
+  crushing_ratio_min: 3.0                  # [CRIT] edge contact pressure must exceed 3 x UCS to crush the layer
+  rake_angle_deg: -10.0                    # [DES] negative rake keeps carbide in compression under impact
+  clearance_angle_deg: 15.0                # [DES] flank clears the hole bottom even at the max depth of cut
+  insert_thickness_m: 0.0035               # [DES] standard chisel-insert section 3.5 x 10 mm
+  insert_height_m: 0.010                   # [DES]
+  braze_gap_m: 0.00005                     # [DES] 50 um silver-braze joint
+  braze_shear_strength_pa: 150.0e+6        # [ENV] Ag-Cu-Zn-Ni braze on carbide, 100-200 MPa
+  body_under_gauge_m: 0.0010               # [DES] crown body radius 1 mm under gauge -> cuttings path to the slots
+  crown_height_m: 0.024                    # [DES]
+  thermocouple_standoff_m: 0.0005          # [DES] pocket ends 0.5 mm above the insert tops (probe reads the carbide, k_WC ~ 100 W/m K)
+  thermocouple_bore_m: 0.002               # [DES] type-T micro thermocouple pocket
+  joint_thread: "M12x1"                    # [DES] fine thread: bit sub screws into the transport-tube coupling
+  joint_thread_major_m: 0.012
+  joint_thread_pitch_m: 0.001
+  joint_engagement_m: 0.012
+  joint_shoulder_od_m: 0.016
+  body_steel: "17-4PH H1025 (same as auger)"
+
+auger_geometry:
+  outer_diameter_m: 0.020          # [DES] 20 mm flights (Phase-1 report Sec. 4.1: drilling energy & WOB fall with D)
+  gauge_diameter_m: 0.021          # [DES] cutters cut 0.5 mm over the flights on each side
+  tube_outer_diameter_m: 0.014     # [DES] upper transport core tube OD
+  tube_inner_diameter_m: 0.012     # [DES] upper core tube ID (sensor wiring + heat pipe space, Phase-1 report)
+  wiring_bore_m: 0.004             # [DES] thermocouple bore through the sampling root
+  sampling_flight_thickness_m: 0.0016   # [DES]
+  transport_flight_thickness_m: 0.0012  # [DES]
+  cutter_protrusion_m: 0.002       # [DES] cutters stand 2 mm proud of the crown -> max depth of cut per rev
+  num_cutters: 2                   # [DES]
+  wall_friction_coeff_soil: 0.42   # [COEF] cuttings-on-regolith wall, tan(phi_wall) ~ 0.35-0.5 (Carrier 1991)
+  wall_friction_coeff_auger: 0.32  # [COEF] cuttings-on-steel flight, 0.25-0.40 (Zacny et al. 2008)
+
+controller:                        # [DES] control-law constants (design choices, documented on the website)
+  idle_health_check_s: 20          # avionics / sensor check before warm-up
+  thermal_derate_band_k: 30.0      # RPM = N_nom * clip((T_crit - T_bit)/band, floor, 1)
+  rpm_derate_floor: 0.4
+  thermal_standoff_m: 0.03         # lift off bottom after a thermal fault (Phase-1 report Sec. 4.3)
+  max_cooling_dwell_s: 1800        # give up cooling in-hole after this and trip out
+  sublimation_exposure_s: 300.0    # cuttings sit on the warm flutes ~ one bite cycle (drill + trip + brush)
+
+cutting_model:                     # Detournay & Defourny (1992) drag-bit model + percussive specific energy
+  intrinsic_energy_to_ucs: 1.0     # [COEF] epsilon / UCS ~ 1 for sharp cutters (Richard et al. 2012)
+  zeta_force_ratio: 0.6            # [COEF] cutting force inclination ratio, 0.5-0.8 (Detournay & Defourny 1992)
+  wearflat_contact_stress_to_ucs: 1.0   # [COEF] sigma / UCS ~ 1 (Detournay & Defourny 1992)
+  wearflat_friction_coeff: 0.4     # [COEF] mu under wearflats, 0.3-0.6 (Detournay & Defourny 1992)
+  wearflat_length_to_edge_radius: 0.33  # [COEF] projected flat of a rounded edge ~ r/3 (geometric estimate)
+  percussive_se_to_ucs: 3.0        # [COEF] percussive specific energy / UCS. Lower bound 1 (Teale 1965);
+                                   #        field efficiency ~30-40 % (Dupriest & Koederitz 2005) -> ~3. Range 1-5
+  impact_transfer_efficiency: 0.6  # [COEF] hammer -> rock energy transfer, 0.5-0.8 (Lundberg 1982)
+  cuttings_bulking_factor: 1.5     # [COEF] loose/in-situ volume, 1.3-1.6 for granular regolith cuttings
+  remoulded_cuttings_cohesion_kpa: 1.0  # [COEF] loose cuttings, 0.1-1 kPa (Carrier et al. 1991, loose regolith)
+  heat_to_bit_fraction: 0.25       # [COEF] fraction of bit-face power conducted into the bit, 0.2-0.3 (Loui & Rao 1997)
+  cuttings_heat_contact: 0.5       # [COEF] fraction of fresh cuttings that thermally equilibrate with the bit
+  bit_conduction_length_m: 0.05    # [COEF] bit + lowest flutes in contact with the hole wall (shape factor length)
+  idle_wall_contact_fraction: 0.5  # [COEF] wall contact while the bit rests (not drilling) in the hole
+  bit_emissivity: 0.3              # [COEF] oxidised / machined steel, 0.2-0.4
+
+actuators:
+  rotary:
+    motor_type: "Frameless BLDC + 8:1 planetary + 24T/12T spur (16:1)"
+    gear_ratio: 16.0               # [DES]
+    nominal_rpm: 150.0             # [DES] gauge cutting speed 0.16 m/s (low frictional heating)
+    min_rpm: 60.0                  # [DES]
+    max_rpm: 240.0                 # [DES]
+    motor_efficiency: 0.85         # [COEF] small BLDC peak efficiency (maxon EC-i 40 class data sheet)
+    gear_efficiency: 0.88          # [COEF] 8:1 planetary (0.90) x spur (0.98)
+    no_load_power_w: 5.0           # [COEF] no-load loss, maxon EC-i 40 class (~0.2 A at 24 V)
+    max_safe_torque_nm: 6.50       # [DES] output torque limit set by motor current limit
+  percussive:
+    mechanism_type: "Two-lobe barrel cam lifting a spring-loaded hammer"
+    spring_rate_n_m: 125000.0      # [DES] hammer spring rate
+    cam_lift_m: 0.006              # [DES] cam lift = spring pre-compression stroke
+    cam_lobes: 2                   # [DES]
+    cam_speed_rps: 13.0            # [DES] -> blow frequency = lobes x rps
+    motor_efficiency: 0.85         # [COEF]
+    cam_efficiency: 0.90           # [COEF] roller follower on hardened cam
+    coefficient_of_restitution: 0.3   # [COEF] steel hammer on anvil, 0.2-0.4
+  z_axis_feed:
+    mechanism_type: "Tr16x4 trapezoidal leadscrew + dual linear guide rails"
+    lead_mm: 4.0                   # [DES]
+    screw_mean_diameter_mm: 14.0   # [DES]
+    thread_friction_coeff: 0.15    # [COEF] lubricated bronze-on-steel, 0.1-0.2 (Shigley)
+    motor_efficiency: 0.80         # [COEF]
+    no_load_power_w: 3.0           # [COEF]
+    retraction_speed_m_s: 0.0125   # [DES] leadscrew 188 rpm
+    search_speed_m_s: 0.0050       # [DES] slow approach for load-cell contact detection
+    max_drill_feed_m_s: 0.0050     # [DES] drilling feed-rate ceiling (leadscrew 75 rpm; WOB servo bandwidth)
+    fast_approach_clearance_m: 0.02  # [DES] descend at retraction speed until 2 cm above the hole bottom
+    contact_detect_wob_n: 5.0      # [DES] SEARCH ends when the load cell reads this
+    moving_mass_kg: 3.2            # [DES] carriage + auger lifted during retraction
+  brush_station:
+    mechanism_type: "Passive steel-bristle worm wheel meshing with the flights"
+    transfer_rpm: 65.0             # [DES] auger speed while brushing
+    # Tuft count, brush radius, bristle wire, contact force, drag torque, spring, chute and cup are DERIVED
+    # in src/design_brush.py.
+    bristle_wire_options_m: [0.10e-3, 0.125e-3, 0.15e-3, 0.20e-3, 0.25e-3, 0.30e-3]  # [DES] stock 17-7PH brush wire sizes
+    tuft_packing_fraction: 0.6     # [COEF] staple-set tufts fill 0.5-0.75 of the tuft hole (brush-maker fill data)
+    tuft_backlash_m: 0.001         # [DES] tuft clears each flight face by 1 mm at the line of centres
+    hub_ligament_m: 0.001          # [DES] minimum hub wall left between neighbouring tuft holes
+    hub_flight_clearance_m: 0.002  # [DES] brush hub clears the flight OD
+    min_interference_m: 0.0002     # [DES] tips pass the flute root by >= 0.2 mm: trim tolerance +/-0.1 mm + root runout 0.1 mm
+    bristle_friction_coeff: 0.6    # [COEF] dry steel on steel in vacuum, 0.5-0.8 (Bowden & Tabor 1950)
+    cuttings_friction_angle_deg: 40.0     # [COEF] loose granular cuttings, 35-45 deg (Carrier et al. 1991)
+    cuttings_bronze_friction_coeff: 0.40  # [COEF] regolith on metal sheet, 0.3-0.5 (interface friction, Carrier et al. 1991)
+    chute_angle_margin_deg: 10.0   # [CRIT] chute 5-10 deg steeper than the wall friction angle (Roberts 2003, chute design)
+    chute_wall_m: 0.001            # [DES] formed phosphor-bronze sheet
+    chute_wall_height_m: 0.008     # [DES] side walls catch cuttings that bounce off the tufts
+    chute_side_clearance_m: 0.005  # [DES] trough clears the brush face on each side; cup rim 5 mm below the outlet
+    axle_d_m: 0.006                # [DES] 17-4PH brush axle
+    bushing: {name: "Vespel SP-3 flanged bushing", length_m: 0.006, friction_coeff: 0.25,
+              pv_limit_pa_m_s: 0.35e+6}  # [COEF] MoS2-filled polyimide for vacuum: mu 0.1-0.3, PV ~0.35 MPa m/s (DuPont)
+    arm_length_m: 0.055            # [DES] pivot below the axle: the line-of-centres force acts at 90 deg to the arm
+    pivot_pin_d_m: 0.004           # [DES]
+    spring_coil_clearance_m: 0.0005  # [DES] torsion-spring coil ID over the pivot pin
+    spring_wire_options_m: [0.3e-3, 0.4e-3, 0.5e-3, 0.6e-3, 0.8e-3, 1.0e-3]  # [DES] stock 17-7PH spring wire
+    stow_clearance_m: 0.005        # [DES] tips clear the bit gauge when stowed (launch lock, dry-heat bake-out)
+  sample_carousel:
+    mechanism_type: "Indexing turntable of sealed sample cups hung under the mast foot plate"
+    # One cup per bite. The foot plate is the cover: one port under the chute outlet, every other cup's rim seals
+    # against its underside. Cup bore and depth, pitch radius, masses, drive torque and index power are DERIVED
+    # in src/design_brush.py.
+    blank_stations: 1              # [DES] one cup-less station sits under the port at launch, bake-out and after the last bite
+    cup_gap_m: 0.004               # [DES] seal flange to seal flange gap between neighbouring cups on the pitch circle
+    seal_flange_width_m: 0.0025    # [DES] cup rim flange carrying the PTFE face-seal ring
+    seal_gap_m: 0.0005             # [DES] compressed PTFE face-seal ring between each cup rim and the foot plate
+    seal_line_load_n_m: 10.0       # [DES] face-seal contact load per metre of seal (dust-exclusion PTFE lip, 5-20 N/m)
+    seal_friction_coeff: 0.15      # [COEF] PTFE on hard-anodised aluminium in vacuum, 0.1-0.2
+    turntable_thickness_m: 0.003   # [DES] 6061-T6 plate the cups are bolted to
+    ground_clearance_m: 0.030      # [DES] turntable underside clears the regolith surface (rocks, cuttings at the collar)
+    radial_clearance_m: 0.002      # [DES] cup flanges clear the guide-bushing flange under the foot plate
+    hub_bearing_friction_coeff: 0.002  # [COEF] dry-lubricated (MoS2) angular-contact pair, 0.001-0.003
+    index_time_s: 6.0              # [DES] one station move, cycloidal profile, made while the auger descends (SEARCH)
+    index_motor: {od_m: 0.028, length_m: 0.050, rated_torque_nm: 0.70, efficiency: 0.40}
+                                   # [COEF] NEMA-11-class stepper + 10:1 planetary on top of the foot plate: ~0.7 N m
+                                   #        output, ~40 % efficient (catalogue class)
+  avionics_and_thermal:
+    base_avionics_power_w: 35.0    # [DES] flight computer + motor drivers + sensors
+    heater_power_w: 95.0           # [DES] actuator warm-up heaters
+    actuator_thermal_mass_kg: 2.1  # [DES] motors + gearboxes (from CAD volumes x ~6000 kg/m^3)
+    actuator_specific_heat_j_kgk: 450.0  # [ENV] steel / copper average
+    actuator_radiating_area_m2: 0.30     # [DES] drill-head envelope
+    mli_effective_emissivity: 0.05       # [COEF] blanketed head, 0.02-0.05 (Gilmore 2002)
+    mars_convection_coeff_w_m2k: 0.8     # [COEF] free convection in 600 Pa CO2, ~0.5-1.5
+
+power_system:
+  solar_array:
+    cell_technology: "Triple-Junction GaInP/GaAs/Ge"
+    num_panels: 4                  # [DES] Phase-1 report: 4 panels
+    panel_area_m2: 0.68            # [DES] Phase-1 report
+    cell_efficiency_28c: 0.28      # [COEF] BOL AM0 efficiency at 28 C (vendor data, 28-30 %)
+    packing_factor: 0.90           # [COEF] cell area / panel area
+    temp_coeff_rel_per_k: -0.0022  # [COEF] relative efficiency change per K (TJ cells, -0.2 to -0.25 %/K)
+    absorptance: 0.92              # [COEF] front-side solar absorptance
+    emissivity_front: 0.85         # [COEF]
+    emissivity_back: 0.85          # [COEF]
+    # wing axis positions (separation and fore-aft station) are DERIVED in src/design_mast.py: the wings clear the
+    # lander deck at the steepest tracking tilt and sit at the lander centre of mass
+    wing_deck_clearance_m: 0.05    # [DES] tilted wing corner clears the deck edge / legs by 5 cm (deployment tolerance + thermal bow)
+    wing_width_m: 0.80             # [DES] each wing = 2 panels stacked: 0.80 m wide x 1.70 m tall
+    wing_height_m: 1.70            # [DES]
+    wing_base_height_m: 0.12       # [DES] lower panel edge above the regolith
+  energy_storage:
+    nominal_capacity_wh: 1375.0    # [DES] Phase-2 report: "1375 Wh energy storage"
+    depth_of_discharge_limit: 0.80 # [CRIT]
+    charge_efficiency: 0.95        # [COEF] power-electronics efficiency into storage
+    chemistries:
+      Ni_H2:
+        name: "Nickel-Hydrogen (Individual Pressure Vessel)"
+        specific_energy_wh_kg: 55.0      # [COEF] Phase-2 report table: 60; flight IPV cells 50-60
+        round_trip_efficiency: 0.82
+        min_operating_temp_k: 233.0
+      Regen_H2_FC:
+        name: "Regenerative H2/O2 PEM Fuel Cell System"
+        specific_energy_wh_kg: 250.0     # [COEF] Phase-2 report table: 275 (stack+tanks, excl. electrolyser margin)
+        round_trip_efficiency: 0.58
+        min_operating_temp_k: 253.0
+      Space_Li_Ion:
+        name: "Space-Grade Low-Temp Li-Ion (NCA)"
+        specific_energy_wh_kg: 145.0     # [COEF] cell-level 150-200, pack-level ~145
+        round_trip_efficiency: 0.92
+        min_operating_temp_k: 223.0
+
+environments:
+  moon:
+    id: "moon"
+    name: "Lunar South Pole (ice-stable terrain near the Shackleton rim)"
+    gravity_m_s2: 1.62                    # [ENV]
+    solar_constant_w_m2: 1361.0           # [ENV] Kopp & Lean 2011 (Moon at ~1 AU)
+    latitude_deg: -89.7                   # [ENV]
+    sun_declination_deg: 1.5              # [ENV] max sun elevation ~ +/-1.5 deg at the pole (lunar obliquity 1.54 deg)
+    optical_depth: 0.0                    # [ENV] no atmosphere
+    local_solar_hour_start: 0.0           # [DES] azimuth only matters for tracking; elevation ~ constant
+    ambient_pressure_pa: 1.0e-10          # [ENV] lunar surface exosphere
+    atmosphere_composition: "Hard vacuum (~1e-10 Pa)"
+    initial_surface_temp_k: 100.0         # [ENV] subsurface mean temperature in ice-stable regions (Paige et al. 2010)
+    sky_temp_k: 3.0                       # [ENV]
+    stratigraphy:                         # [ENV] representative column; dry layers from Carrier et al. (1991),
+                                          # icy UCS from trends in Gertsch et al. (2006). Replace with site data.
+      - name: "Surficial Regolith Fluff (desiccated)"
+        z_start_m: 0.00
+        z_end_m: 0.20
+        density_kg_m3: 1500.0
+        cohesion_kpa: 0.5
+        friction_angle_deg: 40.0
+        ice_wt_pct: 0.0
+        ucs_mpa: null                     # null -> Mohr-Coulomb UCS = 2c tan(45 + phi/2)
+        thermal_conductivity_w_mk: 0.002  # Carrier 1991 (vacuum, fluffy)
+        specific_heat_j_kgk: 400.0        # ~100 K regolith (Hemingway 1981)
+      - name: "Compacted Dry Regolith"
+        z_start_m: 0.20
+        z_end_m: 0.50
+        density_kg_m3: 1750.0
+        cohesion_kpa: 1.5
+        friction_angle_deg: 46.0
+        ice_wt_pct: 0.0
+        ucs_mpa: null
+        thermal_conductivity_w_mk: 0.010
+        specific_heat_j_kgk: 400.0
+      - name: "Low-Ice Cemented Regolith (~3 wt%)"
+        z_start_m: 0.50
+        z_end_m: 0.80
+        density_kg_m3: 1850.0
+        cohesion_kpa: 300.0
+        friction_angle_deg: 46.0
+        ice_wt_pct: 3.0
+        ucs_mpa: 5.0                      # Gertsch et al. 2006 trend: friable at low ice content
+        thermal_conductivity_w_mk: 0.3
+        specific_heat_j_kgk: 450.0
+      - name: "Icy Regolith (~8 wt%)"
+        z_start_m: 0.80
+        z_end_m: 1.00
+        density_kg_m3: 1950.0
+        cohesion_kpa: 2000.0
+        friction_angle_deg: 46.0
+        ice_wt_pct: 8.0
+        ucs_mpa: 20.0                     # Gertsch et al. 2006 trend at cryogenic temperature
+        thermal_conductivity_w_mk: 0.8
+        specific_heat_j_kgk: 500.0
+
+  mars:
+    id: "mars"
+    name: "Martian Northern High Latitudes (68 N, Phoenix analog)"
+    gravity_m_s2: 3.71                    # [ENV]
+    solar_constant_w_m2: 1361.0           # [ENV] at 1 AU; scaled by Mars heliocentric distance below
+    orbit_semi_major_au: 1.5237           # [ENV]
+    orbit_eccentricity: 0.0934            # [ENV]
+    perihelion_ls_deg: 251.0              # [ENV]
+    season_ls_deg: 90.0                   # [DES] northern summer solstice (Phoenix operated Ls 76-150)
+    obliquity_deg: 25.19                  # [ENV]
+    latitude_deg: 68.2                    # [ENV] Phoenix landing site (Smith et al. 2009)
+    optical_depth: 0.45                   # [ENV] assumed Phoenix-season dust optical depth (plausible range 0.3-0.6; replace with site data)
+    local_solar_hour_start: 9.0           # [DES] start drilling at 09:00 LST
+    ambient_pressure_pa: 600.0            # [ENV]
+    atmosphere_composition: "CO2 Atmosphere (~600 Pa)"
+    initial_surface_temp_k: 192.0         # [ENV] Phoenix near-surface ice-table temperature range 180-210 K
+    sky_temp_k: 150.0                     # [ENV] effective sky temperature, dusty CO2 atmosphere
+    stratigraphy:                         # [ENV] representative column after Smith et al. (2009), Mellon et al. (2009),
+                                          # Shaw et al. (2009). Ice table at ~5 cm; excess ice at depth.
+      - name: "Dry Soil above the Ice Table"
+        z_start_m: 0.00
+        z_end_m: 0.05
+        density_kg_m3: 1235.0
+        cohesion_kpa: 0.6
+        friction_angle_deg: 38.0
+        ice_wt_pct: 0.0
+        ucs_mpa: null
+        thermal_conductivity_w_mk: 0.085  # Phoenix TECP (Zent et al. 2010)
+        specific_heat_j_kgk: 650.0
+      - name: "Pore-Ice Cemented Ground (ICG)"
+        z_start_m: 0.05
+        z_end_m: 0.50
+        density_kg_m3: 1700.0
+        cohesion_kpa: 3000.0
+        friction_angle_deg: 40.0
+        ice_wt_pct: 20.0
+        ucs_mpa: 18.0                     # ice-cemented soil at ~190 K (frozen-soil ~1-2x ice strength)
+        thermal_conductivity_w_mk: 1.5
+        specific_heat_j_kgk: 900.0
+      - name: "Dense Ice-Cemented Ground"
+        z_start_m: 0.50
+        z_end_m: 0.80
+        density_kg_m3: 1800.0
+        cohesion_kpa: 3500.0
+        friction_angle_deg: 40.0
+        ice_wt_pct: 25.0
+        ucs_mpa: 22.0
+        thermal_conductivity_w_mk: 1.8
+        specific_heat_j_kgk: 950.0
+      - name: "Excess (Nearly Pure) Ground Ice"
+        z_start_m: 0.80
+        z_end_m: 1.00
+        density_kg_m3: 920.0
+        cohesion_kpa: 1500.0
+        friction_angle_deg: 30.0
+        ice_wt_pct: 90.0
+        ucs_mpa: 12.0                     # polycrystalline ice ~190 K (Schulson & Duval 2009 range 5-20 MPa)
+        thermal_conductivity_w_mk: 3.0
+        specific_heat_j_kgk: 1300.0
+
+drill_head:
+  # Primary inputs for the enclosed rotary-percussive head. Motor size, gear modules, spring, cam profile,
+  # bearing lives, load-cell range and all checks are DERIVED in src/design_head.py.
+  planetary_sun_teeth: 12          # [DES] ring = 7 x sun gives 1 + Zr/Zs = 8:1 with a fixed ring
+  planet_count: 3                  # [DES]
+  planet_load_sharing: 1.15        # [COEF] K_gamma, 3 planets with a floating sun (AGMA 6123: 1.0-1.25)
+  spur_pinion_teeth: 12            # [DES] 24T/12T -> 2:1 onto the spindle
+  spur_gear_teeth: 24              # [DES]
+  spur_efficiency: 0.98            # [COEF] single spur mesh, 0.97-0.99 (planetary = gear_efficiency / spur)
+  pressure_angle_deg: 20.0         # [DES] standard full-depth involute
+  face_width_to_module: 10.0       # [DES] b = 10 m (Shigley: 3p-5p = 9.4-15.7 m)
+  standard_modules_mm: [0.5, 0.6, 0.7, 0.8, 1.0, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0]  # [DES] ISO 54 series 1 + 2
+  motor_trv_n_m_m3: 20.0e+3        # [COEF] torque per rotor volume, high-performance PM servo 15-50 kN m/m^3
+                                   #        (Hendershot & Miller 2010); continuous rating, conservative end
+  motor_rotor_aspect: 1.0          # [DES] stack length / rotor diameter
+  motor_split_ratio: 0.57          # [COEF] rotor OD / stator OD, 0.5-0.65 for surface-PM BLDC
+  percussive_pinion_teeth: 18      # [DES] secondary BLDC pinion
+  cam_gear_teeth: 54               # [DES] 54T ring gear on the barrel cam: 3:1
+  cam_rise_gap_m: 0.001            # [DES] roller clears the cam track by 1 mm when the hammer rests on the anvil
+  cam_roller_diameter_m: 0.012     # [DES] stud-type needle cam follower
+  cam_roller_width_m: 0.008        # [DES]
+  hammer_od_m: 0.056               # [DES] hammer ring 56 mm OD x 22 mm, bore = spline major diameter
+  hammer_length_m: 0.022           # [DES]
+  spline: "Involute spline DIN 5480 W18x1.25x13"   # [DES] hammer and anvil slide on the spindle spline
+  spline_major_m: 0.018            # [DES]
+  spline_module_m: 0.00125         # [DES]
+  spline_teeth: 13                 # [DES]
+  spline_load_sharing: 0.75        # [COEF] fraction of teeth carrying load (Niemann & Winter: 0.5-0.75)
+  spline_allowable_pressure_pa: 40.0e+6  # [COEF] axially sliding hardened hub under load, 20-60 MPa (Niemann & Winter)
+  anvil_spline_engagement_m: 0.016 # [DES]
+  anvil_float_m: 0.004             # [DES] anvil drops 4 mm off the spindle when unloaded (blank-blow catcher)
+  spindle_bore_m: 0.006            # [DES] thermocouple leads run up the hollow spindle to the slip ring
+  spindle_journal_m: 0.020         # [DES] bearing seat
+  spring_wire_options_m: [0.005, 0.0055, 0.006, 0.0065, 0.007, 0.008]  # [DES] stock 17-7PH wire sizes
+  # Catalogue bearings [ENV] (SKF catalogue: d x D x B, C, C0)
+  spindle_bearing: {name: "SKF 7004 ACD/P4A pair, back-to-back", d_m: 0.020, D_m: 0.042, B_m: 0.012,
+                    C_n: 8320.0, C0_n: 4150.0, contact_deg: 25.0}
+  upper_bearing: {name: "SKF 61804 (thin section)", d_m: 0.020, D_m: 0.032, B_m: 0.007, C_n: 4030.0, C0_n: 2320.0}
+  cam_bearing: {name: "SKF 61812 (thin section)", d_m: 0.060, D_m: 0.078, B_m: 0.010, C_n: 11900.0, C0_n: 11400.0,
+                f0: 17.0}
+  design_operating_hours: 100.0    # [DES] drilling-on time over the mission (e.g. ~20 one-metre holes)
+  load_cell_capacities_n: [100.0, 200.0, 250.0, 500.0, 1000.0, 2000.0]  # [DES] standard pancake/S-beam ranges
+  load_cell_error_fs: 0.0025       # [COEF] combined non-linearity + hysteresis, 0.1-0.5 % FS (typical data sheets)
+  leadscrew_nut_length_to_d: 1.5   # [DES] bronze flange nut length = 1.5 d (alignment practice)
+  nut_allowable_pressure_pa: 11.0e+6  # [COEF] steel on bronze, low speed: 11-17 MPa (Shigley Table 8-4)
+  linear_bearing: {name: "LM16UU-OP open ball bushing (supported rail)", d_m: 0.016, D_m: 0.028, L_m: 0.037}  # [ENV] standard dims
+  housing_wall_m: 0.003            # [DES] Ti-6Al-4V shell
+
+cad_layout:
+  # Physical rig layout used by src/cad_generator.py and the Three.js digital twin (metres from the regolith).
+  foot_top_m: 0.10                   # [DES] mast foot plate top (guide-bushing boss, brushing station) above the regolith
+  auger_length_m: 1.24               # [DES] bit tip to carriage underside (1.0 m depth + carriage clearance)
+  home_tip_height_m: 0.30            # [DES] bit tip in the home pose, above the brush & sampling sweep
+  brush_axle_height_m: 0.19          # [DES] brush radius and axle offset are derived (src/design_brush.py)
+
+drill_mast:
+  # Deployable mast on a lander-deck interface. Section and material, latch height, hold-down count and size, stow
+  # pose, hinge pin, deployment actuator, deck length, leg footprint and every structural check are DERIVED in
+  # src/design_mast.py. Coordinates as the CAD: x right, y aft (toward the lander), z up, drill axis at x = y = 0.
+  section_options_mm: [[40, 40, 2], [50, 50, 2], [50, 50, 3], [60, 40, 3], [60, 60, 3], [80, 40, 3], [80, 60, 3],
+                       [80, 80, 3], [100, 50, 3], [100, 100, 3], [120, 60, 4], [120, 120, 4]]
+                                   # [DES] rectangular hollow sections b (across x) x h (fore-aft) x t, EN 755-9 / ASTM B221 stock
+  material_options: [mast_aluminium, mast_titanium]   # [DES] candidate spine materials
+  latch_height_options_m: [0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60]
+                                   # [DES] candidate latch-post heights above the hinge line
+  carriage_envelope_m: 0.340       # [DES] carriage underside to its top (head stack 321 mm + nut flange)
+  rail_x_m: 0.090                  # [DES] rail half-spacing (220 mm carriage plates, Phase 2)
+  rail_bracket_neck_m: 0.006       # [DES] bracket neck passing the open-bushing slot (LM16UU-OP slot ~ 9 mm)
+  rail_bracket_thickness_m: 0.010  # [DES] Al rail-support brackets (z thickness); count and spacing are derived:
+                                   #        an end-supported 1.5 m rail is a 13 Hz string at launch
+  rail_bracket_depth_m: 0.020      # [DES] bracket body (y) between the necks and the spine fore face
+  max_rail_brackets: 12            # [DES] search limit
+  running_clearance_m: 0.005       # [DES] carriage, nut flange and crosshead clear the fixed structure by 5 mm
+  crosshead_thickness_m: 0.012     # [DES] Al crosshead: rail tops, leadscrew top bearing (fixed duplex) and feed motor
+  foot_plate_thickness_m: 0.010    # [DES] Al foot plate: rail bottoms, leadscrew support bearing, bushing boss, brush station
+  foot_plate_margin_m: 0.010       # [DES] plate edge clears the sample cup / rail blocks by 10 mm
+  feed_motor_od_m: 0.048           # [DES] Z-feed BLDC + gearhead envelope (maxon EC-i 40 class)
+  feed_motor_length_m: 0.080       # [DES]
+  stow_gap_m: 0.015                # [DES] stowed spine clears the deck; the cup-cone hold-down pedestal bridges it
+  stow_pose_step_m: 0.005          # [DES] search step for the launch (stow) position of the carriage
+  hinge_pin_options_m: [0.006, 0.008, 0.010, 0.012, 0.016]   # [DES] 17-4PH clevis pins
+  lug_thickness_m: 0.008           # [DES] Ti lugs and clevis cheeks (hinge and latch), pin in double shear
+  hinge_friction_coeff: 0.25       # [COEF] Vespel SP-3 hinge bushings in vacuum, 0.1-0.3 (DuPont)
+  harness_torque_nm: 0.3           # [COEF] flat-flex service loop across the hinge, 0.1-0.5 N m (cable-wrap test data)
+  deploy_time_s: 60.0              # [DES] 90 deg deployment in one minute
+  deploy_accel_fraction: 0.10      # [DES] trapezoidal speed profile: 10 % of the time accelerating, 10 % braking
+  actuator_gear_ratio: 100.0       # [DES] strain-wave gear (CSF-class 100:1), non-backdrivable at the motor brake
+  actuator_gear_efficiency: 0.60   # [COEF] strain-wave gear near -40 C, 0.5-0.8 (Harmonic Drive catalogue curves)
+  hold_down_bolts: {M4: 8.78e-6, M5: 14.2e-6, M6: 20.1e-6, M8: 36.6e-6, M10: 58.0e-6}
+                                   # [ENV] ISO 898-1 tensile stress areas (m^2) for the SMA frangible bolt
+  hold_down_unit_mass_kg: 0.25     # [COEF] SMA frangible-bolt actuator (~0.1 kg, Frangibolt FC2 class) + cup-cone + pedestal
+  hold_down_preload_fraction: 0.65 # [DES] preload = 0.65 x yield x A_s (NASA-STD-5020 practice 0.5-0.75)
+  mass_growth_allowance: 0.20      # [COEF] AIAA S-120A mass growth allowance, new-design structure and mechanisms (18-30 %)
+  actuator_mean_density_kg_m3: 6000.0  # [COEF] motors + gearboxes, CAD envelope x ~6000 kg/m^3 (copper, steel, voids)
+
+lander_interface:
+  # Representative lander deck section the drill mounts to. Deck length, leg footprint and centre of mass are DERIVED.
+  deck_top_height_m: 0.45          # [DES] lander deck top = hinge line: 0.30 m ground clearance (0.25 m rock hazard) + 0.15 m bus
+  deck_width_m: 0.60               # [DES] stowed mast strip (+/- 0.14 m) plus the reactant tanks either side
+  deck_thickness_m: 0.025          # [DES] Al honeycomb deck panel
+  leg_splay_m: 0.25                # [DES] footpads at least 0.25 m outside the deck corners (crushable-leg stroke geometry)
+  footpad_radius_m: 0.08           # [DES]
+  footpad_friction_coeff: 0.5      # [COEF] footpad on regolith; tan(phi) 0.7-1.0, halved for a smooth pad (conservative)
+
+auger_string:
+  # Primary inputs for the string between the bit joint and the drill-head anvil. Flight-root and weld
+  # stresses, braze lap, hex-shank checks, buckling, natural frequencies and wind-up are DERIVED
+  # in src/design_string.py.
+  # Flight attachment trade: (a) laser fillet welds both sides vs (b) flight machined integral with the tube
+  # (thread-whirled from gun-drilled bar) with a root fillet. The derivation checks both and keeps the one that passes.
+  flight_weld_leg_m: 0.0008        # [DES] (a) 0.8 mm fillet leg, below the 1.0 mm tube wall so the weld cannot burn through
+  weld_allowable_ratio: 0.30       # [CRIT] (a) static fillet-weld shear allowable 0.30 F_EXX (AWS D1.1 / AISC 360 ASD)
+  weld_fat_class_pa: 63.0e+6       # [COEF] (a) IIW FAT 63: load-carrying fillet weld, toe crack, 2e6 cycles (Hobbacher 2016)
+  weld_cafl_cycles: 1.0e+7         # [COEF] (a) IIW constant-amplitude knee: slope m = 3 up to 1e7 cycles
+  flight_root_fillet_to_t: 0.5     # [DES] (b) root fillet radius = t/2
+  flight_root_kt: 1.4              # [COEF] (b) Peterson: shoulder fillet in bending, r/t = 0.5, D/d >= 2 (Pilkey 2008, Chart 3.4)
+  notch_sensitivity: 0.9           # [COEF] (b) q for a 0.6 mm root radius in 17-4PH H1025 (Shigley Fig. 6-20)
+  impact_load_amplification: 2.0   # [COEF] dynamic load factor for a suddenly applied load (undamped SDOF upper bound, Biggs 1964)
+  guide_bushing_radial_clearance_m: 0.0005  # [DES] bore = bit gauge + 2 x 0.5 mm (the bit passes through it)
+  guide_bushing_length_m: 0.032    # [DES] Vespel SP-3 liner in the deck boss
+  guide_bushing_leadin_m: 0.0015   # [DES] 45 deg lead-in chamfer that re-centres the bit as it re-enters
+  hex_across_corners_m: 0.016      # [DES] matches the anvil's 16.2 mm hex socket (drill-head interface)
+  shank_collar_od_m: 0.018         # [DES] stays inside the 20 mm flight OD (passes the bushing and the brush)
+  braze_lap_to_wall: 3.0           # [CRIT] lap >= 3 x the thinner member for a joint as strong as the tube (AWS Brazing Handbook)
+  retention_pin_d_m: 0.003         # [DES] cross pin through the anvil nose and hex shank (carries the hanging string)
+  thermocouple_lead_od_m: 0.0010   # [DES] 2-wire type-T mineral-insulated lead
+  fe_elements: 240                 # [DES] beam elements along the string (frequencies converged to < 0.1 %)
+  resonance_separation: 0.20       # [CRIT] natural frequencies >= 20 % from forcing frequencies (API 610 separation margin)

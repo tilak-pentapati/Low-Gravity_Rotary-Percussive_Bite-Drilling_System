@@ -1,0 +1,661 @@
+/* ==========================================================================
+   Academic MBSE Publication Styles + Digital Twin Workbench
+   ========================================================================== */
+
+body {
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: #1e293b;
+}
+
+h1, h2, h3 {
+  letter-spacing: -0.015em;
+  font-weight: 700;
+  margin-top: 1.6rem;
+}
+
+.quarto-title-block .quarto-title .title {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.quarto-title-block .quarto-title .subtitle {
+  font-size: 1.12rem;
+  color: #475569;
+  margin-top: 0.35rem;
+}
+
+/* ==========================================================================
+   EXECUTIVE SUMMARY KPI CARDS & STYLED ENGINEERING TABLES
+   ========================================================================== */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.1rem;
+  margin: 1.4rem 0 1.8rem 0;
+}
+
+.kpi-card {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-top: 4px solid #0284c7;
+  border-radius: 10px;
+  padding: 1.15rem 1.25rem;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.kpi-card.mars {
+  border-top-color: #ea580c;
+}
+
+.kpi-card .kpi-label {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.kpi-card .kpi-value {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0.3rem 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.kpi-card .kpi-sub {
+  font-size: 0.84rem;
+  color: #475569;
+  line-height: 1.4;
+}
+
+.mbse-table-wrap {
+  overflow-x: auto;
+  margin: 1.25rem 0 2rem 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.mbse-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.94rem;
+  background: #ffffff;
+}
+
+.mbse-table thead th {
+  background: #0f172a;
+  color: #f8fafc;
+  font-weight: 700;
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 2px solid #334155;
+}
+
+.mbse-table tbody td {
+  padding: 11px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.mbse-table tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+.mbse-table tbody tr:hover {
+  background: #f1f5f9;
+}
+
+.badge-param {
+  display: inline-block;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-weight: 800;
+  font-size: 0.78rem;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ==========================================================================
+   DIGITAL TWIN (digital_twin.qmd section 4): drawing-sheet workbench
+   Colour carries physics only: cividis = ground UCS, grey->red = bit
+   temperature against its limit, Okabe-Ito = controller state.
+   ========================================================================== */
+.digital-twin-workbench {
+  --tw-paper: #fbfaf7;
+  --tw-panel: #ffffff;
+  --tw-ink: #1f2328;
+  --tw-muted: #5b6170;
+  --tw-rule: #d9d6cf;
+  --tw-rule-soft: #ebe8e2;
+  --tw-moon: #0284c7;
+  --tw-mars: #c2410c;
+  --tw-limit: #b42318;
+  --tw-cividis: linear-gradient(90deg, #00224e 0%, #083370 10%, #35456c 20%, #4f576c 30%, #666970 40%, #7d7c78 50%,
+                #948e77 60%, #aea371 70%, #c8b866 80%, #e5cf52 90%, #fee838 100%);
+  --tw-thermal: linear-gradient(90deg, #8b939c 0%, #c99a5b 50%, #b42318 100%);
+  background: var(--tw-paper);
+  color: var(--tw-ink);
+  border: 1px solid var(--tw-rule);
+  border-radius: 4px;
+  margin: 1.5rem 0 2.2rem 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+}
+
+.twin-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--tw-rule);
+  background: var(--tw-panel);
+}
+.twin-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.twin-title-main { font-weight: 700; font-size: 0.98rem; }
+.twin-title-sub { color: var(--tw-muted); }
+
+/* Segmented buttons */
+.twin-seg {
+  display: inline-flex;
+  border: 1px solid var(--tw-rule);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--tw-panel);
+}
+.twin-seg-btn {
+  border: 0;
+  border-left: 1px solid var(--tw-rule);
+  background: transparent;
+  color: var(--tw-ink);
+  padding: 5px 14px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.twin-seg-btn:first-child { border-left: 0; }
+.twin-seg-btn:hover { background: var(--tw-rule-soft); }
+.twin-seg-btn.is-on { background: var(--tw-ink); color: #fff; }
+#hud-env-moon.is-on { background: var(--tw-moon); }
+#hud-env-mars.is-on { background: var(--tw-mars); }
+.twin-seg-sm .twin-seg-btn { padding: 3px 10px; font-size: 0.8rem; }
+.twin-seg-btn:focus-visible, .twin-play:focus-visible, .hud-override-btn:focus-visible {
+  outline: 2px solid var(--tw-moon);
+  outline-offset: -2px;
+}
+
+/* 3D view beside the readout column; the view stretches to the column height */
+.twin-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+}
+.twin-view {
+  position: relative;
+  min-height: 560px;
+  background: linear-gradient(#fbfaf7, #efede7);
+}
+#drill-canvas-container { position: absolute; inset: 0; }
+#drill-canvas-container canvas { display: block; }
+
+.twin-view-tools { position: absolute; top: 10px; right: 10px; }
+
+.twin-scale { margin-top: 8px; font-size: 0.72rem; color: var(--tw-muted); }
+.twin-cbar, .twin-tbar {
+  position: relative;
+  height: 9px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+.twin-cbar { background: var(--tw-cividis); }
+.twin-tbar { background: var(--tw-thermal); }
+.twin-cbar-mark {
+  position: absolute;
+  top: -5px;
+  width: 0;
+  height: 0;
+  margin-left: -5px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--tw-ink);
+  transition: left 0.2s ease;
+}
+.twin-cbar-ticks { display: flex; justify-content: space-between; margin-top: 1px; }
+
+.twin-hint {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  font-size: 0.72rem;
+  color: var(--tw-muted);
+  pointer-events: none;
+}
+
+/* Readout column */
+.twin-side {
+  background: var(--tw-panel);
+  border-left: 1px solid var(--tw-rule);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.twin-state-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.twin-state {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding-left: 9px;
+  border-left: 5px solid var(--tw-muted);
+}
+.twin-bite { color: var(--tw-muted); }
+.twin-fault {
+  border: 1px solid var(--tw-limit);
+  color: var(--tw-limit);
+  background: #fdf1f0;
+  padding: 5px 8px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+.twin-read {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3px 10px;
+  margin: 0;
+  padding: 8px 0;
+  border-top: 1px solid var(--tw-rule-soft);
+  border-bottom: 1px solid var(--tw-rule-soft);
+}
+.twin-read dt { font-weight: 400; color: var(--tw-muted); }
+.twin-read dd { margin: 0; text-align: right; font-weight: 600; white-space: nowrap; }
+.twin-read dd small { font-weight: 400; color: var(--tw-muted); }
+.twin-hot { color: var(--tw-limit); }
+
+.twin-h {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--tw-muted);
+  margin: 0 0 4px 0;
+}
+.twin-layer { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.twin-swatch {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  background: #888;
+}
+.twin-small { font-size: 0.8rem; color: var(--tw-muted); margin: 2px 0 0 0; }
+.twin-mode { font-weight: 600; }
+.twin-tray { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 2px; }
+.twin-core { text-align: center; font-size: 0.68rem; color: var(--tw-muted); }
+.twin-core-box {
+  height: 46px;
+  border: 1px solid var(--tw-rule);
+  background: var(--tw-paper);
+  display: flex;
+  flex-direction: column;
+}
+.twin-core-box i { display: block; flex: none; }
+.twin-core.is-current .twin-core-box { border-color: var(--tw-ink); }
+.twin-core.is-current { color: var(--tw-ink); font-weight: 700; }
+.twin-jump { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.hud-override-btn {
+  border: 1px solid var(--tw-rule);
+  border-radius: 3px;
+  background: var(--tw-panel);
+  color: var(--tw-ink);
+  padding: 4px 8px;
+  font: inherit;
+  font-size: 0.8rem;
+  text-align: left;
+  cursor: pointer;
+}
+.hud-override-btn:hover:not(:disabled) { border-color: var(--tw-ink); }
+.hud-override-btn:disabled { color: var(--tw-muted); cursor: default; opacity: 0.6; }
+
+/* Strip charts */
+.twin-charts {
+  border-top: 1px solid var(--tw-rule);
+  background: var(--tw-panel);
+  padding: 6px 8px 2px 8px;
+}
+#twin-strip { display: block; width: 100%; height: 330px; cursor: ew-resize; touch-action: pan-y; }
+
+/* Transport bar */
+.twin-transport {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  padding: 8px 16px;
+  border-top: 1px solid var(--tw-rule);
+  background: var(--tw-panel);
+}
+.twin-play {
+  min-width: 70px;
+  border: 1px solid var(--tw-ink);
+  border-radius: 3px;
+  background: var(--tw-ink);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+.twin-time { min-width: 64px; font-weight: 600; }
+.twin-scrub { flex: 1 1 200px; min-width: 140px; accent-color: var(--tw-ink); cursor: pointer; }
+
+.hud-load-error {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  padding: 2rem; text-align: center; color: var(--tw-ink); font-size: 0.9rem; line-height: 1.5;
+  background: rgba(251, 250, 247, 0.94);
+}
+
+@media (max-width: 992px) {
+  .twin-main { grid-template-columns: 1fr; }
+  .twin-view { min-height: 0; height: 64vh; max-height: 560px; min-height: 360px; }
+  .twin-side { border-left: 0; border-top: 1px solid var(--tw-rule); }
+  .twin-hint { display: none; }
+}
+@media (max-width: 576px) {
+  .twin-head, .twin-transport { padding-left: 10px; padding-right: 10px; }
+  #twin-strip { height: 300px; }
+}
+
+/* ==========================================================================
+   <model-viewer> Subassembly Cards (cad_architecture.qmd)
+   Drafting-paper look: warm paper ground with a faint 10 mm / 50 mm grid,
+   ink-coloured rules, no tinted gradients, so the functional part colours carry the meaning.
+   ========================================================================== */
+.cad-viewer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin: 1rem 0 1.1rem 0;
+}
+.cad-viewer-single { margin: 1rem 0 1.1rem 0; }
+
+.cad-card {
+  margin: 0;
+  background: #fbfaf6;
+  border: 1px solid #c9c3b4;
+  border-radius: 4px;
+  color: #22211e;
+  display: flex;
+  flex-direction: column;
+}
+
+.cad-card-header {
+  padding: 0.7rem 1rem;
+  background: #fbfaf6;
+  border-bottom: 1px solid #c9c3b4;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.cad-card-header h4 {
+  margin: 0 0 0.15rem 0;
+  font-size: 1rem;
+  font-weight: 650;
+  color: #22211e;
+}
+
+.cad-tag {
+  color: #6b665b;
+  font-size: 0.76rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+model-viewer {
+  width: 100%;
+  height: 440px;
+  background-color: #f3f1ec;
+  background-image:
+    linear-gradient(rgba(60, 55, 45, 0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(60, 55, 45, 0.10) 1px, transparent 1px),
+    linear-gradient(rgba(60, 55, 45, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(60, 55, 45, 0.045) 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+  --poster-color: transparent;
+}
+.cad-viewer-tall model-viewer { height: 620px; }
+
+/* Download menu (native <details>, closed by a click elsewhere) */
+.cad-dl { position: relative; flex-shrink: 0; }
+.cad-dl summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #22211e;
+  border: 1px solid #8f887a;
+  border-radius: 3px;
+  padding: 0.22rem 0.65rem;
+  background: #fff;
+}
+.cad-dl summary::-webkit-details-marker { display: none; }
+.cad-dl summary::after { content: " \25BE"; color: #6b665b; }
+.cad-dl[open] summary { background: #22211e; color: #fbfaf6; border-color: #22211e; }
+.cad-dl[open] summary::after { content: " \25B4"; color: #fbfaf6; }
+.cad-dl-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 20;
+  min-width: 21rem;
+  background: #fff;
+  border: 1px solid #8f887a;
+  border-radius: 3px;
+  box-shadow: 0 6px 16px rgba(34, 33, 30, 0.14);
+  padding: 0.25rem 0;
+}
+.cad-dl-menu a {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.82rem;
+  color: #22211e;
+  text-decoration: none;
+}
+.cad-dl-menu a span { color: #6b665b; white-space: nowrap; }
+.cad-dl-menu a strong { white-space: nowrap; }
+.cad-dl-menu a:hover { background: #f1eee6; }
+
+/* Explanation under each subassembly, outside the viewer card */
+.cad-notes { margin: 0 0 2rem 0; padding-left: 1.2rem; }
+.cad-notes li { margin-bottom: 0.45rem; }
+
+/* Functional colour-code legend */
+.cc-swatch {
+  display: inline-block;
+  width: 1.6rem;
+  height: 1rem;
+  border: 1px solid rgba(34, 33, 30, 0.45);
+  border-radius: 2px;
+  vertical-align: middle;
+}
+.cc-table td:first-child { width: 3.5rem; }
+
+@media (max-width: 1100px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .cad-viewer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cad-load-error {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  padding: 2rem; text-align: center; color: #7a1f12; font-size: 0.9rem; line-height: 1.5;
+  background: rgba(243, 241, 236, 0.95);
+}
+
+/* ==========================================================================
+   DESIGN SHOWCASE (landing page)
+   ========================================================================== */
+.sc-fig { margin: 0 0 1.2rem 0; }
+.sc-fig img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+.sc-fig figcaption { font-size: 0.86rem; color: #64748b; margin-top: 0.4rem; line-height: 1.45; }
+.sc-hero img { border: none; }
+
+.sc-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0.4rem 0 1.6rem 0; }
+.sc-btn {
+  display: inline-block;
+  padding: 0.5rem 0.95rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  color: #0f172a;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.92rem;
+  background: #fff;
+}
+.sc-btn:hover { border-color: #0284c7; color: #0369a1; }
+.sc-btn-primary { background: #0f172a; border-color: #0f172a; color: #fff; }
+.sc-btn-primary:hover { background: #0369a1; border-color: #0369a1; color: #fff; }
+
+.sc-constraints { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 1rem 0 1.4rem 0; }
+.sc-con { border: 1px solid #e2e8f0; border-left: 4px solid #0369a1; border-radius: 8px; padding: 0.9rem 1rem; background: #f8fafc; }
+.sc-con-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #475569; }
+.sc-con-num { font-size: 1.7rem; font-weight: 800; color: #0f172a; margin: 0.15rem 0 0.3rem 0; }
+.sc-con p { font-size: 0.9rem; line-height: 1.5; margin: 0; color: #334155; }
+
+.sc-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; margin: 0.6rem 0 1rem 0; }
+.sc-split-wide { grid-template-columns: 1.1fr 1fr; }
+/* Equal-height cards: rows share one height (also when stacked); captions take the slack */
+.sc-split-eq { align-items: stretch; grid-auto-rows: 1fr; }
+.sc-split-eq .sc-fig { display: flex; flex-direction: column; margin: 0; }
+.sc-split-eq .sc-fig figcaption { flex: 1 0 auto; }
+/* Image beside a facts card: the image fills the card height; letterbox bands use the render's own gradient */
+.sc-split-eq .sc-fig-fill img {
+  flex: 1 1 0;
+  height: 0;
+  min-height: 220px;
+  object-fit: contain;
+  background: linear-gradient(#f6f8fa, #dee3e8);
+}
+.sc-split-eq .sc-fig-fill figcaption { flex: none; }
+.sc-facts { border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem 1.2rem; background: #f8fafc; }
+.sc-facts-title { font-weight: 700; color: #0369a1; margin-bottom: 0.4rem; }
+.sc-facts ul { margin: 0; padding-left: 1.1rem; font-size: 0.92rem; line-height: 1.55; }
+.sc-facts li { margin-bottom: 0.35rem; }
+
+.sc-bench td.moon { color: #0284c7; font-weight: 700; }
+.sc-bench td.mars { color: #ea580c; font-weight: 700; }
+
+.sc-dwgs { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin: 0.6rem 0 1.2rem 0; }
+.sc-dwg img { width: 100%; height: auto; display: block; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; }
+.sc-dwg-cap { font-size: 0.88rem; color: #475569; margin-top: 0.4rem; }
+
+@media (max-width: 992px) {
+  .sc-constraints { grid-template-columns: 1fr 1fr; }
+  .sc-split, .sc-split-wide, .sc-dwgs { grid-template-columns: 1fr; }
+}
+@media (max-width: 576px) {
+  .sc-constraints { grid-template-columns: 1fr; }
+  .sc-con-num { font-size: 1.45rem; }
+  .sc-btn { flex: 1 1 100%; text-align: center; }
+}
+
+/* Citation hover cards: Quarto gives <main> opacity 0.999, which makes it a stacking context below the sticky
+   table-of-contents sidebar (z-index 1). Lift the content above it so the card covers the sidebar too. */
+#quarto-content.page-columns #quarto-document-content {
+  position: relative;
+  z-index: 2;
+}
+
+.tippy-box {
+  background-color: #ffffff;
+  opacity: 1;
+}
+
+/* "where ..." lists that define the symbols under an equation */
+.symbols ul {
+  list-style: none;
+  padding-left: 1.25rem;
+  margin: -0.4rem 0 1.25rem 0;
+  font-size: 0.95rem;
+}
+
+.symbols li {
+  margin: 0.15rem 0;
+}
+
+/* Long tables (derivation table) scroll inside the page instead of stretching it */
+.mbse-table-scroll {
+  max-height: 560px;
+  overflow-y: auto;
+}
+
+.mbse-table-scroll thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/* The units list under the control-law table keeps its bullets */
+.symbols.units ul {
+  list-style: disc;
+}
+
+/* Cosmo's typeface (Source Sans) everywhere, including chart and diagram labels */
+:root, body {
+  --bs-body-font-family: "Source Sans 3", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--bs-body-font-family);
+}
+.js-plotly-plot .plotly text,
+.mermaid, .mermaid svg, .mermaid text, .mermaid .label, .mermaid foreignObject div {
+  font-family: var(--bs-body-font-family) !important;
+}
+
+/* White navbar with black text, separated from the page by a hairline */
+#quarto-header .navbar {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e2e2e2;
+}
+#quarto-header .navbar .navbar-title,
+#quarto-header .navbar .nav-link,
+#quarto-header .navbar .menu-text,
+#quarto-header .navbar .bi {
+  color: #000000 !important;
+}
+#quarto-header .navbar .nav-link.active .menu-text {
+  font-weight: 700;
+}
+
+/* Footer tag on a single line on desktop widths */
+@media (min-width: 768px) {
+  .nav-footer .nav-footer-left {
+    flex: 1 1 auto;
+    white-space: nowrap;
+    text-align: left;
+  }
+  .nav-footer .nav-footer-center {
+    flex: 0 0 auto;
+  }
+  .nav-footer .nav-footer-right {
+    flex: 1 1 auto;
+    white-space: nowrap;
+    text-align: right;
+  }
+}
+

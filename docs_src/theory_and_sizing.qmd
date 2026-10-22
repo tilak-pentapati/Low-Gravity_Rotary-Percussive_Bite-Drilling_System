@@ -1,0 +1,461 @@
+---
+title: "Terramechanics, Design Derivations & Power Sizing"
+subtitle: "Each dimension and power figure on this page is solved from force, energy and heat balances, using the measured gravity and ground properties of the Moon and Mars"
+---
+
+```{python}
+#| output: asis
+import json
+import math
+from pathlib import Path
+
+import pandas as pd
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+root = Path("..").resolve()
+data = root / "exports" / "data"
+des = json.loads((data / "design_derivations.json").read_text())
+cur = json.loads((data / "terramechanics_curves.json").read_text())
+sol = json.loads((data / "solar_trade.json").read_text())
+abcd = json.loads((data / "abcd_summary.json").read_text())
+led = des["ledger"]
+V = lambda k: led[k]["value"]
+E = abcd["environments"]
+G = {"moon": 1.62, "mars": 3.71}
+M_LANDER = V("wob_lift_off_moon_n") / G["moon"]
+
+def emit_html(h: str) -> None:
+    print(f"\n```{{=html}}\n{h.strip()}\n```\n")
+
+def plot(fig, h=420, legend_top=False):
+    if legend_top:
+        fig.update_layout(template="plotly_white", height=h, margin=dict(l=60, r=30, t=70, b=60),
+                          legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0.5, xanchor="center"))
+    else:
+        fig.update_layout(template="plotly_white", height=h, margin=dict(l=60, r=30, t=60, b=130),
+                          legend=dict(orientation="h", yanchor="top", y=-110 / h, x=0.5, xanchor="center"))
+    emit_html(fig.to_html(full_html=False, include_plotlyjs=False, include_mathjax=False, config={'displayModeBar': False, 'responsive': True}))
+
+def log_hline(fig, y, text, color):
+    # add_hline's annotation is misplaced on a log axis, so the label is placed in log10 units by hand
+    fig.add_hline(y=y, line=dict(dash="dash", color=color))
+    fig.add_annotation(x=0, xref="paper", xanchor="left", y=math.log10(y), yref="y", yanchor="bottom",
+                       text=text, showarrow=False, font=dict(color=color))
+
+def table(head, rows, scroll=False):
+    th = "".join(f"<th>{h}</th>" for h in head)
+    tr = "".join("<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>" for r in rows)
+    cls = "mbse-table-wrap mbse-table-scroll" if scroll else "mbse-table-wrap"
+    emit_html(f'<div class="{cls}"><table class="mbse-table"><thead><tr>{th}</tr></thead><tbody>{tr}</tbody></table></div>')
+```
+
+**Terramechanics** is the mechanics of soil and granular ground under the loads applied by a machine: how the ground deforms, shears and fails when a wheel, blade or cutter is pressed into it [@wong2008]. For a drill, the ground is lunar or Martian regolith, which may be cemented by water ice. Its resistance to cutting is set by its cohesion, internal friction and ice content. **Design derivations** take that resistance and apply Newton's laws, conservation of energy, stress-wave mechanics and fatigue theory to fix each dimension of the drill: the bit load, the hammer, the auger flutes. **Power sizing** closes the energy balance. The electrical energy the drill consumes must be supplied by the solar array, with the battery covering any shortfall, at the solar flux and gravity of each body.
+
+## Method
+
+The model is built in three layers, so every result can be traced back to a stated assumption:
+
+1. **Primary inputs.** Each value carries a tag:
+   - `[ENV]`: an environment fact, with its source (gravity, temperature, ground strength).
+   - `[DES]`: a design choice, with its rationale.
+   - `[COEF]`: an empirical coefficient from the literature, with its plausible range.
+   - `[CRIT]`: an acceptance criterion or a factor of safety.
+2. **Derivations** turn those inputs into sizes and limits. All of them are listed in the derivation table at the bottom of this page.
+3. **Simulation** integrates the drilling mission second by second with those sizes. No factor is adjusted afterwards to reach a desired result.
+
+An **acceptance criterion** is a physical limit that a computed quantity must satisfy for the design to be accepted. Examples are a bit temperature below the point where ice is lost, or a bit load below the load that would lift the lander. A **factor of safety** (FOS) is the ratio of the capacity of a part to the demand placed on it:
+
+$$FOS = \frac{\text{capacity}}{\text{demand}} \;\; \left(\text{e.g. } \frac{S_y}{\sigma} \text{ for strength}\right)$$
+
+where
+
+::: {.symbols}
+- $S_y$: yield strength of the material, the stress at which it starts to deform permanently (Pa)
+- $\sigma$: largest stress the part carries in service (Pa)
+:::
+
+A design with $FOS > 1$ can carry its load. The margin above 1 covers uncertainty in the loads, the material properties and the model itself. Spaceflight structures use factors of 1.25–1.4 on ultimate strength [@nasastd5001]. Parts under repeated load, such as the auger under hammer blows, are checked against fatigue strength instead [@shigley].
+
+## Environments and stratigraphy
+
+```{python}
+#| output: asis
+rows = []
+for env in ("moon", "mars"):
+    for s in des["strata"][env]:
+        rows.append([env.title(), s["name"], f"{s['z0']:.2f}–{s['z1']:.2f}",
+                     (f"{s['ucs_mpa']*1000:.1f}" if s['ucs_mpa'] < 0.1 else f"{s['ucs_mpa']*1000:,.0f}".replace(",", " ")), f"{s['ice_wt_pct']:.0f}", f"{s['k_w_mk']}"])
+table(["Astronomical object", "Layer", "Depth (m)", "UCS, σ<sub>c</sub> (kPa)", "Ice content (wt %)", "Thermal conductivity, k (W/(m·K))"], rows)
+```
+
+**UCS** (unconfined, or uniaxial, compressive strength), $\sigma_c$, is the axial stress at which a sample of the ground fails when it is compressed along one axis with no side support. It is measured in pascals (1 kPa = 10³ Pa, 1 MPa = 10⁶ Pa) and sets how hard the ground is to cut. Dry regolith fails at a few kPa. Ice-cemented ground fails at tens of MPa, about four orders of magnitude higher. **Thermal conductivity**, $k$, is the rate of heat flow through a 1 m thick layer of 1 m² area per kelvin of temperature difference across it. Its unit is the watt per metre-kelvin, written W/(m·K) or W m⁻¹ K⁻¹. It controls how fast the drill bit can shed its frictional heat into the ground. **Ice content** is the mass of water ice per unit mass of the ground, in weight percent.
+
+The dry layers have no ice to bind the grains, so their strength comes only from cohesion and friction. Their UCS follows from the Mohr–Coulomb failure criterion under uniaxial load [@jaeger2007; @das2014]:
+
+$$\sigma_c = 2c\tan\!\left(45^\circ + \frac{\phi}{2}\right)$$
+
+where
+
+::: {.symbols}
+- $\sigma_c$: unconfined compressive strength (Pa)
+- $c$: cohesion, the shear strength of the ground at zero normal stress (Pa)
+- $\phi$: angle of internal friction, which sets how shear strength grows with normal stress (°)
+:::
+
+Cohesion and friction angle come from @carrier1991 (Moon) and @shaw2009 (Mars). The icy-layer strengths follow published trends for ice-cemented regolith [@gertsch2006; @schulson2009]. Thermal conductivities come from @carrier1991 and from the Phoenix probe measurements [@zent2010]. The Moon site is an ice-stable area near the Shackleton rim with a subsurface temperature of about 100 K [@paige2010]. The Mars site is the Phoenix landing area at 68°N, where the ice table sits about 5 cm down [@smith2009h2o; @mellon2009].
+
+These are **representative values** for each site. Every design parameter below is a function of these ground properties ($\sigma_c$, $\phi$, $c$, $k$ and ice content). If a site is characterised more closely, the same equations return new sizes. No one has drilled to 1 m at either site, so the properties are inferred in stages. Each stage uses a physical signal that reaches below the surface:
+
+- **Neutron spectroscopy from orbit.** Cosmic rays knock neutrons out of the top metre of ground. Hydrogen nuclei have nearly the same mass as a neutron, so they slow neutrons far more efficiently than heavier nuclei do. A drop in the epithermal neutron flux therefore marks hydrogen, most likely water ice, in the upper ~1 m. This mapped polar hydrogen on the Moon [@feldman1998] and the ice-rich layer below a dry cover at high Martian latitudes [@boynton2002].
+- **Thermal infrared radiometry.** Measured surface temperatures, together with a heat-conduction model, give the depth below which ice is stable against sublimation. This is how the cold traps near the lunar south pole were identified [@paige2010].
+- **Reflectance spectra and impacts.** Water ice absorbs near-infrared light at known wavelengths, which revealed exposed ice in shadowed lunar craters [@li2018ice]. The LCROSS impactor threw up ejecta from a shadowed crater, and the water was measured directly in the plume [@colaprete2010detection]. On Mars, steep eroding scarps expose buried ice sheets in cross-section to high-resolution cameras [@dundas2018].
+- **In-situ contact.** Landers measure strength directly. Apollo core tubes and penetrometers gave lunar density and cohesion [@carrier1991]. Phoenix's scoop found hard ice-cemented ground a few centimetres down [@mellon2009; @shaw2009]. The InSight heat-flow probe stalled at about 40 cm in unexpectedly cohesive soil, which shows how far orbital estimates can be from the true ground [@spohn2022mole].
+- **The drill as a sensor.** While drilling, the measured torque, bit load and penetration rate give the energy spent per unit volume of rock removed. That energy tracks the ground's compressive strength [@teale1965concept]. The drill therefore measures UCS layer by layer as it advances, as the Icebreaker field tests showed [@zacny2013icebreaker].
+
+## Weight-on-bit limit
+
+Weight on bit (WOB) is the axial force pressing the bit into the ground. The drill pushes against the lander, so the lander's weight is the only reaction force available. The bit load must stay below the load that would lift the lander, with a margin:
+
+$$WOB_{\lim} = m g, \qquad WOB_{set} = \frac{m g}{FOS}, \quad FOS = 1.4$$
+
+where
+
+::: {.symbols}
+- $WOB_{\lim}$: lift-off limit, the bit load that would just lift the lander off the ground (N)
+- $WOB_{set}$: set-point, the bit load the feed controller holds while drilling (N)
+- $m$: deployed lander mass reacting the bit load, `{python} f"{M_LANDER:.0f}"` kg
+- $g$: surface gravity, 1.62 m/s² (Moon) and 3.71 m/s² (Mars)
+- $FOS$: factor of safety on lift-off (dimensionless)
+:::
+
+The factor of 1.4 follows NASA-STD-5001 practice for ultimate loads [@nasastd5001].
+
+```{python}
+#| output: asis
+table(["Astronomical object", "Lift-off limit, WOB<sub>lim</sub> (N)", "Set-point, WOB<sub>set</sub> (N)"], [
+    ["Moon", f"{V('wob_lift_off_moon_n'):.1f}", f"<strong>{V('wob_setpoint_moon_n'):.1f}</strong>"],
+    ["Mars", f"{V('wob_lift_off_mars_n'):.1f}", f"<strong>{V('wob_setpoint_mars_n'):.1f}</strong>"],
+])
+```
+
+## Rotary cutting and its stall in icy ground under lunar gravity
+
+The model is the drag-bit law of @detournay1992. Rounded cutter edges behave as wear-flats of total length $\ell$, carrying a load $W_f = \sigma\,\ell\,a$ before any cutting happens:
+
+$$\delta = \frac{W - W_f}{\zeta\, a\, \varepsilon}\;(\le \text{cutter protrusion}), \quad T = \tfrac12 a^2\varepsilon\delta + \tfrac12\mu a W_f, \quad ROP_{rot} = \delta\,\frac{N}{60}$$
+
+where
+
+::: {.symbols}
+- $\delta$: depth of cut per revolution of the bit (m)
+- $W$: weight on bit, the applied axial load (N)
+- $W_f$: threshold load carried by the wear-flats in contact with the ground before the cutters bite (N)
+- $\sigma$: contact stress under the wear-flats (Pa)
+- $\ell$: total wear-flat length of all cutters (m)
+- $a$: bit radius (m)
+- $\zeta$: ratio of normal to tangential cutting force on a cutter (dimensionless)
+- $\varepsilon$: intrinsic specific energy, the energy needed to cut a unit volume of ground (J/m³ = Pa)
+- $T$: torque on the bit (N·m)
+- $\mu$: friction coefficient under the wear-flats (dimensionless)
+- $ROP_{rot}$: rate of penetration by rotary cutting alone (m/s)
+- $N$: rotary speed (rev/min)
+:::
+
+The values used are $\varepsilon \approx \sigma \approx \sigma_c$ [@richard2012], $\zeta = 0.6$, $a$ = 10.5 mm and $\ell$ = `{python} f"{V('wearflat_total_length_mm'):.2f}"` mm. In the icy layers $W_f$ reaches about `{python} f"{max(cur['moon']['w_threshold_n']):.0f}"` N, far above the lunar set-point of `{python} f"{V('wob_setpoint_moon_n'):.0f}"` N. The rotary depth of cut therefore drops to zero there, and percussion has to do the work.
+
+```{python}
+#| output: asis
+z = cur["depths_m"]
+fig = make_subplots(rows=1, cols=2, subplot_titles=("Rotary threshold W_f vs available WOB", "Penetration rate"))
+for env, col in (("moon", "#0284c7"), ("mars", "#ea580c")):
+    c = cur[env]
+    fig.add_trace(go.Scatter(x=c["w_threshold_n"], y=z, name=f"{env.title()} W_f", line=dict(color=col, width=3)), 1, 1)
+    fig.add_vline(x=V(f"wob_setpoint_{env}_n"), line=dict(color=col, dash="dash"), row=1, col=1)
+    fig.add_trace(go.Scatter(x=c["rop_rotary_mm_s"], y=z, name=f"{env.title()} rotary only", line=dict(color=col, dash="dot")), 1, 2)
+    fig.add_trace(go.Scatter(x=c["rop_rp_mm_s"], y=z, name=f"{env.title()} rotary-percussive", line=dict(color=col, width=3)), 1, 2)
+fig.update_yaxes(autorange="reversed", title_text="Depth (m)")
+fig.update_xaxes(type="log", title_text="Force (N), dashed = WOB set-point", row=1, col=1)
+fig.update_xaxes(title_text="ROP (mm/s)", row=1, col=2)
+plot(fig, 460)
+```
+
+## Percussion: the cam-spring hammer
+
+The two-lobe barrel cam compresses the spring by the cam lift $h$ and then releases the hammer onto the anvil:
+
+$$E = \tfrac12 k_s h^2, \quad v = \sqrt{2E/m_h}, \quad F = v\frac{Z_h Z_r}{Z_h + Z_r}\;(Z = \rho c A), \quad W_{\min} = m_h v (1+e) f$$
+
+where
+
+::: {.symbols}
+- $E$: blow energy, the spring energy released per blow (J)
+- $k_s$: spring stiffness (N/m)
+- $h$: cam lift, the spring compression per blow (m)
+- $v$: hammer speed at impact (m/s)
+- $m_h$: hammer mass (kg)
+- $F$: peak impact force carried into the drill rod (N)
+- $Z_h$, $Z_r$: mechanical impedance of the hammer and of the rod (N·s/m)
+- $\rho$: material density (kg/m³)
+- $c$: longitudinal stress-wave speed in the material (m/s)
+- $A$: cross-sectional area (m²)
+- $W_{\min}$: smallest bit load that keeps the bit seated against the rebound of each blow (N)
+- $e$: coefficient of restitution of the impact (dimensionless, 0 to 1)
+- $f$: blow frequency (Hz)
+:::
+
+Penetration follows from an energy balance using the percussive specific energy $SE_p = c_p\,\sigma_c$ and the transfer efficiency $\eta_t$ [@lundberg1982; @teale1965concept; @rabia1982]:
+
+$$ROP_{perc} = \frac{\eta_t E f}{A_{hole}\, SE_p}$$
+
+where
+
+::: {.symbols}
+- $ROP_{perc}$: rate of penetration by percussion (m/s)
+- $\eta_t$: fraction of the blow energy transferred into breaking the ground (dimensionless)
+- $A_{hole}$: cross-sectional area of the hole (m²)
+- $SE_p$: percussive specific energy, the blow energy needed per unit volume of ground broken (J/m³ = Pa)
+- $c_p$: ratio of percussive specific energy to UCS (dimensionless)
+- $\sigma_c$: unconfined compressive strength of the layer (Pa)
+:::
+
+```{python}
+#| output: asis
+h = des["hammer"]
+table(["Quantity (unit)", "Symbol", "Value", "Origin of the value", "Acceptance limit"], [
+    ["Blow energy (J)", "<em>E</em>", f"{h['impact_energy_j']:.2f}", "E = ½ k<sub>s</sub> h², k<sub>s</sub> = 125 kN/m, h = 6 mm", "–"],
+    ["Blow frequency (Hz)", "<em>f</em>", f"{h['blow_frequency_hz']:.0f}", "2 cam lobes × 13 rev/s", "–"],
+    ["Hammer mass (kg)", "<em>m<sub>h</sub></em>", f"{V('hammer_mass_kg'):.3f}", "volume × density of the CAD hammer ring", "–"],
+    ["Impact speed (m/s)", "<em>v</em>", f"{h['impact_velocity_m_s']:.2f}", "v = √(2E / m<sub>h</sub>)", "–"],
+    ["Peak impact force (N)", "<em>F</em>", f"{h['peak_force_n']:.0f}", "1-D stress-wave impedance, Z = ρcA", "–"],
+    ["Spring natural frequency (Hz)", "<em>f<sub>n</sub></em>", f"{h['natural_hz']:.1f}", "f<sub>n</sub> = √(k<sub>s</sub> / m<sub>h</sub>) / 2π",
+     f"> 2f = {2*h['blow_frequency_hz']:.0f}"],
+    ["Minimum WOB to stay seated (N)", "<em>W<sub>min</sub></em>", f"{h['min_wob_n']:.1f}", "W<sub>min</sub> = m<sub>h</sub> v (1 + e) f",
+     f"< Moon set-point {V('wob_setpoint_moon_n'):.1f}"],
+    ["Spring shear stress (MPa)", "<em>τ</em>", f"{h['spring_shear_mpa']:.0f}", "Wahl-corrected coil shear stress at full lift", "< 690 (allowable)"],
+    ["Electrical power (W)", "<em>P<sub>e</sub></em>", f"{h['elec_power_w']:.1f}", f"P<sub>e</sub> = E f / (η<sub>m</sub> η<sub>cam</sub>), η<sub>m</sub> η<sub>cam</sub> = {h['efficiency']:.3f}", "–"],
+])
+```
+
+The table lists the hammer as designed. The first six rows follow in sequence from the equations above. The spring stiffness and cam lift fix the blow energy. The hammer mass, taken from the CAD part, then fixes the impact speed, and the impedances of the hammer and rod fix the peak force. The blow frequency is the number of cam lobes times the cam speed. The last column gives the acceptance limit each derived value is compared against. A dash means the row is an input or an intermediate value with no limit of its own. Three limits apply:
+
+- The spring natural frequency (`{python} f"{h['natural_hz']:.0f}"` Hz) must be more than twice the blow frequency (`{python} f"{2*h['blow_frequency_hz']:.0f}"` Hz). The spring can then push the hammer back onto the cam before the next lobe arrives.
+- The bit load needed to absorb the rebound of each blow (`{python} f"{h['min_wob_n']:.1f}"` N) must stay below the lunar set-point (`{python} f"{V('wob_setpoint_moon_n'):.1f}"` N). Otherwise the bit would bounce off the hole bottom. The margin is narrow, about `{python} f"{100*(V('wob_setpoint_moon_n')/h['min_wob_n']-1):.0f}"` %. On Mars the set-point is more than twice as high.
+- The coil shear stress (`{python} f"{h['spring_shear_mpa']:.0f}"` MPa) must stay below the 690 MPa allowable for the spring steel [@shigley].
+
+All three limits are met. The electrical power is the mechanical blow power $E f$ divided by the motor and cam efficiencies.
+
+## Auger design derivations
+
+**Flute depth (strength).** Every blow sends a compressive stress wave down the auger while the motor applies up to 6.5 N·m of torque. The root is the weakest section. A Goodman fatigue check with FOS 1.5 on 17-4PH steel [@shigley] selects the smallest root that survives. The chart sweeps the candidate flute depths.
+
+```{python}
+#| output: asis
+sw = des["auger"]["root_sweep"]
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=[r["flute_depth_mm"] for r in sw], y=[r["fos_fatigue"] for r in sw], name="Fatigue FOS (Goodman)", mode="lines+markers"))
+fig.add_trace(go.Scatter(x=[r["flute_depth_mm"] for r in sw], y=[r["fos_yield"] for r in sw], name="Yield FOS", mode="lines+markers"))
+log_hline(fig, 1.5, "required FOS 1.5", "#ef4444")
+fig.add_vline(x=V("sampling_flute_depth_mm"), line=dict(dash="dot", color="#10b981"))
+fig.add_annotation(x=V("sampling_flute_depth_mm"), y=1, yref="paper", xanchor="right", yanchor="top", showarrow=False,
+                   text=f"chosen {V('sampling_flute_depth_mm')} mm ", font=dict(color="#10b981"))
+fig.update_xaxes(title_text="Sampling flute depth (mm)  [root OD = 20 - 2 x depth]")
+fig.update_yaxes(title_text="Factor of safety", type="log")
+plot(fig, 380)
+```
+
+```{python}
+#| output: asis
+a = des["auger"]
+cv = a["conveying"]
+table(["Derived quantity (unit)", "Value", "Governing relation"], [
+    ["Sampling flute depth (mm)", f"<strong>{a['flute_depth_mm']}</strong> (root diameter {a['root_od_mm']})", "deepest flute with Goodman FOS ≥ 1.5"],
+    ["Sampling pitch (mm)", f"{a['sampling_pitch_mm']}", "tan α ≤ μ<sub>flight</sub>: cuttings stay on a stopped flight"],
+    ["Sampling length (mm)", f"{a['sampling_length_mm']}", "holds one bite of bulked cuttings × 1.2"],
+    ["Flute capacity, choking onset (cm of hole)", f"{a['choking_onset_m']*100:.2f}", "z<sub>crit</sub> = L<sub>s</sub> A<sub>flute</sub> / (A<sub>hole</sub> B)"],
+    ["Transport helix angle (°) / pitch (mm)", f"{a['transport_helix_deg']:.1f} / {a['transport_pitch_mm']}", "α* = 45° − φ<sub>f</sub>/2 (maximum screw efficiency)"],
+    ["Conveying lift ratio at 150 rpm (dimensionless)", f"Moon {cv['moon']['lift_ratio']}, Mars {cv['mars']['lift_ratio']}",
+     f"μ<sub>w</sub> ω² r / g; ≥ 1 needs > {cv['moon']['rpm_min_conveying']:.0f} / {cv['mars']['rpm_min_conveying']:.0f} rpm"],
+    ["Brush sweep speed (mm/s) / transfer time (s)", f"{a['brush_sweep_mm_s']} / {a['transfer_duration_s']}", "3 brush passes per flute point"],
+])
+```
+
+The table lists the auger geometry, each row fixed by the relation in the right-hand column:
+
+- **Flute depth.** The sampling flute is cut as deep as the fatigue check allows, `{python} f"{a['flute_depth_mm']}"` mm, leaving a `{python} f"{a['root_od_mm']}"` mm root. Deeper flutes hold more cuttings.
+- **Pitch.** The flight's helix angle α at the mean radius is kept below the friction angle of cuttings on steel (μ<sub>flight</sub> = 0.32, i.e. 17.7°). Cuttings resting on a stopped flight therefore do not slide back down. This gives a `{python} f"{a['sampling_pitch_mm']}"` mm pitch.
+- **Sampling length.** The fluted length $L_s$ must hold the cuttings of one 10 cm bite after they bulk up by the factor $B$ = 1.5 on loosening, plus 20 %.
+- **Choking onset.** The flute capacity $z_{crit}$ is the hole depth whose bulked cuttings exactly fill the flutes: `{python} f"{a['choking_onset_m']*100:.1f}"` cm, above the 10 cm bite.
+- **Transport flute.** The helix angle α* = 45° − φ<sub>f</sub>/2 maximises the efficiency of a screw that pushes material [@shigley].
+- **Conveying.** The lift ratio compares the friction force that wall contact can generate at the auger's spin speed with the weight of the cuttings. Below 1, a spinning auger cannot lift cuttings continuously up the hole.
+- **Brushing.** The last row is the brush speed and the time to clear the sampling flutes after each bite.
+
+Here $\mu_w$ is the cuttings-on-wall friction coefficient (dimensionless), $\omega$ the auger angular speed (rad/s), $r$ the auger radius (m), $g$ the surface gravity (m/s²), $A_{flute}$ and $A_{hole}$ the flute and hole cross-sections (m²), and $\phi_f$ the friction angle of cuttings on the flight (°).
+
+The conveying check is the physical reason for **bite-drilling**. At a safe speed, wall friction from the spinning auger cannot lift cuttings against gravity on either body. The cuttings therefore stay in the deep sampling flutes until the auger is withdrawn and brushed, and the 10 cm bite has to fit inside the flute capacity.
+
+### Choking beyond the flute capacity
+
+Once a bite exceeds $z_{crit}$, the surplus cuttings are pushed up the narrow transport flute as a compacted plug. The plug's resistance grows exponentially with its length (Janssen, as for a plug pushed up a tube) [@janssen1895versuche]:
+
+$$\sigma(L) = \sigma_0 \exp\!\left(\frac{4\mu_w K L}{D_h}\right), \quad K = 1-\sin\phi, \quad T = \sigma A\, r_m \tan(\alpha + \phi_f)$$
+
+where
+
+::: {.symbols}
+- $\sigma(L)$: axial stress needed to push a plug of length $L$ (Pa)
+- $\sigma_0$: axial stress at the free end of the plug (Pa)
+- $\mu_w$: friction coefficient between the cuttings and the hole wall (dimensionless)
+- $K$: ratio of lateral to axial stress in the plug (dimensionless)
+- $L$: plug length (m)
+- $D_h$: hydraulic diameter of the transport flute, 4 × area / wetted perimeter (m)
+- $\phi$: internal friction angle of the cuttings (°)
+- $T$: auger torque needed to drive the plug (N·m)
+- $A$: cross-sectional area of the transport flute (m²)
+- $r_m$: mean radius of the flight (m)
+- $\alpha$: helix angle of the transport flight (°)
+- $\phi_f$: friction angle between cuttings and the flight (°)
+:::
+
+```{python}
+#| output: asis
+fig = go.Figure()
+for env, col in (("moon", "#0284c7"), ("mars", "#ea580c")):
+    ch = cur[env]["choking"]
+    fig.add_trace(go.Scatter(x=[b * 100 for b in ch["bite_m"]], y=[max(t, 1e-3) for t in ch["torque_nm"]], name=f"{env.title()} (z = {ch['z_ref_m']} m)", line=dict(color=col, width=3)))
+log_hline(fig, des["torque_fault_nm"], "torque fault (0.85 × 6.5 N·m)", "#ef4444")
+fig.add_vline(x=a["choking_onset_m"] * 100, line=dict(dash="dot"))
+fig.add_annotation(x=a["choking_onset_m"] * 100, y=0, yref="paper", xanchor="left", yanchor="bottom", showarrow=False, text=" flute capacity")
+fig.add_vline(x=10, line=dict(dash="dot", color="#10b981"))
+fig.add_annotation(x=10, y=0, yref="paper", xanchor="right", yanchor="bottom", showarrow=False, text="bite ", font=dict(color="#10b981"))
+fig.update_xaxes(title_text="Continuous penetration in one bite (cm)")
+fig.update_yaxes(title_text="Auger torque (N·m)", type="log", range=[-1.5, 2])
+plot(fig, 400)
+```
+
+## Thermal limits
+
+**Moon.** The cuttings must keep their ice. In vacuum, ice on a warm grain sublimates freely at the Hertz–Knudsen rate, with the ice vapour pressure of @murphy2005:
+
+$$J = p_v(T)\sqrt{\frac{M}{2\pi R T}}$$
+
+where
+
+::: {.symbols}
+- $J$: mass of ice leaving the surface per unit area and time (kg/(m²·s))
+- $p_v(T)$: saturation vapour pressure of ice at temperature $T$ (Pa)
+- $M$: molar mass of water, 0.018 kg/mol
+- $R$: universal gas constant, 8.314 J/(mol·K)
+- $T$: temperature of the ice surface, taken as the bit temperature (K)
+:::
+
+The limit allows a 1 % ice loss from cuttings grains of 25 µm radius over one 300 s bite cycle. This gives the critical bit temperature **T<sub>crit</sub> = `{python} f"{V('critical_bit_temp_moon_k'):.1f}"` K**.
+
+**Mars.** At about 600 Pa, the risk is transient melting and refreezing that welds the bit in place. The limit is set 10 K below melting: **T<sub>crit</sub> = `{python} f"{V('critical_bit_temp_mars_k'):.1f}"` K**. Perchlorate brines can form at lower temperatures, which is a known open risk.
+
+**Bit thermal model.** The bit has a heat capacity C = `{python} f"{V('bit_thermal_mass_j_k'):.1f}"` J/K, the energy needed to raise its temperature by 1 K. It absorbs 25 % of the bit-face power [@loui1997]. It loses heat by conduction into the hole wall (cylinder shape factor) and into the fresh cuttings. Peak simulated temperatures were `{python} f"{E['moon']['max_bit_temp_k']:.0f}"` K on the Moon and `{python} f"{E['mars']['max_bit_temp_k']:.0f}"` K on Mars, both below T<sub>crit</sub>, so no thermal fault was raised.
+
+**Warm-up.** 95 W of heaters bring 2.1 kg of actuators up to the lubricant limit plus margin (213 K). That takes `{python} f"{V('warmup_duration_moon_s')/60:.1f}"` min on the Moon (from 100 K) and `{python} f"{V('warmup_duration_mars_s')/60:.1f}"` min on Mars (from 192 K).
+
+## Solar array: configuration trade
+
+The four 0.68 m² panels were evaluated in five arrangements over a full lunar day and a Mars sol at $L_s = 90^\circ$ with $\tau = 0.45$. $L_s$, the **areocentric solar longitude**, is the angle Mars has travelled around the Sun since its northern spring equinox. It is the standard measure of the Martian season: $L_s = 0^\circ$ is northern spring and $L_s = 90^\circ$ is the northern summer solstice [@allison2000], the season in which Phoenix operated [@smith2009h2o]. $\tau$ is the dust **optical depth** (dimensionless), which reduces the direct beam reaching the panels as
+
+$$G_b = S\, e^{-\tau / \sin \theta_{el}}$$
+
+where
+
+::: {.symbols}
+- $G_b$: direct solar irradiance at the surface (W/m²)
+- $S$: solar irradiance above the atmosphere at Mars's distance from the Sun (W/m²)
+- $\theta_{el}$: elevation of the Sun above the horizon (°)
+:::
+
+The model includes the true sun path, cell temperature and packing factor, and ray-traced self-shading by the other wing, the deployed mast, its latch posts and the lander deck.
+
+```{python}
+#| output: asis
+cfgs = sol["configs"]
+labels = sol["labels"]
+wrapped = [labels[k].replace(" (", "<br>(").replace(", ", ",<br>") for k in cfgs]
+fig = go.Figure()
+fig.add_trace(go.Bar(x=wrapped, y=[v["moon"]["mean_w"] for v in cfgs.values()], name="Moon (day mean)", marker_color="#0284c7"))
+fig.add_trace(go.Bar(x=wrapped, y=[v["mars"]["mean_w"] for v in cfgs.values()], name="Mars (sol mean)", marker_color="#ea580c"))
+fig.update_yaxes(title_text="Electrical power (W)")
+fig.update_xaxes(tickangle=0)
+fig.update_layout(barmode="group")
+plot(fig, 440, legend_top=True)
+```
+
+**Selected: `{python} labels[sol['selected']]`.** At the lunar south pole the sun circles the horizon at about 1.5° elevation [@moonvillage2020], so panels have to stand vertical and follow it in azimuth. On Mars, at 68°N in summer, the sun climbs to about 47°, and a second (elevation) axis adds roughly 30 %. A first-order estimate, $P = A\,\eta\,S$ (total panel area $A$ = 2.72 m², cell efficiency $\eta$ = 0.28), gives `{python} f"{sol['first_order_estimate_w']['moon']:.0f}"` W on the Moon and `{python} f"{sol['first_order_estimate_w']['mars']:.0f}"` W on Mars. That estimate assumes the full irradiance falls squarely on the panels at all times. The modelled output is lower, mostly on Mars: northern summer is near aphelion (S ≈ `{python} f"{sol['sun']['mars']['solar_constant_eff_w_m2']:.0f}"` W/m²) and dust attenuates the beam.
+
+## Energy storage trade
+
+```{python}
+#| output: asis
+ch = E["mars"]["storage_trade_study"]
+table(["Chemistry", "Specific energy (Wh/kg)", "Mass for 1375 Wh (kg)", "Round-trip efficiency (dimensionless)", "Minimum operating temperature (K)"], [
+    [v["name"], f"{v['specific_energy_wh_kg']:.0f}", f"{v['pack_mass_kg']:.1f}", f"{v['round_trip_efficiency']:.2f}", f"{v['min_operating_temp_k']:.0f}"]
+    for v in ch.values()])
+tel = {e: pd.read_csv(data / f"telemetry_{e}.csv") for e in ("moon", "mars")}
+margin = {e: float((t["solar_w"] - t["power_w"]).min()) for e, t in tel.items()}
+```
+
+Specific energy is the stored energy per unit mass, so the pack mass is the 1375 Wh capacity divided by it. Round-trip efficiency is the energy recovered on discharge divided by the energy put in on charge.
+
+**Depth of discharge** (DoD) is the fraction of the rated capacity that has been drawn out of the battery [@linden2002]:
+
+$$DoD = 1 - \frac{E_{\min}}{E_{nom}}$$
+
+where
+
+::: {.symbols}
+- $E_{nom}$: nominal stored energy of the full battery, 1375 Wh
+- $E_{\min}$: lowest stored energy reached during the mission (Wh)
+:::
+
+The simulation starts with a full battery and updates it every second. When the array output $P_{solar}$ exceeds the electrical load $P_{load}$, the surplus would charge the battery, but it is already full. When the load exceeds the array output, the battery supplies the difference. Over the simulated mission the tracked array delivers `{python} f"{E['moon']['D_mean_solar_power_w']:.0f}"` W on the Moon and `{python} f"{E['mars']['D_mean_solar_power_w']:.0f}"` W on Mars. The peak load is `{python} f"{E['moon']['D_peak_electrical_power_w']:.0f}"` W. The array therefore exceeds the load at every time step, with a smallest margin of `{python} f"{margin['moon']:.0f}"` W (Moon) and `{python} f"{margin['mars']:.0f}"` W (Mars). The battery is never drawn on, $E_{\min} = E_{nom}$, and the maximum depth of discharge is `{python} f"{E['moon']['D_max_depth_of_discharge_pct']:.1f}"` % (Moon) and `{python} f"{E['mars']['D_max_depth_of_discharge_pct']:.1f}"` % (Mars).
+
+This result is correct, but it covers only the daytime drilling run of under one hour. The 1375 Wh capacity is a design choice for periods with no sun on the array: terrain shadow at the lunar pole, and the Martian nights that return later in the season. This simulation does not model those periods. In such periods the battery would be held above a 20 % state of charge (DoD ≤ 80 %), since deeper cycling shortens battery cycle life [@linden2002]. Among the chemistries, the regenerative fuel cell is lightest (5.5 kg), but its 0.58 round-trip efficiency means more solar energy is needed to refill it. Li-ion, at 9.5 kg and 0.92 efficiency, is the lower-risk choice inside the warm box.
+
+## Sensitivity to uncertain coefficients
+
+```{python}
+#| output: asis
+names = {"percussive_se_to_ucs": "Percussive specific energy ratio, c<sub>p</sub> = SE<sub>p</sub> / σ<sub>c</sub>",
+         "heat_to_bit_fraction": "Fraction of bit-face heat entering the bit",
+         "cuttings_bulking_factor": "Cuttings bulking factor, B"}
+sens = abcd["sensitivity"]
+rows = [[names.get(r["parameter"], r["parameter"]), r["value"], f"{r['moon']['duration_h']:.2f}", f"{r['moon']['max_bit_temp_k']:.0f}",
+         f"{r['mars']['duration_h']:.2f}", f"{r['mars']['max_bit_temp_k']:.0f}", r["moon"]["faults"] + r["mars"]["faults"]]
+        for r in sens]
+table(["Coefficient", "Value (dimensionless)", "Moon mission time (h)", "Moon peak bit temperature, T<sub>max</sub> (K)",
+       "Mars mission time (h)", "Mars peak bit temperature, T<sub>max</sub> (K)", "Faults (count)"], rows)
+by = lambda p: [r for r in sens if r["parameter"] == p]
+cp, hb, bk = by("percussive_se_to_ucs"), by("heat_to_bit_fraction"), by("cuttings_bulking_factor")
+```
+
+Three coefficients in the model are known only within a range from experiments. This table re-runs the full mission simulation with each one set to the low, central and high ends of its range, one at a time, with every other input at its baseline. The middle row of each group is the baseline design. The question is how far the mission results move when a coefficient moves.
+
+- **Percussive specific energy ratio.** This coefficient sets how much blow energy is needed to break a unit volume of ground, so it controls the drilling rate in the hard, icy layers. Raising it from `{python} f"{cp[0]['value']:.0f}"` to `{python} f"{cp[-1]['value']:.0f}"` lengthens the Mars mission from `{python} f"{cp[0]['mars']['duration_h']:.2f}"` h to `{python} f"{cp[-1]['mars']['duration_h']:.2f}"` h (`{python} f"{100*(cp[-1]['mars']['duration_h']/cp[0]['mars']['duration_h']-1):.0f}"` %). On the Moon it goes from `{python} f"{cp[0]['moon']['duration_h']:.2f}"` h to `{python} f"{cp[-1]['moon']['duration_h']:.2f}"` h. Mars is more sensitive because its icy layers are thicker, so more of the hole is drilled by percussion.
+- **Fraction of bit-face heat entering the bit.** This changes only the bit temperature, not the mission time. At the high end the peak bit temperature is `{python} f"{hb[-1]['moon']['max_bit_temp_k']:.0f}"` K on the Moon and `{python} f"{hb[-1]['mars']['max_bit_temp_k']:.0f}"` K on Mars. Both remain well below the critical temperatures of `{python} f"{V('critical_bit_temp_moon_k'):.1f}"` K and `{python} f"{V('critical_bit_temp_mars_k'):.1f}"` K.
+- **Cuttings bulking factor.** Loosened cuttings take up more volume than intact ground. A higher factor fills the flutes sooner and adds brushing time, but changes mission time by only a few minutes.
+
+No case produced a fault. The mission time is dominated by auger trips and warm-up rather than by cutting, so the design is not sensitive to the exact values of these coefficients within their published ranges.
+
+## Derivation table
+
+Every derived quantity used on this site, with the equation that produces it. The table scrolls.
+
+```{python}
+#| output: asis
+def qty(k, unit):
+    return f"<code>{k}</code>" + (f" ({unit})" if unit not in ("-", "") else "")
+table(["Quantity (unit)", "Value", "Equation", "Note"],
+      [[qty(k, v["unit"]), f"{v['value']}", f"<code>{v['equation']}</code>", v["note"]] for k, v in led.items()], scroll=True)
+```
+
+## References {.unnumbered}
+
+::: {#refs}
+:::

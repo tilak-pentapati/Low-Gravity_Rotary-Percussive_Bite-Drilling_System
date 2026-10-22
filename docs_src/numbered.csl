@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0" demote-non-dropping-particle="sort-only">
+  <info>
+    <title>Numbered (IEEE-like)</title>
+    <id>numbered-ieee-like</id>
+    <updated>2026-10-21T00:00:00+00:00</updated>
+  </info>
+  <macro name="author">
+    <names variable="author">
+      <name and="text" delimiter=", " delimiter-precedes-last="contextual" et-al-min="7" et-al-use-first="3" initialize-with=". " name-as-sort-order="none"/>
+      <et-al font-style="italic"/>
+      <substitute>
+        <names variable="editor"/>
+        <text variable="publisher"/>
+      </substitute>
+    </names>
+  </macro>
+  <macro name="title">
+    <choose>
+      <if type="book report thesis" match="any">
+        <text variable="title" font-style="italic"/>
+      </if>
+      <else>
+        <text variable="title" quotes="true"/>
+      </else>
+    </choose>
+  </macro>
+  <macro name="container">
+    <group delimiter=", ">
+      <choose>
+        <if type="paper-conference chapter" match="any">
+          <text variable="container-title" prefix="in " font-style="italic"/>
+        </if>
+        <else>
+          <text variable="container-title" font-style="italic"/>
+        </else>
+      </choose>
+      <text variable="volume" prefix="vol. "/>
+      <text variable="issue" prefix="no. "/>
+      <text variable="page" prefix="pp. "/>
+    </group>
+  </macro>
+  <macro name="publisher">
+    <group delimiter=", ">
+      <text variable="edition" suffix=" ed."/>
+      <text variable="publisher"/>
+      <text variable="number"/>
+    </group>
+  </macro>
+  <citation collapse="citation-number">
+    <sort>
+      <key variable="citation-number"/>
+    </sort>
+    <layout prefix="[" suffix="]" delimiter=", ">
+      <text variable="citation-number"/>
+    </layout>
+  </citation>
+  <bibliography entry-spacing="0" second-field-align="flush">
+    <layout suffix=".">
+      <text variable="citation-number" prefix="[" suffix="]"/>
+      <group delimiter=", ">
+        <text macro="author"/>
+        <text macro="title"/>
+        <text macro="container"/>
+        <text macro="publisher"/>
+        <date variable="issued">
+          <date-part name="year"/>
+        </date>
+        <text variable="note"/>
+        <text variable="DOI" prefix="doi: "/>
+      </group>
+    </layout>
+  </bibliography>
+</style>

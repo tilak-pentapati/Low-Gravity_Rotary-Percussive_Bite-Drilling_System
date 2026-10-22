@@ -1,0 +1,98 @@
+{
+  "configs": {
+    "A_fixed_horizontal": {
+      "moon": {
+        "mean_w": 26.9,
+        "min_w": 17.8,
+        "max_w": 39.6,
+        "mean_shaded_pct": 18.7
+      },
+      "mars": {
+        "mean_w": 110.1,
+        "min_w": 12.8,
+        "max_w": 223.1,
+        "mean_shaded_pct": 5.1
+      }
+    },
+    "B_fixed_vertical_2wings": {
+      "moon": {
+        "mean_w": 287.9,
+        "min_w": 0.0,
+        "max_w": 428.6,
+        "mean_shaded_pct": 0.0
+      },
+      "mars": {
+        "mean_w": 58.4,
+        "min_w": 6.3,
+        "max_w": 102.1,
+        "mean_shaded_pct": 0.0
+      }
+    },
+    "C_fixed_vertical_4faces": {
+      "moon": {
+        "mean_w": 287.9,
+        "min_w": 214.3,
+        "max_w": 323.3,
+        "mean_shaded_pct": 0.0
+      },
+      "mars": {
+        "mean_w": 53.7,
+        "min_w": 6.4,
+        "max_w": 87.9,
+        "mean_shaded_pct": 0.0
+      }
+    },
+    "D_track_azimuth_vertical": {
+      "moon": {
+        "mean_w": 796.3,
+        "min_w": 454.2,
+        "max_w": 857.3,
+        "mean_shaded_pct": 8.0
+      },
+      "mars": {
+        "mean_w": 112.5,
+        "min_w": 6.5,
+        "max_w": 183.1,
+        "mean_shaded_pct": 2.2
+      }
+    },
+    "E_track_2axis": {
+      "moon": {
+        "mean_w": 796.6,
+        "min_w": 454.4,
+        "max_w": 857.4,
+        "mean_shaded_pct": 8.0
+      },
+      "mars": {
+        "mean_w": 143.4,
+        "min_w": 6.9,
+        "max_w": 266.3,
+        "mean_shaded_pct": 2.7
+      }
+    }
+  },
+  "labels": {
+    "A_fixed_horizontal": "Fixed horizontal (cells up)",
+    "B_fixed_vertical_2wings": "Fixed vertical, 2 wings facing +/-X",
+    "C_fixed_vertical_4faces": "Fixed vertical, 4 faces (+/-X, +/-Y)",
+    "D_track_azimuth_vertical": "1-axis azimuth tracking, vertical",
+    "E_track_2axis": "2-axis tracking (azimuth + elevation)"
+  },
+  "selected": "E_track_2axis",
+  "sun": {
+    "moon": {
+      "solar_constant_eff_w_m2": 1361.0,
+      "declination_deg": -1.5,
+      "day_length_h": 708.73
+    },
+    "mars": {
+      "solar_constant_eff_w_m2": 495.9,
+      "declination_deg": 25.19,
+      "day_length_h": 24.66
+    }
+  },
+  "first_order_estimate_w": {
+    "moon": 1036.5,
+    "mars": 377.7
+  }
+}

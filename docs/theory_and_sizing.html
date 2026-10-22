@@ -1,0 +1,2431 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Terramechanics, Design Derivations &amp; Power Sizing – Lunar &amp; Martian Bite Drill</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-d5af1ddb80ef99ea9e4d0c004ab93c6c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300..900;1,300..900&amp;display=swap">
+<script>window.backupDefine = window.define; window.define = undefined;</script>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Lunar &amp; Martian Bite Drill</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Design Showcase</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./digital_twin.html"> 
+<span class="menu-text">Results &amp; Digital Twin</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./theory_and_sizing.html" aria-current="page"> 
+<span class="menu-text">Derivations &amp; Design</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./cad_architecture.html"> 
+<span class="menu-text">3D CAD</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./autonomous_control.html"> 
+<span class="menu-text">Autonomous Control</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#method" id="toc-method" class="nav-link active" data-scroll-target="#method"><span class="header-section-number">1</span> Method</a></li>
+  <li><a href="#environments-and-stratigraphy" id="toc-environments-and-stratigraphy" class="nav-link" data-scroll-target="#environments-and-stratigraphy"><span class="header-section-number">2</span> Environments and stratigraphy</a></li>
+  <li><a href="#weight-on-bit-limit" id="toc-weight-on-bit-limit" class="nav-link" data-scroll-target="#weight-on-bit-limit"><span class="header-section-number">3</span> Weight-on-bit limit</a></li>
+  <li><a href="#rotary-cutting-and-its-stall-in-icy-ground-under-lunar-gravity" id="toc-rotary-cutting-and-its-stall-in-icy-ground-under-lunar-gravity" class="nav-link" data-scroll-target="#rotary-cutting-and-its-stall-in-icy-ground-under-lunar-gravity"><span class="header-section-number">4</span> Rotary cutting and its stall in icy ground under lunar gravity</a></li>
+  <li><a href="#percussion-the-cam-spring-hammer" id="toc-percussion-the-cam-spring-hammer" class="nav-link" data-scroll-target="#percussion-the-cam-spring-hammer"><span class="header-section-number">5</span> Percussion: the cam-spring hammer</a></li>
+  <li><a href="#auger-design-derivations" id="toc-auger-design-derivations" class="nav-link" data-scroll-target="#auger-design-derivations"><span class="header-section-number">6</span> Auger design derivations</a>
+  <ul class="collapse">
+  <li><a href="#choking-beyond-the-flute-capacity" id="toc-choking-beyond-the-flute-capacity" class="nav-link" data-scroll-target="#choking-beyond-the-flute-capacity"><span class="header-section-number">6.1</span> Choking beyond the flute capacity</a></li>
+  </ul></li>
+  <li><a href="#thermal-limits" id="toc-thermal-limits" class="nav-link" data-scroll-target="#thermal-limits"><span class="header-section-number">7</span> Thermal limits</a></li>
+  <li><a href="#solar-array-configuration-trade" id="toc-solar-array-configuration-trade" class="nav-link" data-scroll-target="#solar-array-configuration-trade"><span class="header-section-number">8</span> Solar array: configuration trade</a></li>
+  <li><a href="#energy-storage-trade" id="toc-energy-storage-trade" class="nav-link" data-scroll-target="#energy-storage-trade"><span class="header-section-number">9</span> Energy storage trade</a></li>
+  <li><a href="#sensitivity-to-uncertain-coefficients" id="toc-sensitivity-to-uncertain-coefficients" class="nav-link" data-scroll-target="#sensitivity-to-uncertain-coefficients"><span class="header-section-number">10</span> Sensitivity to uncertain coefficients</a></li>
+  <li><a href="#derivation-table" id="toc-derivation-table" class="nav-link" data-scroll-target="#derivation-table"><span class="header-section-number">11</span> Derivation table</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Terramechanics, Design Derivations &amp; Power Sizing</h1>
+<p class="subtitle lead">Each dimension and power figure on this page is solved from force, energy and heat balances, using the measured gravity and ground properties of the Moon and Mars</p>
+</div>
+
+
+
+<div class="quarto-title-meta column-page-left">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><strong>Terramechanics</strong> is the mechanics of soil and granular ground under the loads applied by a machine: how the ground deforms, shears and fails when a wheel, blade or cutter is pressed into it <span class="citation" data-cites="wong2008">[<a href="#ref-wong2008" role="doc-biblioref">1</a>]</span>. For a drill, the ground is lunar or Martian regolith, which may be cemented by water ice. Its resistance to cutting is set by its cohesion, internal friction and ice content. <strong>Design derivations</strong> take that resistance and apply Newton’s laws, conservation of energy, stress-wave mechanics and fatigue theory to fix each dimension of the drill: the bit load, the hammer, the auger flutes. <strong>Power sizing</strong> closes the energy balance. The electrical energy the drill consumes must be supplied by the solar array, with the battery covering any shortfall, at the solar flux and gravity of each body.</p>
+<section id="method" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="method"><span class="header-section-number">1</span> Method</h2>
+<p>The model is built in three layers, so every result can be traced back to a stated assumption:</p>
+<ol type="1">
+<li><strong>Primary inputs.</strong> Each value carries a tag:
+<ul>
+<li><code>[ENV]</code>: an environment fact, with its source (gravity, temperature, ground strength).</li>
+<li><code>[DES]</code>: a design choice, with its rationale.</li>
+<li><code>[COEF]</code>: an empirical coefficient from the literature, with its plausible range.</li>
+<li><code>[CRIT]</code>: an acceptance criterion or a factor of safety.</li>
+</ul></li>
+<li><strong>Derivations</strong> turn those inputs into sizes and limits. All of them are listed in the derivation table at the bottom of this page.</li>
+<li><strong>Simulation</strong> integrates the drilling mission second by second with those sizes. No factor is adjusted afterwards to reach a desired result.</li>
+</ol>
+<p>An <strong>acceptance criterion</strong> is a physical limit that a computed quantity must satisfy for the design to be accepted. Examples are a bit temperature below the point where ice is lost, or a bit load below the load that would lift the lander. A <strong>factor of safety</strong> (FOS) is the ratio of the capacity of a part to the demand placed on it:</p>
+<p><span class="math display">FOS = \frac{\text{capacity}}{\text{demand}} \;\; \left(\text{e.g. } \frac{S_y}{\sigma} \text{ for strength}\right)</span></p>
+<p>where</p>
+<div class="symbols">
+<ul>
+<li><span class="math inline">S_y</span>: yield strength of the material, the stress at which it starts to deform permanently (Pa)</li>
+<li><span class="math inline">\sigma</span>: largest stress the part carries in service (Pa)</li>
+</ul>
+</div>
+<p>A design with <span class="math inline">FOS &gt; 1</span> can carry its load. The margin above 1 covers uncertainty in the loads, the material properties and the model itself. Spaceflight structures use factors of 1.25–1.4 on ultimate strength <span class="citation" data-cites="nasastd5001">[<a href="#ref-nasastd5001" role="doc-biblioref">2</a>]</span>. Parts under repeated load, such as the auger under hammer blows, are checked against fatigue strength instead <span class="citation" data-cites="shigley">[<a href="#ref-shigley" role="doc-biblioref">3</a>]</span>.</p>
+</section>
+<section id="environments-and-stratigraphy" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="environments-and-stratigraphy"><span class="header-section-number">2</span> Environments and stratigraphy</h2>
+<div class="mbse-table-wrap">
+<table class="mbse-table caption-top table">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Astronomical object</th>
+<th data-quarto-table-cell-role="th">Layer</th>
+<th data-quarto-table-cell-role="th">Depth (m)</th>
+<th data-quarto-table-cell-role="th">UCS, σ<sub>c</sub> (kPa)</th>
+<th data-quarto-table-cell-role="th">Ice content (wt %)</th>
+<th data-quarto-table-cell-role="th">Thermal conductivity, k (W/(m·K))</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Moon</td>
+<td>Surficial Regolith Fluff (desiccated)</td>
+<td>0.00–0.20</td>
+<td>2.1</td>
+<td>0</td>
+<td>0.002</td>
+</tr>
+<tr class="even">
+<td>Moon</td>
+<td>Compacted Dry Regolith</td>
+<td>0.20–0.50</td>
+<td>7.4</td>
+<td>0</td>
+<td>0.01</td>
+</tr>
+<tr class="odd">
+<td>Moon</td>
+<td>Low-Ice Cemented Regolith (~3 wt%)</td>
+<td>0.50–0.80</td>
+<td>5 000</td>
+<td>3</td>
+<td>0.3</td>
+</tr>
+<tr class="even">
+<td>Moon</td>
+<td>Icy Regolith (~8 wt%)</td>
+<td>0.80–1.00</td>
+<td>20 000</td>
+<td>8</td>
+<td>0.8</td>
+</tr>
+<tr class="odd">
+<td>Mars</td>
+<td>Dry Soil above the Ice Table</td>
+<td>0.00–0.05</td>
+<td>2.5</td>
+<td>0</td>
+<td>0.085</td>
+</tr>
+<tr class="even">
+<td>Mars</td>
+<td>Pore-Ice Cemented Ground (ICG)</td>
+<td>0.05–0.50</td>
+<td>18 000</td>
+<td>20</td>
+<td>1.5</td>
+</tr>
+<tr class="odd">
+<td>Mars</td>
+<td>Dense Ice-Cemented Ground</td>
+<td>0.50–0.80</td>
+<td>22 000</td>
+<td>25</td>
+<td>1.8</td>
+</tr>
+<tr class="even">
+<td>Mars</td>
+<td>Excess (Nearly Pure) Ground Ice</td>
+<td>0.80–1.00</td>
+<td>12 000</td>
+<td>90</td>
+<td>3.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>UCS</strong> (unconfined, or uniaxial, compressive strength), <span class="math inline">\sigma_c</span>, is the axial stress at which a sample of the ground fails when it is compressed along one axis with no side support. It is measured in pascals (1 kPa = 10³ Pa, 1 MPa = 10⁶ Pa) and sets how hard the ground is to cut. Dry regolith fails at a few kPa. Ice-cemented ground fails at tens of MPa, about four orders of magnitude higher. <strong>Thermal conductivity</strong>, <span class="math inline">k</span>, is the rate of heat flow through a 1 m thick layer of 1 m² area per kelvin of temperature difference across it. Its unit is the watt per metre-kelvin, written W/(m·K) or W m⁻¹ K⁻¹. It controls how fast the drill bit can shed its frictional heat into the ground. <strong>Ice content</strong> is the mass of water ice per unit mass of the ground, in weight percent.</p>
+<p>The dry layers have no ice to bind the grains, so their strength comes only from cohesion and friction. Their UCS follows from the Mohr–Coulomb failure criterion under uniaxial load <span class="citation" data-cites="jaeger2007 das2014">[<a href="#ref-jaeger2007" role="doc-biblioref">4</a>, <a href="#ref-das2014" role="doc-biblioref">5</a>]</span>:</p>
+<p><span class="math display">\sigma_c = 2c\tan\!\left(45^\circ + \frac{\phi}{2}\right)</span></p>
+<p>where</p>
+<div class="symbols">
+<ul>
+<li><span class="math inline">\sigma_c</span>: unconfined compressive strength (Pa)</li>
+<li><span class="math inline">c</span>: cohesion, the shear strength of the ground at zero normal stress (Pa)</li>
+<li><span class="math inline">\phi</span>: angle of internal friction, which sets how shear strength grows with normal stress (°)</li>
+</ul>
+</div>
+<p>Cohesion and friction angle come from <span class="citation" data-cites="carrier1991">[<a href="#ref-carrier1991" role="doc-biblioref">6</a>]</span> (Moon) and <span class="citation" data-cites="shaw2009">[<a href="#ref-shaw2009" role="doc-biblioref">7</a>]</span> (Mars). The icy-layer strengths follow published trends for ice-cemented regolith <span class="citation" data-cites="gertsch2006 schulson2009">[<a href="#ref-gertsch2006" role="doc-biblioref">8</a>, <a href="#ref-schulson2009" role="doc-biblioref">9</a>]</span>. Thermal conductivities come from <span class="citation" data-cites="carrier1991">[<a href="#ref-carrier1991" role="doc-biblioref">6</a>]</span> and from the Phoenix probe measurements <span class="citation" data-cites="zent2010">[<a href="#ref-zent2010" role="doc-biblioref">10</a>]</span>. The Moon site is an ice-stable area near the Shackleton rim with a subsurface temperature of about 100 K <span class="citation" data-cites="paige2010">[<a href="#ref-paige2010" role="doc-biblioref">11</a>]</span>. The Mars site is the Phoenix landing area at 68°N, where the ice table sits about 5 cm down <span class="citation" data-cites="smith2009h2o mellon2009">[<a href="#ref-smith2009h2o" role="doc-biblioref">12</a>, <a href="#ref-mellon2009" role="doc-biblioref">13</a>]</span>.</p>
+<p>These are <strong>representative values</strong> for each site. Every design parameter below is a function of these ground properties (<span class="math inline">\sigma_c</span>, <span class="math inline">\phi</span>, <span class="math inline">c</span>, <span class="math inline">k</span> and ice content). If a site is characterised more closely, the same equations return new sizes. No one has drilled to 1 m at either site, so the properties are inferred in stages. Each stage uses a physical signal that reaches below the surface:</p>
+<ul>
+<li><strong>Neutron spectroscopy from orbit.</strong> Cosmic rays knock neutrons out of the top metre of ground. Hydrogen nuclei have nearly the same mass as a neutron, so they slow neutrons far more efficiently than heavier nuclei do. A drop in the epithermal neutron flux therefore marks hydrogen, most likely water ice, in the upper ~1 m. This mapped polar hydrogen on the Moon <span class="citation" data-cites="feldman1998">[<a href="#ref-feldman1998" role="doc-biblioref">14</a>]</span> and the ice-rich layer below a dry cover at high Martian latitudes <span class="citation" data-cites="boynton2002">[<a href="#ref-boynton2002" role="doc-biblioref">15</a>]</span>.</li>
+<li><strong>Thermal infrared radiometry.</strong> Measured surface temperatures, together with a heat-conduction model, give the depth below which ice is stable against sublimation. This is how the cold traps near the lunar south pole were identified <span class="citation" data-cites="paige2010">[<a href="#ref-paige2010" role="doc-biblioref">11</a>]</span>.</li>
+<li><strong>Reflectance spectra and impacts.</strong> Water ice absorbs near-infrared light at known wavelengths, which revealed exposed ice in shadowed lunar craters <span class="citation" data-cites="li2018ice">[<a href="#ref-li2018ice" role="doc-biblioref">16</a>]</span>. The LCROSS impactor threw up ejecta from a shadowed crater, and the water was measured directly in the plume <span class="citation" data-cites="colaprete2010detection">[<a href="#ref-colaprete2010detection" role="doc-biblioref">17</a>]</span>. On Mars, steep eroding scarps expose buried ice sheets in cross-section to high-resolution cameras <span class="citation" data-cites="dundas2018">[<a href="#ref-dundas2018" role="doc-biblioref">18</a>]</span>.</li>
+<li><strong>In-situ contact.</strong> Landers measure strength directly. Apollo core tubes and penetrometers gave lunar density and cohesion <span class="citation" data-cites="carrier1991">[<a href="#ref-carrier1991" role="doc-biblioref">6</a>]</span>. Phoenix’s scoop found hard ice-cemented ground a few centimetres down <span class="citation" data-cites="mellon2009 shaw2009">[<a href="#ref-shaw2009" role="doc-biblioref">7</a>, <a href="#ref-mellon2009" role="doc-biblioref">13</a>]</span>. The InSight heat-flow probe stalled at about 40 cm in unexpectedly cohesive soil, which shows how far orbital estimates can be from the true ground <span class="citation" data-cites="spohn2022mole">[<a href="#ref-spohn2022mole" role="doc-biblioref">19</a>]</span>.</li>
+<li><strong>The drill as a sensor.</strong> While drilling, the measured torque, bit load and penetration rate give the energy spent per unit volume of rock removed. That energy tracks the ground’s compressive strength <span class="citation" data-cites="teale1965concept">[<a href="#ref-teale1965concept" role="doc-biblioref">20</a>]</span>. The drill therefore measures UCS layer by layer as it advances, as the Icebreaker field tests showed <span class="citation" data-cites="zacny2013icebreaker">[<a href="#ref-zacny2013icebreaker" role="doc-biblioref">21</a>]</span>.</li>
+</ul>
+</section>
+<section id="weight-on-bit-limit" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="weight-on-bit-limit"><span class="header-section-number">3</span> Weight-on-bit limit</h2>
+<p>Weight on bit (WOB) is the axial force pressing the bit into the ground. The drill pushes against the lander, so the lander’s weight is the only reaction force available. The bit load must stay below the load that would lift the lander, with a margin:</p>
+<p><span class="math display">WOB_{\lim} = m g, \qquad WOB_{set} = \frac{m g}{FOS}, \quad FOS = 1.4</span></p>
+<p>where</p>
+<div class="symbols">
+<ul>
+<li><span class="math inline">WOB_{\lim}</span>: lift-off limit, the bit load that would just lift the lander off the ground (N)</li>
+<li><span class="math inline">WOB_{set}</span>: set-point, the bit load the feed controller holds while drilling (N)</li>
+<li><span class="math inline">m</span>: deployed lander mass reacting the bit load, 45 kg</li>
+<li><span class="math inline">g</span>: surface gravity, 1.62 m/s² (Moon) and 3.71 m/s² (Mars)</li>
+<li><span class="math inline">FOS</span>: factor of safety on lift-off (dimensionless)</li>
+</ul>
+</div>
+<p>The factor of 1.4 follows NASA-STD-5001 practice for ultimate loads <span class="citation" data-cites="nasastd5001">[<a href="#ref-nasastd5001" role="doc-biblioref">2</a>]</span>.</p>
+<div class="mbse-table-wrap">
+<table class="mbse-table caption-top table">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Astronomical object</th>
+<th data-quarto-table-cell-role="th">Lift-off limit, WOB<sub>lim</sub> (N)</th>
+<th data-quarto-table-cell-role="th">Set-point, WOB<sub>set</sub> (N)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Moon</td>
+<td>72.9</td>
+<td><strong>52.1</strong></td>
+</tr>
+<tr class="even">
+<td>Mars</td>
+<td>166.9</td>
+<td><strong>119.2</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="rotary-cutting-and-its-stall-in-icy-ground-under-lunar-gravity" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="rotary-cutting-and-its-stall-in-icy-ground-under-lunar-gravity"><span class="header-section-number">4</span> Rotary cutting and its stall in icy ground under lunar gravity</h2>
+<p>The model is the drag-bit law of <span class="citation" data-cites="detournay1992">[<a href="#ref-detournay1992" role="doc-biblioref">22</a>]</span>. Rounded cutter edges behave as wear-flats of total length <span class="math inline">\ell</span>, carrying a load <span class="math inline">W_f = \sigma\,\ell\,a</span> before any cutting happens:</p>
+<p><span class="math display">\delta = \frac{W - W_f}{\zeta\, a\, \varepsilon}\;(\le \text{cutter protrusion}), \quad T = \tfrac12 a^2\varepsilon\delta + \tfrac12\mu a W_f, \quad ROP_{rot} = \delta\,\frac{N}{60}</span></p>
+<p>where</p>
+<div class="symbols">
+<ul>
+<li><span class="math inline">\delta</span>: depth of cut per revolution of the bit (m)</li>
+<li><span class="math inline">W</span>: weight on bit, the applied axial load (N)</li>
+<li><span class="math inline">W_f</span>: threshold load carried by the wear-flats in contact with the ground before the cutters bite (N)</li>
+<li><span class="math inline">\sigma</span>: contact stress under the wear-flats (Pa)</li>
+<li><span class="math inline">\ell</span>: total wear-flat length of all cutters (m)</li>
+<li><span class="math inline">a</span>: bit radius (m)</li>
+<li><span class="math inline">\zeta</span>: ratio of normal to tangential cutting force on a cutter (dimensionless)</li>
+<li><span class="math inline">\varepsilon</span>: intrinsic specific energy, the energy needed to cut a unit volume of ground (J/m³ = Pa)</li>
+<li><span class="math inline">T</span>: torque on the bit (N·m)</li>
+<li><span class="math inline">\mu</span>: friction coefficient under the wear-flats (dimensionless)</li>
+<li><span class="math inline">ROP_{rot}</span>: rate of penetration by rotary cutting alone (m/s)</li>
+<li><span class="math inline">N</span>: rotary speed (rev/min)</li>
+</ul>
+</div>
+<p>The values used are <span class="math inline">\varepsilon \approx \sigma \approx \sigma_c</span> <span class="citation" data-cites="richard2012">[<a href="#ref-richard2012" role="doc-biblioref">23</a>]</span>, <span class="math inline">\zeta = 0.6</span>, <span class="math inline">a</span> = 10.5 mm and <span class="math inline">\ell</span> = 0.66 mm. In the icy layers <span class="math inline">W_f</span> reaches about 139 N, far above the lunar set-point of 52 N. The rotary depth of cut therefore drops to zero there, and percussion has to do the work.</p>
+<div style="height:460px; width:100%;">                            <div id="35e08b37-241b-419f-a3ea-a48b47047a8d" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("35e08b37-241b-419f-a3ea-a48b47047a8d")) {                    Plotly.newPlot(                        "35e08b37-241b-419f-a3ea-a48b47047a8d",                        [{"line":{"color":"#0284c7","width":3},"name":"Moon W_f","x":[0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,34.65,34.65,34.65,34.65,34.65,34.65,34.65,34.65,34.65,34.65,34.65,34.65,34.65,34.65,34.65,138.6,138.6,138.6,138.6,138.6,138.6,138.6,138.6,138.6,138.6],"y":[0.01,0.03,0.05,0.07,0.09,0.11,0.13,0.15,0.17,0.19,0.21,0.23,0.25,0.27,0.29,0.31,0.33,0.35,0.37,0.39,0.41,0.43,0.45,0.47,0.49,0.51,0.53,0.55,0.57,0.59,0.61,0.63,0.65,0.67,0.69,0.71,0.73,0.75,0.77,0.79,0.81,0.83,0.85,0.87,0.89,0.91,0.93,0.95,0.97,0.99],"type":"scatter","xaxis":"x","yaxis":"y"},{"line":{"color":"#0284c7","dash":"dot"},"name":"Moon rotary only","x":[5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,1.3825,1.3825,1.3825,1.3825,1.3825,1.3825,1.3825,1.3825,1.3825,1.3825,1.3825,1.3825,1.3825,1.3825,1.3825,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"y":[0.01,0.03,0.05,0.07,0.09,0.11,0.13,0.15,0.17,0.19,0.21,0.23,0.25,0.27,0.29,0.31,0.33,0.35,0.37,0.39,0.41,0.43,0.45,0.47,0.49,0.51,0.53,0.55,0.57,0.59,0.61,0.63,0.65,0.67,0.69,0.71,0.73,0.75,0.77,0.79,0.81,0.83,0.85,0.87,0.89,0.91,0.93,0.95,0.97,0.99],"type":"scatter","xaxis":"x2","yaxis":"y2"},{"line":{"color":"#0284c7","width":3},"name":"Moon rotary-percussive","x":[5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,1.689,1.689,1.689,1.689,1.689,1.689,1.689,1.689,1.689,1.689],"y":[0.01,0.03,0.05,0.07,0.09,0.11,0.13,0.15,0.17,0.19,0.21,0.23,0.25,0.27,0.29,0.31,0.33,0.35,0.37,0.39,0.41,0.43,0.45,0.47,0.49,0.51,0.53,0.55,0.57,0.59,0.61,0.63,0.65,0.67,0.69,0.71,0.73,0.75,0.77,0.79,0.81,0.83,0.85,0.87,0.89,0.91,0.93,0.95,0.97,0.99],"type":"scatter","xaxis":"x2","yaxis":"y2"},{"line":{"color":"#ea580c","width":3},"name":"Mars W_f","x":[0.02,0.02,124.74,124.74,124.74,124.74,124.74,124.74,124.74,124.74,124.74,124.74,124.74,124.74,124.74,124.74,124.74,124.74,124.74,124.74,124.74,124.74,124.74,124.74,124.74,152.46,152.46,152.46,152.46,152.46,152.46,152.46,152.46,152.46,152.46,152.46,152.46,152.46,152.46,152.46,83.16,83.16,83.16,83.16,83.16,83.16,83.16,83.16,83.16,83.16],"y":[0.01,0.03,0.05,0.07,0.09,0.11,0.13,0.15,0.17,0.19,0.21,0.23,0.25,0.27,0.29,0.31,0.33,0.35,0.37,0.39,0.41,0.43,0.45,0.47,0.49,0.51,0.53,0.55,0.57,0.59,0.61,0.63,0.65,0.67,0.69,0.71,0.73,0.75,0.77,0.79,0.81,0.83,0.85,0.87,0.89,0.91,0.93,0.95,0.97,0.99],"type":"scatter","xaxis":"x","yaxis":"y"},{"line":{"color":"#ea580c","dash":"dot"},"name":"Mars rotary only","x":[5.0,5.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.1935,1.1935,1.1935,1.1935,1.1935,1.1935,1.1935,1.1935,1.1935,1.1935],"y":[0.01,0.03,0.05,0.07,0.09,0.11,0.13,0.15,0.17,0.19,0.21,0.23,0.25,0.27,0.29,0.31,0.33,0.35,0.37,0.39,0.41,0.43,0.45,0.47,0.49,0.51,0.53,0.55,0.57,0.59,0.61,0.63,0.65,0.67,0.69,0.71,0.73,0.75,0.77,0.79,0.81,0.83,0.85,0.87,0.89,0.91,0.93,0.95,0.97,0.99],"type":"scatter","xaxis":"x2","yaxis":"y2"},{"line":{"color":"#ea580c","width":3},"name":"Mars rotary-percussive","x":[5.0,5.0,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.8767,1.5354,1.5354,1.5354,1.5354,1.5354,1.5354,1.5354,1.5354,1.5354,1.5354,1.5354,1.5354,1.5354,1.5354,1.5354,4.0084,4.0084,4.0084,4.0084,4.0084,4.0084,4.0084,4.0084,4.0084,4.0084],"y":[0.01,0.03,0.05,0.07,0.09,0.11,0.13,0.15,0.17,0.19,0.21,0.23,0.25,0.27,0.29,0.31,0.33,0.35,0.37,0.39,0.41,0.43,0.45,0.47,0.49,0.51,0.53,0.55,0.57,0.59,0.61,0.63,0.65,0.67,0.69,0.71,0.73,0.75,0.77,0.79,0.81,0.83,0.85,0.87,0.89,0.91,0.93,0.95,0.97,0.99],"type":"scatter","xaxis":"x2","yaxis":"y2"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","margin":{"b":0,"l":0,"r":0,"t":30},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"xaxis":{"anchor":"y","domain":[0.0,0.45],"title":{"text":"Force (N), dashed = WOB set-point"},"type":"log"},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"Depth (m)"},"autorange":"reversed"},"xaxis2":{"anchor":"y2","domain":[0.55,1.0],"title":{"text":"ROP (mm\u002fs)"}},"yaxis2":{"anchor":"x2","domain":[0.0,1.0],"title":{"text":"Depth (m)"},"autorange":"reversed"},"annotations":[{"font":{"size":16},"showarrow":false,"text":"Rotary threshold W_f vs available WOB","x":0.225,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"Penetration rate","x":0.775,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"}],"shapes":[{"line":{"color":"#0284c7","dash":"dash"},"type":"line","x0":52.07,"x1":52.07,"xref":"x","y0":0,"y1":1,"yref":"y domain"},{"line":{"color":"#ea580c","dash":"dash"},"type":"line","x0":119.25,"x1":119.25,"xref":"x","y0":0,"y1":1,"yref":"y domain"}],"margin":{"l":60,"r":30,"t":60,"b":130},"legend":{"orientation":"h","yanchor":"top","y":-0.2391304347826087,"x":0.5,"xanchor":"center"},"height":460},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div>
+</section>
+<section id="percussion-the-cam-spring-hammer" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="percussion-the-cam-spring-hammer"><span class="header-section-number">5</span> Percussion: the cam-spring hammer</h2>
+<p>The two-lobe barrel cam compresses the spring by the cam lift <span class="math inline">h</span> and then releases the hammer onto the anvil:</p>
+<p><span class="math display">E = \tfrac12 k_s h^2, \quad v = \sqrt{2E/m_h}, \quad F = v\frac{Z_h Z_r}{Z_h + Z_r}\;(Z = \rho c A), \quad W_{\min} = m_h v (1+e) f</span></p>
+<p>where</p>
+<div class="symbols">
+<ul>
+<li><span class="math inline">E</span>: blow energy, the spring energy released per blow (J)</li>
+<li><span class="math inline">k_s</span>: spring stiffness (N/m)</li>
+<li><span class="math inline">h</span>: cam lift, the spring compression per blow (m)</li>
+<li><span class="math inline">v</span>: hammer speed at impact (m/s)</li>
+<li><span class="math inline">m_h</span>: hammer mass (kg)</li>
+<li><span class="math inline">F</span>: peak impact force carried into the drill rod (N)</li>
+<li><span class="math inline">Z_h</span>, <span class="math inline">Z_r</span>: mechanical impedance of the hammer and of the rod (N·s/m)</li>
+<li><span class="math inline">\rho</span>: material density (kg/m³)</li>
+<li><span class="math inline">c</span>: longitudinal stress-wave speed in the material (m/s)</li>
+<li><span class="math inline">A</span>: cross-sectional area (m²)</li>
+<li><span class="math inline">W_{\min}</span>: smallest bit load that keeps the bit seated against the rebound of each blow (N)</li>
+<li><span class="math inline">e</span>: coefficient of restitution of the impact (dimensionless, 0 to 1)</li>
+<li><span class="math inline">f</span>: blow frequency (Hz)</li>
+</ul>
+</div>
+<p>Penetration follows from an energy balance using the percussive specific energy <span class="math inline">SE_p = c_p\,\sigma_c</span> and the transfer efficiency <span class="math inline">\eta_t</span> <span class="citation" data-cites="lundberg1982 teale1965concept rabia1982">[<a href="#ref-teale1965concept" role="doc-biblioref">20</a>, <a href="#ref-lundberg1982" role="doc-biblioref">24</a>, <a href="#ref-rabia1982" role="doc-biblioref">25</a>]</span>:</p>
+<p><span class="math display">ROP_{perc} = \frac{\eta_t E f}{A_{hole}\, SE_p}</span></p>
+<p>where</p>
+<div class="symbols">
+<ul>
+<li><span class="math inline">ROP_{perc}</span>: rate of penetration by percussion (m/s)</li>
+<li><span class="math inline">\eta_t</span>: fraction of the blow energy transferred into breaking the ground (dimensionless)</li>
+<li><span class="math inline">A_{hole}</span>: cross-sectional area of the hole (m²)</li>
+<li><span class="math inline">SE_p</span>: percussive specific energy, the blow energy needed per unit volume of ground broken (J/m³ = Pa)</li>
+<li><span class="math inline">c_p</span>: ratio of percussive specific energy to UCS (dimensionless)</li>
+<li><span class="math inline">\sigma_c</span>: unconfined compressive strength of the layer (Pa)</li>
+</ul>
+</div>
+<div class="mbse-table-wrap">
+<table class="mbse-table caption-top table">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Quantity (unit)</th>
+<th data-quarto-table-cell-role="th">Symbol</th>
+<th data-quarto-table-cell-role="th">Value</th>
+<th data-quarto-table-cell-role="th">Origin of the value</th>
+<th data-quarto-table-cell-role="th">Acceptance limit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Blow energy (J)</td>
+<td><em>E</em></td>
+<td>2.25</td>
+<td>E = ½ k<sub>s</sub> h², k<sub>s</sub> = 125 kN/m, h = 6 mm</td>
+<td>–</td>
+</tr>
+<tr class="even">
+<td>Blow frequency (Hz)</td>
+<td><em>f</em></td>
+<td>26</td>
+<td>2 cam lobes × 13 rev/s</td>
+<td>–</td>
+</tr>
+<tr class="odd">
+<td>Hammer mass (kg)</td>
+<td><em>m<sub>h</sub></em></td>
+<td>0.379</td>
+<td>volume × density of the CAD hammer ring</td>
+<td>–</td>
+</tr>
+<tr class="even">
+<td>Impact speed (m/s)</td>
+<td><em>v</em></td>
+<td>3.45</td>
+<td>v = √(2E / m<sub>h</sub>)</td>
+<td>–</td>
+</tr>
+<tr class="odd">
+<td>Peak impact force (N)</td>
+<td><em>F</em></td>
+<td>5417</td>
+<td>1-D stress-wave impedance, Z = ρcA</td>
+<td>–</td>
+</tr>
+<tr class="even">
+<td>Spring natural frequency (Hz)</td>
+<td><em>f<sub>n</sub></em></td>
+<td>91.4</td>
+<td>f<sub>n</sub> = √(k<sub>s</sub> / m<sub>h</sub>) / 2π</td>
+<td>&gt; 2f = 52</td>
+</tr>
+<tr class="odd">
+<td>Minimum WOB to stay seated (N)</td>
+<td><em>W<sub>min</sub></em></td>
+<td>44.1</td>
+<td>W<sub>min</sub> = m<sub>h</sub> v (1 + e) f</td>
+<td>&lt; Moon set-point 52.1</td>
+</tr>
+<tr class="even">
+<td>Spring shear stress (MPa)</td>
+<td><em>τ</em></td>
+<td>360</td>
+<td>Wahl-corrected coil shear stress at full lift</td>
+<td>&lt; 690 (allowable)</td>
+</tr>
+<tr class="odd">
+<td>Electrical power (W)</td>
+<td><em>P<sub>e</sub></em></td>
+<td>76.5</td>
+<td>P<sub>e</sub> = E f / (η<sub>m</sub> η<sub>cam</sub>), η<sub>m</sub> η<sub>cam</sub> = 0.765</td>
+<td>–</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The table lists the hammer as designed. The first six rows follow in sequence from the equations above. The spring stiffness and cam lift fix the blow energy. The hammer mass, taken from the CAD part, then fixes the impact speed, and the impedances of the hammer and rod fix the peak force. The blow frequency is the number of cam lobes times the cam speed. The last column gives the acceptance limit each derived value is compared against. A dash means the row is an input or an intermediate value with no limit of its own. Three limits apply:</p>
+<ul>
+<li>The spring natural frequency (91 Hz) must be more than twice the blow frequency (52 Hz). The spring can then push the hammer back onto the cam before the next lobe arrives.</li>
+<li>The bit load needed to absorb the rebound of each blow (44.1 N) must stay below the lunar set-point (52.1 N). Otherwise the bit would bounce off the hole bottom. The margin is narrow, about 18 %. On Mars the set-point is more than twice as high.</li>
+<li>The coil shear stress (360 MPa) must stay below the 690 MPa allowable for the spring steel <span class="citation" data-cites="shigley">[<a href="#ref-shigley" role="doc-biblioref">3</a>]</span>.</li>
+</ul>
+<p>All three limits are met. The electrical power is the mechanical blow power <span class="math inline">E f</span> divided by the motor and cam efficiencies.</p>
+</section>
+<section id="auger-design-derivations" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="auger-design-derivations"><span class="header-section-number">6</span> Auger design derivations</h2>
+<p><strong>Flute depth (strength).</strong> Every blow sends a compressive stress wave down the auger while the motor applies up to 6.5 N·m of torque. The root is the weakest section. A Goodman fatigue check with FOS 1.5 on 17-4PH steel <span class="citation" data-cites="shigley">[<a href="#ref-shigley" role="doc-biblioref">3</a>]</span> selects the smallest root that survives. The chart sweeps the candidate flute depths.</p>
+<div style="height:380px; width:100%;">                            <div id="689f23b5-c091-488d-8203-3daa7aad056e" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("689f23b5-c091-488d-8203-3daa7aad056e")) {                    Plotly.newPlot(                        "689f23b5-c091-488d-8203-3daa7aad056e",                        [{"mode":"lines+markers","name":"Fatigue FOS (Goodman)","x":[0.5,0.75,1.0,1.25,1.5,1.75,2.0,2.25,2.5,2.75,3.0,3.25,3.5,3.75,4.0,4.25,4.5,4.75,5.0,5.25,5.5,5.75,6.0,6.25,6.5,6.75,7.0,7.25],"y":[14.04,13.36,12.69,12.04,11.41,10.8,10.2,9.63,9.07,8.52,8.0,7.49,7.0,6.52,6.06,5.62,5.19,4.78,4.39,4.01,3.64,3.28,2.94,2.61,2.28,1.95,1.63,1.29],"type":"scatter"},{"mode":"lines+markers","name":"Yield FOS","x":[0.5,0.75,1.0,1.25,1.5,1.75,2.0,2.25,2.5,2.75,3.0,3.25,3.5,3.75,4.0,4.25,4.5,4.75,5.0,5.25,5.5,5.75,6.0,6.25,6.5,6.75,7.0,7.25],"y":[27.98,26.61,25.28,23.98,22.71,21.48,20.29,19.13,18.01,16.91,15.86,14.83,13.84,12.88,11.95,11.05,10.18,9.34,8.53,7.74,6.97,6.22,5.48,4.76,4.04,3.32,2.62,1.92],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","margin":{"b":0,"l":0,"r":0,"t":30},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"shapes":[{"line":{"color":"#ef4444","dash":"dash"},"type":"line","x0":0,"x1":1,"xref":"x domain","y0":1.5,"y1":1.5,"yref":"y"},{"line":{"color":"#10b981","dash":"dot"},"type":"line","x0":7.0,"x1":7.0,"xref":"x","y0":0,"y1":1,"yref":"y domain"}],"annotations":[{"font":{"color":"#ef4444"},"showarrow":false,"text":"required FOS 1.5","x":0,"xanchor":"left","xref":"paper","y":0.17609125905568124,"yanchor":"bottom","yref":"y"},{"font":{"color":"#10b981"},"showarrow":false,"text":"chosen 7.0 mm ","x":7.0,"xanchor":"right","y":1,"yanchor":"top","yref":"paper"}],"xaxis":{"title":{"text":"Sampling flute depth (mm)  [root OD = 20 - 2 x depth]"}},"yaxis":{"title":{"text":"Factor of safety"},"type":"log"},"margin":{"l":60,"r":30,"t":60,"b":130},"legend":{"orientation":"h","yanchor":"top","y":-0.2894736842105263,"x":0.5,"xanchor":"center"},"height":380},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div>
+<div class="mbse-table-wrap">
+<table class="mbse-table caption-top table">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Derived quantity (unit)</th>
+<th data-quarto-table-cell-role="th">Value</th>
+<th data-quarto-table-cell-role="th">Governing relation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Sampling flute depth (mm)</td>
+<td><strong>7.0</strong> (root diameter 6.0)</td>
+<td>deepest flute with Goodman FOS ≥ 1.5</td>
+</tr>
+<tr class="even">
+<td>Sampling pitch (mm)</td>
+<td>13.0</td>
+<td>tan α ≤ μ<sub>flight</sub>: cuttings stay on a stopped flight</td>
+</tr>
+<tr class="odd">
+<td>Sampling length (mm)</td>
+<td>225</td>
+<td>holds one bite of bulked cuttings × 1.2</td>
+</tr>
+<tr class="even">
+<td>Flute capacity, choking onset (cm of hole)</td>
+<td>12.25</td>
+<td>z<sub>crit</sub> = L<sub>s</sub> A<sub>flute</sub> / (A<sub>hole</sub> B)</td>
+</tr>
+<tr class="odd">
+<td>Transport helix angle (°) / pitch (mm)</td>
+<td>36.1 / 39.0</td>
+<td>α* = 45° − φ<sub>f</sub>/2 (maximum screw efficiency)</td>
+</tr>
+<tr class="even">
+<td>Conveying lift ratio at 150 rpm (dimensionless)</td>
+<td>Moon 0.64, Mars 0.279</td>
+<td>μ<sub>w</sub> ω² r / g; ≥ 1 needs &gt; 188 / 284 rpm</td>
+</tr>
+<tr class="odd">
+<td>Brush sweep speed (mm/s) / transfer time (s)</td>
+<td>2.61 / 87</td>
+<td>3 brush passes per flute point</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The table lists the auger geometry, each row fixed by the relation in the right-hand column:</p>
+<ul>
+<li><strong>Flute depth.</strong> The sampling flute is cut as deep as the fatigue check allows, 7.0 mm, leaving a 6.0 mm root. Deeper flutes hold more cuttings.</li>
+<li><strong>Pitch.</strong> The flight’s helix angle α at the mean radius is kept below the friction angle of cuttings on steel (μ<sub>flight</sub> = 0.32, i.e.&nbsp;17.7°). Cuttings resting on a stopped flight therefore do not slide back down. This gives a 13.0 mm pitch.</li>
+<li><strong>Sampling length.</strong> The fluted length <span class="math inline">L_s</span> must hold the cuttings of one 10 cm bite after they bulk up by the factor <span class="math inline">B</span> = 1.5 on loosening, plus 20 %.</li>
+<li><strong>Choking onset.</strong> The flute capacity <span class="math inline">z_{crit}</span> is the hole depth whose bulked cuttings exactly fill the flutes: 12.2 cm, above the 10 cm bite.</li>
+<li><strong>Transport flute.</strong> The helix angle α* = 45° − φ<sub>f</sub>/2 maximises the efficiency of a screw that pushes material <span class="citation" data-cites="shigley">[<a href="#ref-shigley" role="doc-biblioref">3</a>]</span>.</li>
+<li><strong>Conveying.</strong> The lift ratio compares the friction force that wall contact can generate at the auger’s spin speed with the weight of the cuttings. Below 1, a spinning auger cannot lift cuttings continuously up the hole.</li>
+<li><strong>Brushing.</strong> The last row is the brush speed and the time to clear the sampling flutes after each bite.</li>
+</ul>
+<p>Here <span class="math inline">\mu_w</span> is the cuttings-on-wall friction coefficient (dimensionless), <span class="math inline">\omega</span> the auger angular speed (rad/s), <span class="math inline">r</span> the auger radius (m), <span class="math inline">g</span> the surface gravity (m/s²), <span class="math inline">A_{flute}</span> and <span class="math inline">A_{hole}</span> the flute and hole cross-sections (m²), and <span class="math inline">\phi_f</span> the friction angle of cuttings on the flight (°).</p>
+<p>The conveying check is the physical reason for <strong>bite-drilling</strong>. At a safe speed, wall friction from the spinning auger cannot lift cuttings against gravity on either body. The cuttings therefore stay in the deep sampling flutes until the auger is withdrawn and brushed, and the 10 cm bite has to fit inside the flute capacity.</p>
+<section id="choking-beyond-the-flute-capacity" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="choking-beyond-the-flute-capacity"><span class="header-section-number">6.1</span> Choking beyond the flute capacity</h3>
+<p>Once a bite exceeds <span class="math inline">z_{crit}</span>, the surplus cuttings are pushed up the narrow transport flute as a compacted plug. The plug’s resistance grows exponentially with its length (Janssen, as for a plug pushed up a tube) <span class="citation" data-cites="janssen1895versuche">[<a href="#ref-janssen1895versuche" role="doc-biblioref">26</a>]</span>:</p>
+<p><span class="math display">\sigma(L) = \sigma_0 \exp\!\left(\frac{4\mu_w K L}{D_h}\right), \quad K = 1-\sin\phi, \quad T = \sigma A\, r_m \tan(\alpha + \phi_f)</span></p>
+<p>where</p>
+<div class="symbols">
+<ul>
+<li><span class="math inline">\sigma(L)</span>: axial stress needed to push a plug of length <span class="math inline">L</span> (Pa)</li>
+<li><span class="math inline">\sigma_0</span>: axial stress at the free end of the plug (Pa)</li>
+<li><span class="math inline">\mu_w</span>: friction coefficient between the cuttings and the hole wall (dimensionless)</li>
+<li><span class="math inline">K</span>: ratio of lateral to axial stress in the plug (dimensionless)</li>
+<li><span class="math inline">L</span>: plug length (m)</li>
+<li><span class="math inline">D_h</span>: hydraulic diameter of the transport flute, 4 × area / wetted perimeter (m)</li>
+<li><span class="math inline">\phi</span>: internal friction angle of the cuttings (°)</li>
+<li><span class="math inline">T</span>: auger torque needed to drive the plug (N·m)</li>
+<li><span class="math inline">A</span>: cross-sectional area of the transport flute (m²)</li>
+<li><span class="math inline">r_m</span>: mean radius of the flight (m)</li>
+<li><span class="math inline">\alpha</span>: helix angle of the transport flight (°)</li>
+<li><span class="math inline">\phi_f</span>: friction angle between cuttings and the flight (°)</li>
+</ul>
+</div>
+<div style="height:400px; width:100%;">                            <div id="9221876a-34f7-45db-a15f-77132f7eed8e" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("9221876a-34f7-45db-a15f-77132f7eed8e")) {                    Plotly.newPlot(                        "9221876a-34f7-45db-a15f-77132f7eed8e",                        [{"line":{"color":"#0284c7","width":3},"name":"Moon (z = 0.9 m)","x":[1.0,1.25,1.5,1.7500000000000002,2.0,2.25,2.5,2.75,3.0,3.25,3.5000000000000004,3.75,4.0,4.25,4.5,4.75,5.0,5.25,5.5,5.75,6.0,6.25,6.5,6.75,7.000000000000001,7.249999999999999,7.5,7.75,8.0,8.25,8.5,8.75,9.0,9.25,9.5,9.75,10.0,10.25,10.5,10.75,11.0,11.25,11.5,11.75,12.0,12.25,12.5,12.75,13.0,13.25,13.5,13.750000000000002,14.000000000000002,14.249999999999998,14.499999999999998,14.75,15.0,15.25,15.5,15.75,16.0,16.25,16.5,16.75,17.0,17.25,17.5,17.75,18.0,18.25,18.5,18.75,19.0,19.25,19.5,19.75,20.0],"y":[0.1095,0.1096,0.1096,0.1097,0.1097,0.1098,0.1098,0.1098,0.1099,0.1099,0.11,0.11,0.1101,0.1101,0.1102,0.1102,0.1102,0.1103,0.1103,0.1104,0.1104,0.1105,0.1105,0.1106,0.1106,0.1106,0.1107,0.1107,0.1108,0.1108,0.1108,0.1108,0.1108,0.1108,0.1108,0.1108,0.1108,0.1108,0.1108,0.1108,0.1108,0.1109,0.1109,0.1109,0.1109,0.1109,0.1303,0.1459,0.1739,0.2243,0.3149,0.4781,0.7718,1.3002,2.2513,3.9629,7.0432,12.5868,22.5633,40.5177,72.8296,130.9802,235.6319,423.9701,762.916,1372.9054,2470.6828,4446.3156,8001.7951,14400.4716,25915.9533,46639.9765,83936.3007,151057.235,271852.512,489243.6896,880475.245],"type":"scatter"},{"line":{"color":"#ea580c","width":3},"name":"Mars (z = 0.9 m)","x":[1.0,1.25,1.5,1.7500000000000002,2.0,2.25,2.5,2.75,3.0,3.25,3.5000000000000004,3.75,4.0,4.25,4.5,4.75,5.0,5.25,5.5,5.75,6.0,6.25,6.5,6.75,7.000000000000001,7.249999999999999,7.5,7.75,8.0,8.25,8.5,8.75,9.0,9.25,9.5,9.75,10.0,10.25,10.5,10.75,11.0,11.25,11.5,11.75,12.0,12.25,12.5,12.75,13.0,13.25,13.5,13.750000000000002,14.000000000000002,14.249999999999998,14.499999999999998,14.75,15.0,15.25,15.5,15.75,16.0,16.25,16.5,16.75,17.0,17.25,17.5,17.75,18.0,18.25,18.5,18.75,19.0,19.25,19.5,19.75,20.0],"y":[0.4905,0.4905,0.4906,0.4906,0.4906,0.4906,0.4907,0.4907,0.4907,0.4907,0.4908,0.4908,0.4908,0.4908,0.4908,0.4909,0.4909,0.4909,0.4909,0.491,0.491,0.491,0.491,0.4911,0.4911,0.4911,0.4911,0.4912,0.4912,0.4912,0.4912,0.4912,0.4912,0.4912,0.4912,0.4912,0.4912,0.4912,0.4912,0.4912,0.4912,0.4912,0.4912,0.4912,0.4912,0.4913,0.5128,0.5526,0.6661,0.9893,1.9099,4.5324,12.0028,33.2827,93.9002,266.5738,758.4478,2159.5889,6150.8475,17520.2553,49906.8902,142162.718,404960.559,1153560.4789,3286005.0908,9360438.0443,26663928.8373,75954256.9899,216361558.5253,616322586.6495,1755642424.4981,5001082859.0407,14245970259.6268,40580745083.9749,115597382388.3025,329288059828.4662,938002436608.4703],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","margin":{"b":0,"l":0,"r":0,"t":30},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"shapes":[{"line":{"color":"#ef4444","dash":"dash"},"type":"line","x0":0,"x1":1,"xref":"x domain","y0":5.525,"y1":5.525,"yref":"y"},{"line":{"dash":"dot"},"type":"line","x0":12.25,"x1":12.25,"xref":"x","y0":0,"y1":1,"yref":"y domain"},{"line":{"color":"#10b981","dash":"dot"},"type":"line","x0":10,"x1":10,"xref":"x","y0":0,"y1":1,"yref":"y domain"}],"annotations":[{"font":{"color":"#ef4444"},"showarrow":false,"text":"torque fault (0.85 \u00d7 6.5 N\u00b7m)","x":0,"xanchor":"left","xref":"paper","y":0.7423322823571483,"yanchor":"bottom","yref":"y"},{"showarrow":false,"text":" flute capacity","x":12.25,"xanchor":"left","y":0,"yanchor":"bottom","yref":"paper"},{"font":{"color":"#10b981"},"showarrow":false,"text":"bite ","x":10,"xanchor":"right","y":0,"yanchor":"bottom","yref":"paper"}],"xaxis":{"title":{"text":"Continuous penetration in one bite (cm)"}},"yaxis":{"title":{"text":"Auger torque (N\u00b7m)"},"type":"log","range":[-1.5,2]},"margin":{"l":60,"r":30,"t":60,"b":130},"legend":{"orientation":"h","yanchor":"top","y":-0.275,"x":0.5,"xanchor":"center"},"height":400},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div>
+</section>
+</section>
+<section id="thermal-limits" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="thermal-limits"><span class="header-section-number">7</span> Thermal limits</h2>
+<p><strong>Moon.</strong> The cuttings must keep their ice. In vacuum, ice on a warm grain sublimates freely at the Hertz–Knudsen rate, with the ice vapour pressure of <span class="citation" data-cites="murphy2005">[<a href="#ref-murphy2005" role="doc-biblioref">27</a>]</span>:</p>
+<p><span class="math display">J = p_v(T)\sqrt{\frac{M}{2\pi R T}}</span></p>
+<p>where</p>
+<div class="symbols">
+<ul>
+<li><span class="math inline">J</span>: mass of ice leaving the surface per unit area and time (kg/(m²·s))</li>
+<li><span class="math inline">p_v(T)</span>: saturation vapour pressure of ice at temperature <span class="math inline">T</span> (Pa)</li>
+<li><span class="math inline">M</span>: molar mass of water, 0.018 kg/mol</li>
+<li><span class="math inline">R</span>: universal gas constant, 8.314 J/(mol·K)</li>
+<li><span class="math inline">T</span>: temperature of the ice surface, taken as the bit temperature (K)</li>
+</ul>
+</div>
+<p>The limit allows a 1 % ice loss from cuttings grains of 25 µm radius over one 300 s bite cycle. This gives the critical bit temperature <strong>T<sub>crit</sub> = 163.5 K</strong>.</p>
+<p><strong>Mars.</strong> At about 600 Pa, the risk is transient melting and refreezing that welds the bit in place. The limit is set 10 K below melting: <strong>T<sub>crit</sub> = 263.1 K</strong>. Perchlorate brines can form at lower temperatures, which is a known open risk.</p>
+<p><strong>Bit thermal model.</strong> The bit has a heat capacity C = 23.4 J/K, the energy needed to raise its temperature by 1 K. It absorbs 25 % of the bit-face power <span class="citation" data-cites="loui1997">[<a href="#ref-loui1997" role="doc-biblioref">28</a>]</span>. It loses heat by conduction into the hole wall (cylinder shape factor) and into the fresh cuttings. Peak simulated temperatures were 120 K on the Moon and 205 K on Mars, both below T<sub>crit</sub>, so no thermal fault was raised.</p>
+<p><strong>Warm-up.</strong> 95 W of heaters bring 2.1 kg of actuators up to the lubricant limit plus margin (213 K). That takes 18.9 min on the Moon (from 100 K) and 3.6 min on Mars (from 192 K).</p>
+</section>
+<section id="solar-array-configuration-trade" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="solar-array-configuration-trade"><span class="header-section-number">8</span> Solar array: configuration trade</h2>
+<p>The four 0.68 m² panels were evaluated in five arrangements over a full lunar day and a Mars sol at <span class="math inline">L_s = 90^\circ</span> with <span class="math inline">\tau = 0.45</span>. <span class="math inline">L_s</span>, the <strong>areocentric solar longitude</strong>, is the angle Mars has travelled around the Sun since its northern spring equinox. It is the standard measure of the Martian season: <span class="math inline">L_s = 0^\circ</span> is northern spring and <span class="math inline">L_s = 90^\circ</span> is the northern summer solstice <span class="citation" data-cites="allison2000">[<a href="#ref-allison2000" role="doc-biblioref">29</a>]</span>, the season in which Phoenix operated <span class="citation" data-cites="smith2009h2o">[<a href="#ref-smith2009h2o" role="doc-biblioref">12</a>]</span>. <span class="math inline">\tau</span> is the dust <strong>optical depth</strong> (dimensionless), which reduces the direct beam reaching the panels as</p>
+<p><span class="math display">G_b = S\, e^{-\tau / \sin \theta_{el}}</span></p>
+<p>where</p>
+<div class="symbols">
+<ul>
+<li><span class="math inline">G_b</span>: direct solar irradiance at the surface (W/m²)</li>
+<li><span class="math inline">S</span>: solar irradiance above the atmosphere at Mars’s distance from the Sun (W/m²)</li>
+<li><span class="math inline">\theta_{el}</span>: elevation of the Sun above the horizon (°)</li>
+</ul>
+</div>
+<p>The model includes the true sun path, cell temperature and packing factor, and ray-traced self-shading by the other wing, the deployed mast, its latch posts and the lander deck.</p>
+<div style="height:440px; width:100%;">                            <div id="68602836-765e-47fc-b022-54e6e6df946d" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("68602836-765e-47fc-b022-54e6e6df946d")) {                    Plotly.newPlot(                        "68602836-765e-47fc-b022-54e6e6df946d",                        [{"marker":{"color":"#0284c7"},"name":"Moon (day mean)","x":["Fixed horizontal\u003cbr\u003e(cells up)","Fixed vertical,\u003cbr\u003e2 wings facing +\u002f-X","Fixed vertical,\u003cbr\u003e4 faces\u003cbr\u003e(+\u002f-X,\u003cbr\u003e+\u002f-Y)","1-axis azimuth tracking,\u003cbr\u003evertical","2-axis tracking\u003cbr\u003e(azimuth + elevation)"],"y":[26.9,287.9,287.9,796.3,796.6],"type":"bar"},{"marker":{"color":"#ea580c"},"name":"Mars (sol mean)","x":["Fixed horizontal\u003cbr\u003e(cells up)","Fixed vertical,\u003cbr\u003e2 wings facing +\u002f-X","Fixed vertical,\u003cbr\u003e4 faces\u003cbr\u003e(+\u002f-X,\u003cbr\u003e+\u002f-Y)","1-axis azimuth tracking,\u003cbr\u003evertical","2-axis tracking\u003cbr\u003e(azimuth + elevation)"],"y":[110.1,58.4,53.7,112.5,143.4],"type":"bar"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","margin":{"b":0,"l":0,"r":0,"t":30},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"yaxis":{"title":{"text":"Electrical power (W)"}},"xaxis":{"tickangle":0},"barmode":"group","margin":{"l":60,"r":30,"t":70,"b":60},"legend":{"orientation":"h","yanchor":"bottom","y":1.02,"x":0.5,"xanchor":"center"},"height":440},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div>
+<p><strong>Selected: 2-axis tracking (azimuth + elevation).</strong> At the lunar south pole the sun circles the horizon at about 1.5° elevation <span class="citation" data-cites="moonvillage2020">[<a href="#ref-moonvillage2020" role="doc-biblioref">30</a>]</span>, so panels have to stand vertical and follow it in azimuth. On Mars, at 68°N in summer, the sun climbs to about 47°, and a second (elevation) axis adds roughly 30 %. A first-order estimate, <span class="math inline">P = A\,\eta\,S</span> (total panel area <span class="math inline">A</span> = 2.72 m², cell efficiency <span class="math inline">\eta</span> = 0.28), gives 1036 W on the Moon and 378 W on Mars. That estimate assumes the full irradiance falls squarely on the panels at all times. The modelled output is lower, mostly on Mars: northern summer is near aphelion (S ≈ 496 W/m²) and dust attenuates the beam.</p>
+</section>
+<section id="energy-storage-trade" class="level2" data-number="9">
+<h2 data-number="9" class="anchored" data-anchor-id="energy-storage-trade"><span class="header-section-number">9</span> Energy storage trade</h2>
+<div class="mbse-table-wrap">
+<table class="mbse-table caption-top table">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Chemistry</th>
+<th data-quarto-table-cell-role="th">Specific energy (Wh/kg)</th>
+<th data-quarto-table-cell-role="th">Mass for 1375 Wh (kg)</th>
+<th data-quarto-table-cell-role="th">Round-trip efficiency (dimensionless)</th>
+<th data-quarto-table-cell-role="th">Minimum operating temperature (K)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Nickel-Hydrogen (Individual Pressure Vessel)</td>
+<td>55</td>
+<td>25.0</td>
+<td>0.82</td>
+<td>233</td>
+</tr>
+<tr class="even">
+<td>Regenerative H2/O2 PEM Fuel Cell System</td>
+<td>250</td>
+<td>5.5</td>
+<td>0.58</td>
+<td>253</td>
+</tr>
+<tr class="odd">
+<td>Space-Grade Low-Temp Li-Ion (NCA)</td>
+<td>145</td>
+<td>9.5</td>
+<td>0.92</td>
+<td>223</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Specific energy is the stored energy per unit mass, so the pack mass is the 1375 Wh capacity divided by it. Round-trip efficiency is the energy recovered on discharge divided by the energy put in on charge.</p>
+<p><strong>Depth of discharge</strong> (DoD) is the fraction of the rated capacity that has been drawn out of the battery <span class="citation" data-cites="linden2002">[<a href="#ref-linden2002" role="doc-biblioref">31</a>]</span>:</p>
+<p><span class="math display">DoD = 1 - \frac{E_{\min}}{E_{nom}}</span></p>
+<p>where</p>
+<div class="symbols">
+<ul>
+<li><span class="math inline">E_{nom}</span>: nominal stored energy of the full battery, 1375 Wh</li>
+<li><span class="math inline">E_{\min}</span>: lowest stored energy reached during the mission (Wh)</li>
+</ul>
+</div>
+<p>The simulation starts with a full battery and updates it every second. When the array output <span class="math inline">P_{solar}</span> exceeds the electrical load <span class="math inline">P_{load}</span>, the surplus would charge the battery, but it is already full. When the load exceeds the array output, the battery supplies the difference. Over the simulated mission the tracked array delivers 857 W on the Moon and 249 W on Mars. The peak load is 130 W. The array therefore exceeds the load at every time step, with a smallest margin of 727 W (Moon) and 111 W (Mars). The battery is never drawn on, <span class="math inline">E_{\min} = E_{nom}</span>, and the maximum depth of discharge is 0.0 % (Moon) and 0.0 % (Mars).</p>
+<p>This result is correct, but it covers only the daytime drilling run of under one hour. The 1375 Wh capacity is a design choice for periods with no sun on the array: terrain shadow at the lunar pole, and the Martian nights that return later in the season. This simulation does not model those periods. In such periods the battery would be held above a 20 % state of charge (DoD ≤ 80 %), since deeper cycling shortens battery cycle life <span class="citation" data-cites="linden2002">[<a href="#ref-linden2002" role="doc-biblioref">31</a>]</span>. Among the chemistries, the regenerative fuel cell is lightest (5.5 kg), but its 0.58 round-trip efficiency means more solar energy is needed to refill it. Li-ion, at 9.5 kg and 0.92 efficiency, is the lower-risk choice inside the warm box.</p>
+</section>
+<section id="sensitivity-to-uncertain-coefficients" class="level2" data-number="10">
+<h2 data-number="10" class="anchored" data-anchor-id="sensitivity-to-uncertain-coefficients"><span class="header-section-number">10</span> Sensitivity to uncertain coefficients</h2>
+<div class="mbse-table-wrap">
+<table class="mbse-table caption-top table">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Coefficient</th>
+<th data-quarto-table-cell-role="th">Value (dimensionless)</th>
+<th data-quarto-table-cell-role="th">Moon mission time (h)</th>
+<th data-quarto-table-cell-role="th">Moon peak bit temperature, T<sub>max</sub> (K)</th>
+<th data-quarto-table-cell-role="th">Mars mission time (h)</th>
+<th data-quarto-table-cell-role="th">Mars peak bit temperature, T<sub>max</sub> (K)</th>
+<th data-quarto-table-cell-role="th">Faults (count)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Percussive specific energy ratio, c<sub>p</sub> = SE<sub>p</sub> / σ<sub>c</sub></td>
+<td>1.0</td>
+<td>0.94</td>
+<td>108</td>
+<td>0.68</td>
+<td>198</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>Percussive specific energy ratio, c<sub>p</sub> = SE<sub>p</sub> / σ<sub>c</sub></td>
+<td>3.0</td>
+<td>0.96</td>
+<td>120</td>
+<td>0.76</td>
+<td>205</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>Percussive specific energy ratio, c<sub>p</sub> = SE<sub>p</sub> / σ<sub>c</sub></td>
+<td>5.0</td>
+<td>0.98</td>
+<td>129</td>
+<td>0.84</td>
+<td>211</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>Fraction of bit-face heat entering the bit</td>
+<td>0.15</td>
+<td>0.96</td>
+<td>112</td>
+<td>0.76</td>
+<td>200</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>Fraction of bit-face heat entering the bit</td>
+<td>0.25</td>
+<td>0.96</td>
+<td>120</td>
+<td>0.76</td>
+<td>205</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>Fraction of bit-face heat entering the bit</td>
+<td>0.35</td>
+<td>0.96</td>
+<td>128</td>
+<td>0.76</td>
+<td>210</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>Cuttings bulking factor, B</td>
+<td>1.3</td>
+<td>0.94</td>
+<td>120</td>
+<td>0.73</td>
+<td>205</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>Cuttings bulking factor, B</td>
+<td>1.5</td>
+<td>0.96</td>
+<td>120</td>
+<td>0.76</td>
+<td>205</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>Cuttings bulking factor, B</td>
+<td>1.6</td>
+<td>0.98</td>
+<td>120</td>
+<td>0.77</td>
+<td>205</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Three coefficients in the model are known only within a range from experiments. This table re-runs the full mission simulation with each one set to the low, central and high ends of its range, one at a time, with every other input at its baseline. The middle row of each group is the baseline design. The question is how far the mission results move when a coefficient moves.</p>
+<ul>
+<li><strong>Percussive specific energy ratio.</strong> This coefficient sets how much blow energy is needed to break a unit volume of ground, so it controls the drilling rate in the hard, icy layers. Raising it from 1 to 5 lengthens the Mars mission from 0.68 h to 0.84 h (23 %). On the Moon it goes from 0.94 h to 0.98 h. Mars is more sensitive because its icy layers are thicker, so more of the hole is drilled by percussion.</li>
+<li><strong>Fraction of bit-face heat entering the bit.</strong> This changes only the bit temperature, not the mission time. At the high end the peak bit temperature is 128 K on the Moon and 210 K on Mars. Both remain well below the critical temperatures of 163.5 K and 263.1 K.</li>
+<li><strong>Cuttings bulking factor.</strong> Loosened cuttings take up more volume than intact ground. A higher factor fills the flutes sooner and adds brushing time, but changes mission time by only a few minutes.</li>
+</ul>
+<p>No case produced a fault. The mission time is dominated by auger trips and warm-up rather than by cutting, so the design is not sensitive to the exact values of these coefficients within their published ranges.</p>
+</section>
+<section id="derivation-table" class="level2" data-number="11">
+<h2 data-number="11" class="anchored" data-anchor-id="derivation-table"><span class="header-section-number">11</span> Derivation table</h2>
+<p>Every derived quantity used on this site, with the equation that produces it. The table scrolls.</p>
+<div class="mbse-table-wrap mbse-table-scroll">
+<table class="mbse-table caption-top table">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Quantity (unit)</th>
+<th data-quarto-table-cell-role="th">Value</th>
+<th data-quarto-table-cell-role="th">Equation</th>
+<th data-quarto-table-cell-role="th">Note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>hammer_mass_kg</code> (kg)</td>
+<td>0.379</td>
+<td><code>m_h = rho pi (r_o^2 - r_i^2) h</code></td>
+<td>hammer ring 56 mm OD on the 18 mm spline x 22 mm</td>
+</tr>
+<tr class="even">
+<td><code>wob_lift_off_moon_n</code> (N)</td>
+<td>72.9</td>
+<td><code>WOB_lim = m g</code></td>
+<td>lander lift-off limit, moon</td>
+</tr>
+<tr class="odd">
+<td><code>wob_setpoint_moon_n</code> (N)</td>
+<td>52.07</td>
+<td><code>WOB_set = m g / FOS</code></td>
+<td>FOS = 1.4</td>
+</tr>
+<tr class="even">
+<td><code>wob_lift_off_mars_n</code> (N)</td>
+<td>166.95</td>
+<td><code>WOB_lim = m g</code></td>
+<td>lander lift-off limit, mars</td>
+</tr>
+<tr class="odd">
+<td><code>wob_setpoint_mars_n</code> (N)</td>
+<td>119.25</td>
+<td><code>WOB_set = m g / FOS</code></td>
+<td>FOS = 1.4</td>
+</tr>
+<tr class="even">
+<td><code>impact_energy_j</code> (J)</td>
+<td>2.25</td>
+<td><code>E = 1/2 k h^2</code></td>
+<td>spring energy released per blow</td>
+</tr>
+<tr class="odd">
+<td><code>blow_frequency_hz</code> (Hz)</td>
+<td>26.0</td>
+<td><code>f = n_lobes x cam_rps</code></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>hammer_impact_velocity_m_s</code> (m/s)</td>
+<td>3.446</td>
+<td><code>v = sqrt(2E/m_h)</code></td>
+<td>m_h = 0.379 kg from CAD hammer geometry</td>
+</tr>
+<tr class="odd">
+<td><code>impact_peak_force_n</code> (N)</td>
+<td>5416.7</td>
+<td><code>F = v Z_h Z_r / (Z_h + Z_r), Z = rho c A</code></td>
+<td>1-D stress-wave impact (Lundberg 1982)</td>
+</tr>
+<tr class="even">
+<td><code>hammer_spring_natural_hz</code> (Hz)</td>
+<td>91.4</td>
+<td><code>f_n = sqrt(k/m_h) / 2pi</code></td>
+<td>must exceed 2 x blow rate so the hammer re-seats each cycle</td>
+</tr>
+<tr class="odd">
+<td><code>percussive_min_wob_n</code> (N)</td>
+<td>44.1</td>
+<td><code>W_min = m_h v (1+e) f</code></td>
+<td>mean impulse flux the bit must react to stay seated</td>
+</tr>
+<tr class="even">
+<td><code>hammer_spring_wire_mm</code> (mm)</td>
+<td>6.0</td>
+<td><code>min d : all spring checks pass</code></td>
+<td>17-7PH; coil D = (G d^4 / 8 k n_a)^(1/3) = 31.5 mm, index 5.25</td>
+</tr>
+<tr class="odd">
+<td><code>hammer_spring_active_coils</code></td>
+<td>3.14</td>
+<td><code>n_a = G d^4 / (8 D^3 k)</code></td>
+<td>&gt;= 3 for a linear rate; squared &amp; ground ends</td>
+</tr>
+<tr class="even">
+<td><code>hammer_spring_free_length_mm</code> (mm)</td>
+<td>37.8</td>
+<td><code>L0 = (n_a + 2) d + (1 + xi) h</code></td>
+<td>solid 30.9 mm, clash allowance xi = 0.15</td>
+</tr>
+<tr class="odd">
+<td><code>hammer_spring_shear_mpa</code> (MPa)</td>
+<td>360.3</td>
+<td><code>tau = K_w 8 F D / (pi d^3)</code></td>
+<td>F = k h = 750 N; allowable 690 MPa</td>
+</tr>
+<tr class="even">
+<td><code>hammer_spring_fatigue_fos</code></td>
+<td>1.55</td>
+<td><code>n = S_sa / tau_a (Zimmerli-Goodman, r = 1)</code></td>
+<td>unpeened Zimmerli data, S_su = 0.67 S_ut; required 1.5</td>
+</tr>
+<tr class="odd">
+<td><code>hammer_spring_slenderness</code></td>
+<td>1.2</td>
+<td><code>L0 / D &lt; 2.63 / alpha</code></td>
+<td>alpha = 0.5 (ends on parallel plates): absolutely stable, no buckling</td>
+</tr>
+<tr class="even">
+<td><code>hammer_spring_surge_hz</code> (Hz)</td>
+<td>682.0</td>
+<td><code>f = 1/2 sqrt(k / m_coils)</code></td>
+<td>&gt;= 15 x 26 Hz blow rate</td>
+</tr>
+<tr class="odd">
+<td><code>percussive_mech_power_w</code> (W)</td>
+<td>58.5</td>
+<td><code>P = E f</code></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>percussive_elec_power_w</code> (W)</td>
+<td>76.47</td>
+<td><code>P_el = E f / (eta_m eta_cam)</code></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>bit_edge_line_load_n_mm</code> (N/mm)</td>
+<td>270.8</td>
+<td><code>w = F_imp / (n_c L_edge)</code></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>bit_edge_radius_mm</code> (mm)</td>
+<td>1.0</td>
+<td><code>R &gt;= w E* / (pi (sigma_c/FOS)^2)</code></td>
+<td>Hertz line contact on a basalt clast; minimum 0.92 mm rounded up to 0.25 mm</td>
+</tr>
+<tr class="odd">
+<td><code>bit_edge_contact_fos</code></td>
+<td>2.08</td>
+<td><code>sigma_c,WC / p_max</code></td>
+<td>p_max = 2399 MPa on the clast</td>
+</tr>
+<tr class="even">
+<td><code>bit_crushing_ratio</code></td>
+<td>35.7</td>
+<td><code>p_max(rock) / UCS_max</code></td>
+<td>must exceed 3.0; hardest layer UCS 22 MPa</td>
+</tr>
+<tr class="odd">
+<td><code>bit_wedge_angle_deg</code> (deg)</td>
+<td>85.0</td>
+<td><code>beta = 90 - alpha - gamma</code></td>
+<td>rake -10.0 deg, clearance 15.0 deg</td>
+</tr>
+<tr class="even">
+<td><code>bit_index_angle_deg</code> (deg)</td>
+<td>34.6</td>
+<td><code>theta = 360 N / (60 f)</code></td>
+<td>rotation between hammer blows</td>
+</tr>
+<tr class="odd">
+<td><code>bit_index_spacing_gauge_mm</code> (mm)</td>
+<td>6.34</td>
+<td><code>s = a theta</code></td>
+<td>each blow strikes fresh rock this far from the previous crater at the gauge</td>
+</tr>
+<tr class="even">
+<td><code>auger_endurance_limit_mpa</code> (MPa)</td>
+<td>326.6</td>
+<td><code>S_e = 0.5 S_u k_a k_e</code></td>
+<td>Marin-corrected</td>
+</tr>
+<tr class="odd">
+<td><code>sampling_flute_depth_mm</code> (mm)</td>
+<td>7.0</td>
+<td><code>h_f = (D_o - d_root)/2</code></td>
+<td>deepest flute whose root passes fatigue FOS 1.5 and yield FOS 1.25</td>
+</tr>
+<tr class="even">
+<td><code>sampling_root_od_mm</code> (mm)</td>
+<td>6.0</td>
+<td><code>min d_r : n_Goodman &gt;= FOS</code></td>
+<td>impact 191.6 MPa + torsion 191.0 MPa -&gt; n_f = 1.63</td>
+</tr>
+<tr class="odd">
+<td><code>sampling_pitch_mm</code> (mm)</td>
+<td>13.0</td>
+<td><code>p &lt;= mu_f pi d_mean</code></td>
+<td>helix angle at mean radius below friction angle atan(0.32) = 17.7 deg</td>
+</tr>
+<tr class="even">
+<td><code>sampling_length_mm</code> (mm)</td>
+<td>225</td>
+<td><code>L_s = z_bite A_hole B m / A_flute</code></td>
+<td>A_flute = 283 mm^2 per mm, bulking 1.5, margin 1.2</td>
+</tr>
+<tr class="odd">
+<td><code>choking_onset_bite_m</code> (m)</td>
+<td>0.1225</td>
+<td><code>z_crit = L_s A_flute / (A_hole B)</code></td>
+<td>continuous penetration at which sampling flutes are full</td>
+</tr>
+<tr class="even">
+<td><code>transport_helix_angle_deg</code> (deg)</td>
+<td>36.13</td>
+<td><code>alpha* = 45 - phi_f/2</code></td>
+<td>maximises screw efficiency tan(a)/tan(a+phi) (Shigley power-screw result)</td>
+</tr>
+<tr class="odd">
+<td><code>transport_pitch_mm</code> (mm)</td>
+<td>39.0</td>
+<td><code>p = pi d_mean tan(alpha*)</code></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>conveying_lift_ratio_moon</code></td>
+<td>0.64</td>
+<td><code>mu_w omega^2 r / g</code></td>
+<td>&lt; 1: cuttings are not lifted continuously -&gt; they stay in the sampling flutes (bite drilling). Continuous conveying would need &gt; 188 rpm</td>
+</tr>
+<tr class="odd">
+<td><code>conveying_lift_ratio_mars</code></td>
+<td>0.279</td>
+<td><code>mu_w omega^2 r / g</code></td>
+<td>&lt; 1: cuttings are not lifted continuously -&gt; they stay in the sampling flutes (bite drilling). Continuous conveying would need &gt; 284 rpm</td>
+</tr>
+<tr class="even">
+<td><code>wearflat_total_length_mm</code> (mm)</td>
+<td>0.66</td>
+<td><code>l = n_c r_edge (l/r)</code></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>bit_junk_slot_width_mm</code> (mm)</td>
+<td>8.0</td>
+<td><code>2 w d &gt;= A_channel</code></td>
+<td>2 slots x 5.0 mm deep; flute channel 80 mm^2</td>
+</tr>
+<tr class="even">
+<td><code>bit_braze_fos</code></td>
+<td>15.0</td>
+<td><code>tau_braze / (F_t / A_braze)</code></td>
+<td>tangential force 619 N per insert at the torque limit</td>
+</tr>
+<tr class="odd">
+<td><code>bit_joint_shoulder_stress_mpa</code> (MPa)</td>
+<td>61.6</td>
+<td><code>F_imp / A_shoulder</code></td>
+<td>FOS 16.2 on yield; impact passes through the shoulder, not the thread</td>
+</tr>
+<tr class="even">
+<td><code>bit_joint_thread_shear_mpa</code> (MPa)</td>
+<td>5.35</td>
+<td><code>~ 4 T / (pi d_p^2 L_e)</code></td>
+<td>right-hand thread: drilling torque tightens the joint</td>
+</tr>
+<tr class="odd">
+<td><code>planetary_teeth</code> (sun/planet/ring)</td>
+<td>12/36/84</td>
+<td><code>i = 1 + Z_r/Z_s, Z_p = (Z_r - Z_s)/2</code></td>
+<td>3 planets: assembly (Z_s+Z_r)/n integer True, neighbour clearance True</td>
+</tr>
+<tr class="even">
+<td><code>rotary_motor_torque_nm</code> (N m)</td>
+<td>0.462</td>
+<td><code>T_m = T_max / (i eta_g)</code></td>
+<td>6.5 N m at the spindle through 16:1, eta = 0.88</td>
+</tr>
+<tr class="odd">
+<td><code>rotary_motor_rotor_d_mm</code> (mm)</td>
+<td>30.9</td>
+<td><code>D_r = (4 T / (pi TRV lambda))^(1/3)</code></td>
+<td>TRV = 20 kN m/m^3, L/D = 1.0; stack 30.9 mm</td>
+</tr>
+<tr class="even">
+<td><code>rotary_motor_stator_od_mm</code> (mm)</td>
+<td>54.1</td>
+<td><code>D_s = D_r / split ratio</code></td>
+<td>frameless BLDC kit class; 3840 rpm max, 186 W shaft power at the torque limit</td>
+</tr>
+<tr class="odd">
+<td><code>planetary_module_mm</code> (mm)</td>
+<td>0.5</td>
+<td><code>min m : sigma_b &lt;= S_t/S_F and sigma_H &lt;= S_c/S_H</code></td>
+<td>sun mesh F_t = K_g T_s / (n r_s); bending FOS 3.36, contact FOS 1.48</td>
+</tr>
+<tr class="even">
+<td><code>spur_module_mm</code> (mm)</td>
+<td>1.25</td>
+<td><code>Lewis: sigma = K_v F_t / (b m Y); AGMA: sigma_H = Z_E sqrt(K_v F_t / (b d I))</code></td>
+<td>12T/24T, centre distance 22.5 mm; bending FOS 3.1, contact FOS 1.34</td>
+</tr>
+<tr class="odd">
+<td><code>spur_bending_mpa</code> (MPa)</td>
+<td>122.6</td>
+<td><code>sigma_b = K_v F_t / (b m Y)</code></td>
+<td>S_t = 380 MPa (9310 carburised)</td>
+</tr>
+<tr class="even">
+<td><code>spur_contact_mpa</code> (MPa)</td>
+<td>923.4</td>
+<td><code>sigma_H = Z_E sqrt(K_v F_t / (b d_p I))</code></td>
+<td>S_c = 1240 MPa</td>
+</tr>
+<tr class="odd">
+<td><code>hammer_fall_time_ms</code> (ms)</td>
+<td>2.74</td>
+<td><code>t_f = (pi/2) sqrt(m_h / k)</code></td>
+<td>hammer released from full lift</td>
+</tr>
+<tr class="even">
+<td><code>cam_dwell_deg</code> (deg)</td>
+<td>30.0</td>
+<td><code>delta &gt;= margin x 360 n_cam t_f</code></td>
+<td>margin 2.0, rounded up to 5 deg</td>
+</tr>
+<tr class="odd">
+<td><code>cam_rise_deg</code> (deg)</td>
+<td>150.0</td>
+<td><code>beta = 360/n_lobes - delta</code></td>
+<td>cycloidal rise, then a cliff that drops the hammer</td>
+</tr>
+<tr class="even">
+<td><code>cam_mean_radius_mm</code> (mm)</td>
+<td>35.0</td>
+<td><code>R_m = r_hammer + spigot gap + w_roller/2</code></td>
+<td>roller track radius</td>
+</tr>
+<tr class="odd">
+<td><code>cam_pressure_angle_deg</code> (deg)</td>
+<td>8.7</td>
+<td><code>phi = atan((ds/dtheta)_max / R_m), (ds/dtheta)_max = 2 h_c / beta</code></td>
+<td>&lt;= 30.0 deg (cycloidal: zero acceleration at both ends of the rise)</td>
+</tr>
+<tr class="even">
+<td><code>cam_torque_peak_nm</code> (N m)</td>
+<td>2.641</td>
+<td><code>T = k s(theta) s'(theta) / eta_cam</code></td>
+<td>RMS 1.253, mean 0.796 N m</td>
+</tr>
+<tr class="odd">
+<td><code>cam_torque_mean_check_nm</code> (N m)</td>
+<td>0.796</td>
+<td><code>T_mean = n_lobes E / (2 pi eta_cam)</code></td>
+<td>energy balance agrees with the integrated profile</td>
+</tr>
+<tr class="even">
+<td><code>cam_roller_contact_mpa</code> (MPa)</td>
+<td>528.0</td>
+<td><code>p = sqrt(F E* / (pi R L))</code></td>
+<td>F = k h / 2 = 375 N per roller (two rollers); allowable 992 MPa</td>
+</tr>
+<tr class="odd">
+<td><code>cam_gear_module_mm</code> (mm)</td>
+<td>1.75</td>
+<td><code>m &gt;= (D_brg + 2 rim) / (Z - 2.5) and AGMA checks</code></td>
+<td>18T/54T ring gear on the cam; packaging-driven, bending FOS 35.93</td>
+</tr>
+<tr class="even">
+<td><code>percussive_motor_torque_nm</code> (N m)</td>
+<td>0.426</td>
+<td><code>T_m = T_cam,rms / (i eta)</code></td>
+<td>peak 0.898 N m; 2790 rpm at nominal spindle speed</td>
+</tr>
+<tr class="odd">
+<td><code>percussive_motor_stator_od_mm</code> (mm)</td>
+<td>52.7</td>
+<td><code>D_s = (4 T / (pi TRV lambda))^(1/3) / split</code></td>
+<td>sized on RMS (thermal) torque</td>
+</tr>
+<tr class="even">
+<td><code>spline_flank_pressure_mpa</code> (MPa)</td>
+<td>4.56</td>
+<td><code>p = 2 T / (d z h_w L K), h_w = 0.9 m</code></td>
+<td>Involute spline DIN 5480 W18x1.25x13, 16 mm anvil engagement; allowable 40 MPa (sliding hub)</td>
+</tr>
+<tr class="odd">
+<td><code>spindle_torsion_fos</code></td>
+<td>60.4</td>
+<td><code>tau = 16 T d / (pi (d^4 - d_i^4)); n = S_y / (sqrt3 tau)</code></td>
+<td>at the spline root d = 15.25 mm, bore 6 mm, tau = 9.6 MPa</td>
+</tr>
+<tr class="even">
+<td><code>leadscrew_offset_mm</code> (mm)</td>
+<td>65.0</td>
+<td><code>y_ls &gt;= R_housing + r_screw + 2 mm</code></td>
+<td>Tr16 screw passes the cam-gear housing; bronze nut clamped in the top yoke</td>
+</tr>
+<tr class="odd">
+<td><code>drill_head_height_mm</code> (mm)</td>
+<td>321.2</td>
+<td><code>sum of the derived axial stack</code></td>
+<td>carriage underside to the top of the load-cell yoke</td>
+</tr>
+<tr class="even">
+<td><code>spindle_bearing_l10_h</code> (h)</td>
+<td>104061.0</td>
+<td><code>L10h = (C/P)^3 10^6 / (60 n); P = 0.67 F_r + 1.41 F_a</code></td>
+<td>SKF 7004 ACD/P4A pair, back-to-back: C = 1.62 C_single; F_a = WOB_lim + k h = 917 N, F_r = 126 N; required 400 h</td>
+</tr>
+<tr class="odd">
+<td><code>spindle_bearing_s0</code></td>
+<td>10.1</td>
+<td><code>s0 = C0 / (F_r + 0.76 F_a)</code></td>
+<td>&gt;= 2.0</td>
+</tr>
+<tr class="even">
+<td><code>upper_bearing_l10_h</code> (h)</td>
+<td>35847.0</td>
+<td><code>L10h = (C/F_r)^3 10^6 / (60 n)</code></td>
+<td>SKF 61804 (thin section), floating; F_r = 588 N from the overhung 24T gear (F = 461 N)</td>
+</tr>
+<tr class="odd">
+<td><code>cam_bearing_l10_h</code> (h)</td>
+<td>18528.0</td>
+<td><code>P = 0.56 F_r + Y F_a (Y from f0 F_a / C0)</code></td>
+<td>SKF 61812 (thin section): F_a = k h = 750 N, F_r = 59 N, Y = 1.52, 930 rpm; s0 = 27.8</td>
+</tr>
+<tr class="even">
+<td><code>load_cell_capacity_n</code> (N)</td>
+<td>500.0</td>
+<td><code>min standard range &gt;= factor x WOB_lim,max</code></td>
+<td>334 N needed; error 1.25 N vs 5.0 N contact threshold</td>
+</tr>
+<tr class="odd">
+<td><code>leadscrew_nut_pressure_mpa</code> (MPa)</td>
+<td>0.34</td>
+<td><code>p = F / (pi d_2 h_1 n_t)</code></td>
+<td>Tr16x4 bronze nut 24 mm long, F = 179 N; allowable 11 MPa</td>
+</tr>
+<tr class="even">
+<td><code>leadscrew_self_locking</code></td>
+<td>True</td>
+<td><code>mu / cos(alpha/2) &gt; tan(lambda)</code></td>
+<td>lead angle 5.20 deg: WOB cannot back-drive the screw when the feed motor is unpowered</td>
+</tr>
+<tr class="odd">
+<td><code>flight_stall_plug_pressure_kpa</code> (kPa)</td>
+<td>3483.6</td>
+<td><code>sigma = T_max / (A_tr r_m tan(alpha + phi_f))</code></td>
+<td>largest plug pressure the motor can push against before it stalls (screw-torque model)</td>
+</tr>
+<tr class="even">
+<td><code>flight_root_bending_mpa</code> (MPa)</td>
+<td>65.3</td>
+<td><code>sigma = 3 q L^2 / t^2</code></td>
+<td>flight strip L = 3.0 mm, t = 1.2 mm; yield FOS 15.3</td>
+</tr>
+<tr class="odd">
+<td><code>flight_impact_inertia_mpa</code> (MPa)</td>
+<td>135.6</td>
+<td><code>q = DLF rho t a, a = (sigma/rho c) / (2 L_h / c)</code></td>
+<td>wave-front acceleration 39,394 g, DLF 2.0: cycles at the blow rate</td>
+</tr>
+<tr class="even">
+<td><code>flight_required_cycles</code></td>
+<td>37400000.0</td>
+<td><code>N = f_blow x t_drill x life factor</code></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>flight_weld_shear_mpa</code> (MPa)</td>
+<td>56.8</td>
+<td><code>tau = sqrt((M'/(a d_c))^2 + (V'/2a)^2), a = 0.707 w</code></td>
+<td>static: 0.8 mm fillets, allowable 0.30 F_EXX = 321 MPa (ratio 5.6)</td>
+</tr>
+<tr class="even">
+<td><code>flight_weld_fatigue_life_cycles</code></td>
+<td>200000.0</td>
+<td><code>N = 2e6 (FAT / dsigma)^3 above the CAFL</code></td>
+<td>stress range 136 MPa vs constant-amplitude limit 37 MPa (IIW FAT 63): fails the 3.7e+07-cycle requirement -&gt; welded flights rejected</td>
+</tr>
+<tr class="odd">
+<td><code>flight_root_fatigue_fos</code></td>
+<td>2.21</td>
+<td><code>1 / (K_f sigma_a / S_e + K_f sigma_m / S_u)</code></td>
+<td>integral flight, root fillet r = 0.5 t, K_f = 1.36; plug load as mean, blows as alternating</td>
+</tr>
+<tr class="even">
+<td><code>shank_braze_lap_mm</code> (mm)</td>
+<td>3.0</td>
+<td><code>L_b = max(3 t, 2 T FOS / (pi d^2 tau_b))</code></td>
+<td>torque alone needs 0.18 mm; the 3 t lap rule (AWS) governs</td>
+</tr>
+<tr class="odd">
+<td><code>shank_braze_fos</code></td>
+<td>18.8</td>
+<td><code>tau_b / sqrt(tau_T^2 + tau_pull^2)</code></td>
+<td>torque 7.0 MPa + pull-out at the 500 N load-cell rating 3.8 MPa; impact bears on the socket floor</td>
+</tr>
+<tr class="even">
+<td><code>hex_shank_torsion_mpa</code> (MPa)</td>
+<td>12.9</td>
+<td><code>tau = 16 T s / (pi (s^4 - d_b^4))</code></td>
+<td>inscribed circle of the 13.86 mm A/F hex (conservative vs Roark's hexagon); bore 6 mm</td>
+</tr>
+<tr class="odd">
+<td><code>hex_socket_flank_pressure_mpa</code> (MPa)</td>
+<td>3.47</td>
+<td><code>p = 2 T / (d_m h L n k)</code></td>
+<td>6 flats, 52 mm in the anvil socket; allowable 40 MPa (as the spline)</td>
+</tr>
+<tr class="even">
+<td><code>hex_shank_impact_stress_mpa</code> (MPa)</td>
+<td>47.3</td>
+<td><code>F_imp / A_net (pin section)</code></td>
+<td>net hex area 114 mm^2; yield FOS 21.1</td>
+</tr>
+<tr class="odd">
+<td><code>retention_pin_shear_mpa</code> (MPa)</td>
+<td>35.4</td>
+<td><code>tau = F / (2 pi d^2/4)</code></td>
+<td>double shear at the 500 N load-cell rating (the largest pull the feed can apply and still measure)</td>
+</tr>
+<tr class="even">
+<td><code>hex_shank_engagement_mm</code> (mm)</td>
+<td>52.0</td>
+<td><code>hex_top - anvil_bottom (drill-head stack)</code></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>auger_string_mass_kg</code> (kg)</td>
+<td>0.545</td>
+<td><code>sum rho (A_tube + A_flight t/p) ds</code></td>
+<td>bit to anvil; flights add mass, not bending stiffness</td>
+</tr>
+<tr class="even">
+<td><code>string_buckling_load_n</code> (N)</td>
+<td>3294.0</td>
+<td><code>K phi = P K_g phi (bushing + hole wall as supports)</code></td>
+<td>lowest over the stroke at 0.0 m; FOS 19.7 on the 167 N lift-off WOB</td>
+</tr>
+<tr class="odd">
+<td><code>string_buckling_no_bushing_n</code> (N)</td>
+<td>581.0</td>
+<td><code>clamped at the anvil, pinned at the bit only</code></td>
+<td>FOS 3.5: still stable, the bushing is not needed for buckling</td>
+</tr>
+<tr class="even">
+<td><code>string_lateral_f1_hz</code> (Hz)</td>
+<td>46.0</td>
+<td><code>K phi = omega^2 M phi, under the lift-off WOB</code></td>
+<td>lowest over the stroke (start of the hole, longest free span); 1.77 x the 26 Hz blow rate</td>
+</tr>
+<tr class="odd">
+<td><code>string_lateral_no_bushing_hz</code> (Hz)</td>
+<td>19.4</td>
+<td><code>same model without the mast-foot guide bushing</code></td>
+<td>0.75 x blow rate: inside the +/-20 % band, so the bushing is required</td>
+</tr>
+<tr class="even">
+<td><code>string_whirl_margin</code></td>
+<td>11.5</td>
+<td><code>f1 / (N_max / 60)</code></td>
+<td>first lateral mode vs the fastest shaft speed (no whirl critical speed in the RPM range)</td>
+</tr>
+<tr class="odd">
+<td><code>string_torsional_f1_hz</code> (Hz)</td>
+<td>393.0</td>
+<td><code>K_t phi = omega^2 J phi (clamped at the anvil, bit free)</code></td>
+<td>15.1 x the blow rate</td>
+</tr>
+<tr class="even">
+<td><code>string_windup_deg</code> (deg)</td>
+<td>13.24</td>
+<td><code>theta = T int ds / GJ</code></td>
+<td>at the 6.5 N m limit; the 6/4 mm sampling root is 80 % of the compliance</td>
+</tr>
+<tr class="odd">
+<td><code>string_windup_energy_j</code> (J)</td>
+<td>0.751</td>
+<td><code>U = T theta / 2</code></td>
+<td>released into the bit if it breaks free after a stall (stick-slip)</td>
+</tr>
+<tr class="even">
+<td><code>transport_tube_torsion_mpa</code> (MPa)</td>
+<td>26.2</td>
+<td><code>tau = T r_o / J</code></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>thermocouple_path_fill</code></td>
+<td>0.062</td>
+<td><code>(d_lead / d_bore)^2</code></td>
+<td>narrowest bore: sampling root 4 mm; lead 1.0 mm runs bit -&gt; tube -&gt; spindle -&gt; slip ring</td>
+</tr>
+<tr class="even">
+<td><code>brush_tuft_count</code></td>
+<td>14</td>
+<td><code>min N: tufts clear the flights (worm-wheel entry) and fit the hub</code></td>
+<td>tuft 9.4 mm thick in an 11.4 mm flute (backlash 1.0 mm each side), 1 mm hub ligament</td>
+</tr>
+<tr class="odd">
+<td><code>brush_pitch_radius_mm</code> (mm)</td>
+<td>28.97</td>
+<td><code>R_p = N p / (2 pi)</code></td>
+<td>wheel circular pitch = flight pitch 13.0 mm</td>
+</tr>
+<tr class="even">
+<td><code>brush_axle_offset_mm</code> (mm)</td>
+<td>35.47</td>
+<td><code>a = R_p + r_m</code></td>
+<td>auger axis to brush axle (pitch circle on the mean flute radius)</td>
+</tr>
+<tr class="odd">
+<td><code>brush_tip_radius_mm</code> (mm)</td>
+<td>32.67</td>
+<td><code>R_t = a - r_root + delta</code></td>
+<td>tips pass 0.2 mm beyond the flute root</td>
+</tr>
+<tr class="even">
+<td><code>brush_tuft_lean_deg</code> (deg)</td>
+<td>17.66</td>
+<td><code>lambda = atan(p / (2 pi r_m))</code></td>
+<td>tufts lean at the flight lead angle (worm-wheel helix)</td>
+</tr>
+<tr class="odd">
+<td><code>brush_speed_ratio</code></td>
+<td>14</td>
+<td><code>omega_a / omega_b = N (single-start worm)</code></td>
+<td>4.64 rpm at the 65 rpm transfer speed; transport pitch / sampling pitch = 3.00</td>
+</tr>
+<tr class="even">
+<td><code>cuttings_passive_pressure_kpa</code> (kPa)</td>
+<td>4.44</td>
+<td><code>sigma_p = 2 c sqrt(K_p) + gamma h K_p</code></td>
+<td>Rankine passive, K_p = 4.60; c = 1.0 kPa, Mars gravity, densest layer bulked</td>
+</tr>
+<tr class="odd">
+<td><code>brush_contact_force_budget_n</code> (N)</td>
+<td>0.441</td>
+<td><code>F &lt;= k_string x lead-in chamfer</code></td>
+<td>string stiffness at the brush 294 N/m (bit tip) with the bit above the guide bushing</td>
+</tr>
+<tr class="even">
+<td><code>bristle_wire_mm</code> (mm)</td>
+<td>0.1</td>
+<td><code>thickest stock wire: Goodman, force budget, strip pressure</code></td>
+<td>17-7PH, free length 9.2 mm, 13787 bristles per tuft (60% fill)</td>
+</tr>
+<tr class="odd">
+<td><code>bristle_stress_mpa</code> (MPa)</td>
+<td>72.0</td>
+<td><code>sigma = 3 E d delta / (2 L^2)</code></td>
+<td>Goodman FOS 12.75 (0 -&gt; sigma once per brush turn)</td>
+</tr>
+<tr class="even">
+<td><code>bristle_tip_pressure_kpa</code> (kPa)</td>
+<td>58.8</td>
+<td><code>p = (3/16) phi E d^2 delta / L^3</code></td>
+<td>13 x the cuttings' passive pressure: the root is scraped clean</td>
+</tr>
+<tr class="odd">
+<td><code>brush_contact_force_n</code> (N)</td>
+<td>0.362</td>
+<td><code>N = sum 3 E I delta_i / L^3 over the root contact</code></td>
+<td>82 % of the force budget</td>
+</tr>
+<tr class="even">
+<td><code>brush_sweep_speed_mm_s</code> (mm/s)</td>
+<td>2.61</td>
+<td><code>v = (2 sqrt(R_t^2 - (a - r_root)^2) / N_pass) x n/60</code></td>
+<td>root-contact patch 7.2 mm along the auger</td>
+</tr>
+<tr class="odd">
+<td><code>transfer_duration_s</code> (s)</td>
+<td>87</td>
+<td><code>t = L_s / v_sweep</code></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>brush_spring_preload_n</code> (N)</td>
+<td>0.362</td>
+<td><code>F_pre = N (arm floats on the bristles)</code></td>
+<td>preload equals the required bristle force; the arm follows the string as it deflects</td>
+</tr>
+<tr class="odd">
+<td><code>brush_spring_wire_mm</code> (mm)</td>
+<td>0.8</td>
+<td><code>thinnest stock wire: K_i 32 M / (pi d^3) x FOS &lt;= S_sy/0.577</code></td>
+<td>torsion spring on the 4 mm pivot pin: index 6.6, 3 coils, wound up 14 deg, 447 MPa</td>
+</tr>
+<tr class="even">
+<td><code>brush_force_rise_crown_pct</code> (%)</td>
+<td>3.73</td>
+<td><code>dF/F = k_t (step / L_arm) / (L_arm F)</code></td>
+<td>when the 0.5 mm gauge step of the bit crown lifts the brush</td>
+</tr>
+<tr class="odd">
+<td><code>brush_bushing_pv_pa_m_s</code> (Pa m/s)</td>
+<td>8.7</td>
+<td><code>PV = (F/2)/(d L) x omega_b d/2</code></td>
+<td>Vespel SP-3 flanged bushing: 0.0025 % of the 0.35 MPa m/s limit</td>
+</tr>
+<tr class="even">
+<td><code>brush_drag_torque_nm</code> (N m)</td>
+<td>0.00294</td>
+<td><code>T = F_plough r_m + mu N r_root + T_bush / N</code></td>
+<td>plough 2.26 + bristle friction 0.65 + brush bushings 0.019 mN m (full flutes)</td>
+</tr>
+<tr class="odd">
+<td><code>brush_idle_drag_torque_nm</code> (N m)</td>
+<td>0.00067</td>
+<td><code>T = mu N r_root + T_bush / N</code></td>
+<td>empty flights passing the brush while drilling</td>
+</tr>
+<tr class="even">
+<td><code>bite_cuttings_volume_cm3</code> (cm^3)</td>
+<td>52.0</td>
+<td><code>V = z_bite A_hole B</code></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>chute_angle_deg</code> (deg)</td>
+<td>32</td>
+<td><code>theta &gt;= atan(mu_w) + margin</code></td>
+<td>wall friction angle 21.8 deg on bronze (g-independent for dry flow)</td>
+</tr>
+<tr class="even">
+<td><code>sample_cup_id_mm</code> (mm)</td>
+<td>37.8</td>
+<td><code>pi/4 D^2 h &gt;= V_bite x margin</code></td>
+<td>62.4 cm^3 (120% of one bite); 55.5 mm deep, the most the 30 mm ground clearance under the foot plate allows</td>
+</tr>
+<tr class="odd">
+<td><code>chute_flow_depth_mm</code> (mm)</td>
+<td>0.193</td>
+<td><code>h = Q / (w sqrt(2 g' L/2)), g' = g (sin th - mu cos th)</code></td>
+<td>brush delivers 0.60 cm^3/s; lunar sliding flow, 8 mm side walls; run 36 mm</td>
+</tr>
+<tr class="even">
+<td><code>carousel_stations</code></td>
+<td>11</td>
+<td><code>N = ceil(depth / bite) cups + blank station</code></td>
+<td>10 sealed cups, one per bite; the blank station sits under the port at launch and after the last bite</td>
+</tr>
+<tr class="odd">
+<td><code>carousel_pitch_radius_mm</code> (mm)</td>
+<td>82.0</td>
+<td><code>R = N_st (D_f + gap) / (2 pi)</code></td>
+<td>seal flange 42.8 mm, 4 mm between neighbours; axis 125 mm fore of the auger, port-cup flange 2.0 mm from the guide-bushing flange</td>
+</tr>
+<tr class="even">
+<td><code>carousel_mass_kg</code> (kg)</td>
+<td>0.824</td>
+<td><code>sum rho V (1 + MGA)</code></td>
+<td>turntable 272 g, 10 cups x 23 g, index motor 185 g; hung from the mast foot plate, which grows a disc of radius 105 mm to cover the cups</td>
+</tr>
+<tr class="odd">
+<td><code>carousel_index_torque_nm</code> (N m)</td>
+<td>0.3128</td>
+<td><code>T = 2 (T_seal + T_hub) + 1.25 J alpha</code></td>
+<td>face seals 156 mN m + hub bearing 0.133 mN m + inertia 0.811 mN m (J = 81.3 kg cm^2, all cups full); motor rated 0.70 N m</td>
+</tr>
+<tr class="even">
+<td><code>carousel_index_power_w</code> (W)</td>
+<td>0.075</td>
+<td><code>P = T omega_max / eta</code></td>
+<td>32.7 deg in 6 s while the auger descends, 0.45 J per index; empty and balanced at launch, so linear launch loads put no torque on the drive</td>
+</tr>
+<tr class="odd">
+<td><code>brush_stow_angle_deg</code> (deg)</td>
+<td>13.4</td>
+<td><code>psi = asin((R_t - (a - r_gauge) + c) / L_arm)</code></td>
+<td>arm swung away so the tips clear the bit gauge by 5 mm: launch lock + dry-heat bake-out position</td>
+</tr>
+<tr class="even">
+<td><code>mast_spine_fore_face_mm</code> (mm)</td>
+<td>108.0</td>
+<td><code>y = y_ls + r_flange + c + d_bracket</code></td>
+<td>rail brackets clear the Tr16 nut flange by 5 mm; carriage bushing pairs 262 mm apart</td>
+</tr>
+<tr class="odd">
+<td><code>rail_span_max_mm</code> (mm)</td>
+<td>801.0</td>
+<td><code>f = (pi / 2 L^2) sqrt(EI / m) &gt;= f_launch</code></td>
+<td>Ø16 rail between supports; end-supported over 1785 mm it would be 10 Hz</td>
+</tr>
+<tr class="even">
+<td><code>mast_stow_carriage_drop_mm</code> (mm)</td>
+<td>701.0</td>
+<td><code>argmax_delta min(f_screw, f_string)</code></td>
+<td>launch pose: carriage 701 mm below home, bit 491 mm through the foot. The nut splits the leadscrew and the guide bushing props the string (at home: screw 10 Hz, string 6 Hz)</td>
+</tr>
+<tr class="odd">
+<td><code>leadscrew_stowed_f1_hz</code> (Hz)</td>
+<td>22.1</td>
+<td><code>K phi = w^2 M phi: fixed top bearing, nut, support bearing</code></td>
+<td>local mode (not the stowed primary); launch load 15.0 g (Miles 3-sigma vs 15 g quasi-static)</td>
+</tr>
+<tr class="even">
+<td><code>leadscrew_launch_stress_mpa</code> (MPa)</td>
+<td>124.2</td>
+<td><code>sigma = M c / I (minor diameter d3)</code></td>
+<td>yield FOS 2.5 (AISI 1045); peak sag 8.44 mm vs 15 mm to the rail brackets</td>
+</tr>
+<tr class="odd">
+<td><code>string_stowed_f1_hz</code> (Hz)</td>
+<td>22.8</td>
+<td><code>auger-string FE model with the bushing as launch support</code></td>
+<td>local mode; launch load 15.0 g, peak bending 200 MPa (yield FOS 5.0), sag 9.71 mm</td>
+</tr>
+<tr class="even">
+<td><code>bit_side_force_n</code> (N)</td>
+<td>619.0</td>
+<td><code>F = T_max / r_gauge</code></td>
+<td>one insert hung up on a clast at the torque limit: the largest unbalanced lateral force at the bit</td>
+</tr>
+<tr class="odd">
+<td><code>bit_side_reaction_carriage_n</code> (N)</td>
+<td>77.9</td>
+<td><code>R_A = 3 a F / (2 L), R_B = F + R_A</code></td>
+<td>string clamped at the carriage, propped by the bushing 96 mm above the bit: the foot takes 697 N</td>
+</tr>
+<tr class="even">
+<td><code>mast_section</code> (mm)</td>
+<td>80x80x3 6061-T6 Al</td>
+<td><code>min (m_spine + m_posts + m_brackets) over feasible candidates</code></td>
+<td>64 of 240 (material, section, brackets, latch height) candidates pass the deployed checks</td>
+</tr>
+<tr class="odd">
+<td><code>mast_latch_height_mm</code> (mm)</td>
+<td>250.0</td>
+<td><code>latch posts: chosen with the section</code></td>
+<td>latch at z = 715 mm; 1182 mm of spine above it</td>
+</tr>
+<tr class="even">
+<td><code>rail_bracket_count</code></td>
+<td>4</td>
+<td><code>spans &lt;= L_max and the alignment budget</code></td>
+<td>4 brackets, 357 mm spans (2 needed for the launch mode alone); rail flex tilts the carriage 441 urad</td>
+</tr>
+<tr class="odd">
+<td><code>mast_spine_mass_kg</code> (kg)</td>
+<td>5.41</td>
+<td><code>m = rho A L (1 + MGA)</code></td>
+<td>A = 924 mm^2 over 1807 mm; MGA 20% (AIAA S-120A)</td>
+</tr>
+<tr class="even">
+<td><code>mast_deployed_f1_hz</code> (Hz)</td>
+<td>20.0</td>
+<td><code>K phi = w^2 M phi: hinge + latch, carriage over the drilling stroke</code></td>
+<td>20.0-21.2 Hz from the start of the hole to 1 m; outside the rotary 1-4 Hz, cam 13 Hz and blow 26 Hz bands (+/-20%); 2% from the nearest band edge</td>
+</tr>
+<tr class="odd">
+<td><code>mast_home_f1_hz</code> (Hz)</td>
+<td>18.1</td>
+<td><code>same model, carriage at home (no percussion there)</code></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>mast_stowed_f1_hz</code> (Hz)</td>
+<td>96.9</td>
+<td><code>hinge + hold-down(s), carriage at the stow pose</code></td>
+<td>requirement 50 Hz; 2 hold-down(s) (one at the crosshead alone gives 44.9 Hz)</td>
+</tr>
+<tr class="odd">
+<td><code>mast_alignment_offset_mm</code> (mm)</td>
+<td>0.486</td>
+<td><code>e = w_c + phi_c L_cb - w_b at WOB_lim (+ side force)</code></td>
+<td>the string leaves the carriage 0.486 mm off the bushing axis vs the 0.5 mm bushing clearance</td>
+</tr>
+<tr class="even">
+<td><code>bit_alignment_error_1m_mm</code> (mm)</td>
+<td>3.702</td>
+<td><code>e = theta (z_bush + 1 m), theta = offset / L_cb</code></td>
+<td>string tilt 697 arc-s about the bushing at full depth (hole-wall guidance ignored)</td>
+</tr>
+<tr class="odd">
+<td><code>mast_buckling_load_n</code> (N)</td>
+<td>111272.0</td>
+<td><code>P_cr = pi^2 EI_min / (2 L)^2 above the latch</code></td>
+<td>the spine is in tension while drilling; compression only when pulling a stuck string (510 N): FOS 218</td>
+</tr>
+<tr class="even">
+<td><code>mast_launch_stress_mpa</code> (MPa)</td>
+<td>46.8</td>
+<td><code>sigma = M c / I, launch g = max(QS, Miles 3-sigma)</code></td>
+<td>yield FOS 5.1 (&gt;= 1.25), ultimate FOS 5.6 (&gt;= 1.4)</td>
+</tr>
+<tr class="odd">
+<td><code>mast_rotating_mass_kg</code> (kg)</td>
+<td>24.92</td>
+<td><code>spine + rails + brackets + screw + carriage + crosshead + foot</code></td>
+<td>incl. the 3.2 kg carriage and string; MGA 20%</td>
+</tr>
+<tr class="even">
+<td><code>hinge_lug_load_n</code> (N)</td>
+<td>14525.0</td>
+<td><code>max(R_n/2, R_lat/2 + M/s, m g_ax / 2) at launch</code></td>
+<td>two Ti lugs 88 mm apart; the hinge also takes the launch load along the stowed mast</td>
+</tr>
+<tr class="odd">
+<td><code>hinge_pin_d_mm</code> (mm)</td>
+<td>6.0</td>
+<td><code>min d: tau FOS_u &lt;= S_u/sqrt3, bearing FOS_y &lt;= S_y,lug</code></td>
+<td>17-4PH pin in double shear 257 MPa (FOS 2.4), lug bearing 303 MPa</td>
+</tr>
+<tr class="even">
+<td><code>hold_down_tension_n</code> (N)</td>
+<td>6586.0</td>
+<td><code>hold-down reaction, launch g = max(QS, Miles 3-sigma)</code></td>
+<td>2 hold-down(s); the hinge is the other support</td>
+</tr>
+<tr class="odd">
+<td><code>hold_down_bolt</code></td>
+<td>M8</td>
+<td><code>min A_s: P_pre &gt;= FS_sep FOS_u P_t and P_pre + FOS_u P_t &lt;= S_u A_s</code></td>
+<td>A-286 frangible bolt, preload 15582 N (65% of yield); SMA release (Frangibolt class), no pyro shock</td>
+</tr>
+<tr class="even">
+<td><code>deploy_gravity_torque_nm</code> (N m)</td>
+<td>53.44</td>
+<td><code>T_g = m g_Mars max|dy cos th + dz sin th|</code></td>
+<td>rotating mass 24.92 kg, CG 578 mm above / 141 mm fore of the hinge (home pose)</td>
+</tr>
+<tr class="odd">
+<td><code>deploy_actuator_torque_nm</code> (N m)</td>
+<td>107.73</td>
+<td><code>T = 2 (T_g + T_f + T_harness) + 1.25 J alpha</code></td>
+<td>friction 0.069, harness 0.3, inertia 95.68 mN m (J = 19.74 kg m^2, 60 s); ECSS-E-ST-33-01C</td>
+</tr>
+<tr class="even">
+<td><code>deploy_motor_rotor_d_mm</code> (mm)</td>
+<td>48.5</td>
+<td><code>D_r = (4 T_m / (pi TRV lambda))^(1/3), T_m = T / (i eta)</code></td>
+<td>100:1 strain-wave gear, eta 0.6: motor 1795 mN m. Earth tests need a g-offload (141 N m at 1 g)</td>
+</tr>
+<tr class="odd">
+<td><code>latch_pin_load_n</code> (N)</td>
+<td>647.0</td>
+<td><code>(R_latch,WOB + m g |dy| / h_l) / 2 posts</code></td>
+<td>latch pin 6 mm, shear FOS 54: stiffness, not strength, sizes the latch</td>
+</tr>
+<tr class="even">
+<td><code>latch_engagement_energy_mj</code> (mJ)</td>
+<td>8.35</td>
+<td><code>E = J w^2 / 2 at the end of the slew</code></td>
+<td>absorbed by the spring latch pin and a Vespel stop; the actuator brakes over the last 10 % anyway</td>
+</tr>
+<tr class="odd">
+<td><code>leadscrew_buckling_load_n</code> (N)</td>
+<td>2005.0</td>
+<td><code>P_cr = pi^2 E I_3 / (0.7 L)^2 (fixed top bearing, nut pinned)</code></td>
+<td>nut-to-top length 1330 mm at 1 m depth; FOS 12.0 on the 167 N lift-off WOB</td>
+</tr>
+<tr class="even">
+<td><code>leadscrew_critical_speed_rpm</code> (rpm)</td>
+<td>558.0</td>
+<td><code>n_cr = (60/2pi)(3.927/L)^2 sqrt(EI/rho A) (fixed-supported)</code></td>
+<td>1785 mm between bearings; retraction 188 rpm = 34% of critical (limit 80%)</td>
+</tr>
+<tr class="odd">
+<td><code>leadscrew_nut_launch_pressure_mpa</code> (MPa)</td>
+<td>3.5</td>
+<td><code>p = m_c g_launch / (pi d_2 h_1 n_t)</code></td>
+<td>launch along the stowed mast: the self-locking nut holds the carriage; allowable 11 MPa</td>
+</tr>
+<tr class="even">
+<td><code>lander_deck_length_m</code> (m)</td>
+<td>1.5</td>
+<td><code>L &gt;= z_top - z_hinge + hold-down pedestal</code></td>
+<td>the stowed mast lies aft over the deck; 0.60 m wide, top 0.45 m above the regolith</td>
+</tr>
+<tr class="odd">
+<td><code>lander_cg_offset_m</code> (m)</td>
+<td>0.349</td>
+<td><code>y_G = sum m_i y_i / m (deployed)</code></td>
+<td>drill 30.6 kg at y = 0.07 m, rest of lander 14.4 kg at the deck centre</td>
+</tr>
+<tr class="even">
+<td><code>lander_tilt_lift_off_ratio</code></td>
+<td>0.82</td>
+<td><code>WOB_tip / (m g) = a / (a + e)</code></td>
+<td>a side-mounted drill unloads the near legs before the lander rises: tilt about the far legs 1.59 m behind the CG</td>
+</tr>
+<tr class="odd">
+<td><code>lander_far_leg_line_m</code> (m)</td>
+<td>1.938</td>
+<td><code>max(deck end + splay, y_G + e k / (FOS - k)), k = 1 + e_LC / WOB_set</code></td>
+<td>WOB_set = m g / 1.4 is kept; near legs stay loaded at the set-point plus the load-cell error. Tilt margin 1.15 vs 1.4 for a drill through the CG</td>
+</tr>
+<tr class="even">
+<td><code>wob_tilt_limit_moon_n</code> (N)</td>
+<td>59.77</td>
+<td><code>WOB_tip = m g a / (a + e)</code></td>
+<td>set-point 52.07 N (margin 1.15); near legs 3.7 N, far 6.7 N each</td>
+</tr>
+<tr class="odd">
+<td><code>lander_torque_reaction_fos_moon</code></td>
+<td>2.39</td>
+<td><code>mu sum N_i r_i / T_max (footpads about the drill axis)</code></td>
+<td>footpad friction alone reacts the 6.5 N m torque limit at the WOB set-point</td>
+</tr>
+<tr class="even">
+<td><code>wob_tilt_limit_mars_n</code> (N)</td>
+<td>136.88</td>
+<td><code>WOB_tip = m g a / (a + e)</code></td>
+<td>set-point 119.25 N (margin 1.15); near legs 8.5 N, far 15.3 N each</td>
+</tr>
+<tr class="odd">
+<td><code>lander_torque_reaction_fos_mars</code></td>
+<td>5.47</td>
+<td><code>mu sum N_i r_i / T_max (footpads about the drill axis)</code></td>
+<td>footpad friction alone reacts the 6.5 N m torque limit at the WOB set-point</td>
+</tr>
+<tr class="even">
+<td><code>wing_axis_x_m</code> (m)</td>
+<td>1.339</td>
+<td><code>x_w = W/2 + splay + sqrt((w/2)^2 + (h/2 sin beta)^2) + c</code></td>
+<td>steepest tracking tilt 47 deg (Mars, Ls 90): the wing corner sweeps r = 0.74 m and clears the legs by 5 cm</td>
+</tr>
+<tr class="odd">
+<td><code>wing_base_height_m</code> (m)</td>
+<td>0.522</td>
+<td><code>z = deck top + azimuth platter + c</code></td>
+<td>wings ride on azimuth turntables at the ends of deck outriggers, at the lander CG station</td>
+</tr>
+<tr class="even">
+<td><code>critical_bit_temp_moon_k</code> (K)</td>
+<td>163.5</td>
+<td><code>J_HK(T) = p_v(T) sqrt(M/2piRT) = rho_ice dr/t_bite</code></td>
+<td>&lt;= 1 % ice loss from 25 um radius grains in 300 s (Murphy &amp; Koop 2005)</td>
+</tr>
+<tr class="odd">
+<td><code>critical_bit_temp_mars_k</code> (K)</td>
+<td>263.15</td>
+<td><code>T_crit = 273.15 K - margin</code></td>
+<td>prevents transient melting / refreezing of pore ice on the bit</td>
+</tr>
+<tr class="even">
+<td><code>actuator_warmup_target_k</code> (K)</td>
+<td>213.0</td>
+<td><code>T_target = T_lube,min + margin</code></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>warmup_duration_moon_s</code> (s)</td>
+<td>1132</td>
+<td><code>C dT/dt = Q_h - eps sigma A (T^4 - T_sky^4) - h A (T - T_amb)</code></td>
+<td>C = 945 J/K, 100.0 K -&gt; 213.0 K</td>
+</tr>
+<tr class="even">
+<td><code>warmup_duration_mars_s</code> (s)</td>
+<td>217</td>
+<td><code>C dT/dt = Q_h - eps sigma A (T^4 - T_sky^4) - h A (T - T_amb)</code></td>
+<td>C = 945 J/K, 192.0 K -&gt; 213.0 K</td>
+</tr>
+<tr class="odd">
+<td><code>bit_thermal_mass_j_k</code> (J/K)</td>
+<td>23.39</td>
+<td><code>C = rho c_p V (crown + cutters + lowest flutes)</code></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>torque_fault_threshold_nm</code> (N m)</td>
+<td>5.525</td>
+<td><code>tau_fault = f x tau_max</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="references" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-wong2008" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">J. Y. Wong, <em>Theory of ground vehicles</em>, 4 ed., John Wiley &amp; Sons, 2008.</div>
+</div>
+<div id="ref-nasastd5001" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline">NASA, <em>Structural design and test factors of safety for spaceflight hardware</em>, NASA-STD-5001B, 2014.</div>
+</div>
+<div id="ref-shigley" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline">R. G. Budynas and J. K. Nisbett, <em>Shigley’s mechanical engineering design</em>, 10 ed., McGraw-Hill, 2015.</div>
+</div>
+<div id="ref-jaeger2007" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[4] </div><div class="csl-right-inline">J. C. Jaeger, N. G. W. Cook, and R. W. Zimmerman, <em>Fundamentals of rock mechanics</em>, 4 ed., Blackwell Publishing, 2007.</div>
+</div>
+<div id="ref-das2014" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[5] </div><div class="csl-right-inline">B. M. Das and K. Sobhan, <em>Principles of geotechnical engineering</em>, 8 ed., Cengage Learning, 2014.</div>
+</div>
+<div id="ref-carrier1991" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[6] </div><div class="csl-right-inline">W. D. Carrier, G. R. Olhoeft, and W. Mendell, <em>Physical properties of the lunar surface</em>, pp. 475–594, Cambridge University Press, 1991.</div>
+</div>
+<div id="ref-shaw2009" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[7] </div><div class="csl-right-inline"><span class="nocase">A. Shaw <em>et al.</em></span>, <span>“Phoenix soil physical properties investigation,”</span> <em>Journal of Geophysical Research: Planets</em>, vol. 114, no. E1, 2009.</div>
+</div>
+<div id="ref-gertsch2006" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[8] </div><div class="csl-right-inline">L. Gertsch, R. Gustafson, and R. Gertsch, <span>“Effect of water ice content on excavatability of lunar regolith,”</span> in <em>AIP conference proceedings (STAIF 2006)</em>, vol. 813, pp. 1093–1100, 2006.</div>
+</div>
+<div id="ref-schulson2009" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[9] </div><div class="csl-right-inline">E. M. Schulson and P. Duval, <em>Creep and fracture of ice</em>, Cambridge University Press, 2009.</div>
+</div>
+<div id="ref-zent2010" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[10] </div><div class="csl-right-inline"><span class="nocase">A. P. Zent <em>et al.</em></span>, <span>“Initial results from the thermal and electrical conductivity probe (TECP) on phoenix,”</span> <em>Journal of Geophysical Research: Planets</em>, vol. 115, no. E3, 2010.</div>
+</div>
+<div id="ref-paige2010" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[11] </div><div class="csl-right-inline"><span class="nocase">D. A. Paige <em>et al.</em></span>, <span>“Diviner lunar radiometer observations of cold traps in the moon’s south polar region,”</span> <em>Science</em>, vol. 330, no. 6003, pp. 479–482, 2010.</div>
+</div>
+<div id="ref-smith2009h2o" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[12] </div><div class="csl-right-inline"><span class="nocase">P. H. Smith, L. K. Tamppari, R. E. Arvidson, <em>et al.</em></span>, <span>“<span class="math inline">\text{H}_2\text{O}</span> at the phoenix landing site,”</span> <em>Science</em>, vol. 325, no. 5936, pp. 58–61, American Association for the Advancement of Science, 2009.</div>
+</div>
+<div id="ref-mellon2009" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[13] </div><div class="csl-right-inline"><span class="nocase">M. T. Mellon <em>et al.</em></span>, <span>“Ground ice at the phoenix landing site: Stability state and origin,”</span> <em>Journal of Geophysical Research: Planets</em>, vol. 114, no. E1, 2009.</div>
+</div>
+<div id="ref-feldman1998" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[14] </div><div class="csl-right-inline">W. C. Feldman, S. Maurice, A. B. Binder, B. L. Barraclough, R. C. Elphic, and D. J. Lawrence, <span>“Fluxes of fast and epithermal neutrons from <span>Lunar Prospector</span>: Evidence for water ice at the lunar poles,”</span> <em>Science</em>, vol. 281, no. 5382, pp. 1496–1500, 1998, doi: <a href="https://doi.org/10.1126/science.281.5382.1496">10.1126/science.281.5382.1496</a>.</div>
+</div>
+<div id="ref-boynton2002" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[15] </div><div class="csl-right-inline"><span class="nocase">W. V. Boynton, W. C. Feldman, S. W. Squyres, T. H. Prettyman, J. Brückner, <em>et al.</em></span>, <span>“Distribution of hydrogen in the near surface of <span>Mars</span>: Evidence for subsurface ice deposits,”</span> <em>Science</em>, vol. 297, no. 5578, pp. 81–85, 2002, doi: <a href="https://doi.org/10.1126/science.1073722">10.1126/science.1073722</a>.</div>
+</div>
+<div id="ref-li2018ice" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[16] </div><div class="csl-right-inline">S. Li, P. G. Lucey, R. E. Milliken, <em>et al.</em>, <span>“Direct evidence of surface exposed water ice in the lunar polar regions,”</span> <em>Proceedings of the National Academy of Sciences</em>, vol. 115, no. 36, pp. 8907–8912, 2018, doi: <a href="https://doi.org/10.1073/pnas.1802345115">10.1073/pnas.1802345115</a>.</div>
+</div>
+<div id="ref-colaprete2010detection" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[17] </div><div class="csl-right-inline"><span class="nocase">A. Colaprete, P. Schultz, J. Heldmann, <em>et al.</em></span>, <span>“Detection of water in the LCROSS ejecta plume,”</span> <em>Science</em>, vol. 330, no. 6003, pp. 463–468, American Association for the Advancement of Science, 2010.</div>
+</div>
+<div id="ref-dundas2018" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[18] </div><div class="csl-right-inline"><span class="nocase">C. M. Dundas, A. M. Bramson, L. Ojha, J. J. Wray, M. T. Mellon, <em>et al.</em></span>, <span>“Exposed subsurface ice sheets in the <span>Martian</span> mid-latitudes,”</span> <em>Science</em>, vol. 359, no. 6372, pp. 199–201, 2018, doi: <a href="https://doi.org/10.1126/science.aao1619">10.1126/science.aao1619</a>.</div>
+</div>
+<div id="ref-spohn2022mole" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[19] </div><div class="csl-right-inline"><span class="nocase">T. Spohn, T. L. Hudson, L. Witte, T. Wippermann, L. Wisniewski, <em>et al.</em></span>, <span>“The <span>InSight</span> <span>HP</span><span class="math inline">^3</span> mole on <span>Mars</span>: Lessons learned from attempts to penetrate to depth in the <span>Martian</span> soil,”</span> <em>Advances in Space Research</em>, vol. 69, no. 8, pp. 3140–3163, 2022, doi: <a href="https://doi.org/10.1016/j.asr.2022.02.009">10.1016/j.asr.2022.02.009</a>.</div>
+</div>
+<div id="ref-teale1965concept" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[20] </div><div class="csl-right-inline">R. Teale, <span>“The concept of specific energy in rock drilling,”</span> <em>International Journal of Rock Mechanics and Mining Sciences &amp; Geomechanics Abstracts</em>, vol. 2, no. 1, pp. 57–73, Elsevier, 1965.</div>
+</div>
+<div id="ref-zacny2013icebreaker" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[21] </div><div class="csl-right-inline"><span class="nocase">K. Zacny, G. Paulsen, C. P. McKay, <em>et al.</em></span>, <span>“Reaching 1 m deep on mars: The icebreaker drill,”</span> <em>Astrobiology</em>, vol. 13, no. 12, pp. 1166–1198, 2013.</div>
+</div>
+<div id="ref-detournay1992" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[22] </div><div class="csl-right-inline">E. Detournay and P. Defourny, <span>“A phenomenological model for the drilling action of drag bits,”</span> <em>International Journal of Rock Mechanics and Mining Sciences &amp; Geomechanics Abstracts</em>, vol. 29, no. 1, pp. 13–23, 1992.</div>
+</div>
+<div id="ref-richard2012" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[23] </div><div class="csl-right-inline">T. Richard, F. Dagrain, E. Poyol, and E. Detournay, <span>“Rock strength determination from scratch tests,”</span> <em>Engineering Geology</em>, vol. 147–148, pp. 91–100, 2012.</div>
+</div>
+<div id="ref-lundberg1982" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[24] </div><div class="csl-right-inline">B. Lundberg, <span>“Computer simulation of percussive drilling of rock,”</span> <em>International Journal of Rock Mechanics and Mining Sciences &amp; Geomechanics Abstracts</em>, vol. 19, no. 5, pp. 229–249, 1982.</div>
+</div>
+<div id="ref-rabia1982" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[25] </div><div class="csl-right-inline">H. Rabia, <span>“Specific energy as a criterion for drill performance prediction,”</span> <em>International Journal of Rock Mechanics and Mining Sciences &amp; Geomechanics Abstracts</em>, vol. 19, no. 1, pp. 39–42, 1982.</div>
+</div>
+<div id="ref-janssen1895versuche" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[26] </div><div class="csl-right-inline">H. A. Janssen, <span>“Versuche <span class="nocase">ü</span>ber getreidedruck in silozellen,”</span> <em>Zeitschrift des Vereines Deutscher Ingenieure</em>, vol. 39, no. 35, pp. 1045–1049, 1895.</div>
+</div>
+<div id="ref-murphy2005" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[27] </div><div class="csl-right-inline">D. M. Murphy and T. Koop, <span>“Review of the vapour pressures of ice and supercooled water for atmospheric applications,”</span> <em>Quarterly Journal of the Royal Meteorological Society</em>, vol. 131, pp. 1539–1565, 2005.</div>
+</div>
+<div id="ref-loui1997" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[28] </div><div class="csl-right-inline">J. P. Loui and K. U. M. Rao, <span>“Experimental investigations of pick-rock interface temperature in rock cutting,”</span> in <em>Proceedings of the indian geotechnical conference / int. J. Rock mech. Min. Sci. 34(3-4)</em>, 1997.</div>
+</div>
+<div id="ref-allison2000" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[29] </div><div class="csl-right-inline">M. Allison and M. McEwen, <span>“A post-<span>Pathfinder</span> evaluation of areocentric solar coordinates with improved timing recipes for <span>Mars</span> seasonal/diurnal climate studies,”</span> <em>Planetary and Space Science</em>, vol. 48, no. 2–3, pp. 215–235, 2000, doi: <a href="https://doi.org/10.1016/S0032-0633(99)00092-6">10.1016/S0032-0633(99)00092-6</a>.</div>
+</div>
+<div id="ref-moonvillage2020" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[30] </div><div class="csl-right-inline">Texas Tech University (ICES 2020), <span>“Solar array configurations for the moon village,”</span> https://ttu-ir.tdl.org/items/4b4c413c-d8ee-4540-8f97-c13c91f4532a, 2020, Sun elevation varies only about +/-1.5 deg near Shackleton; panels must face the horizon and track 360 deg.</div>
+</div>
+<div id="ref-linden2002" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[31] </div><div class="csl-right-inline">D. Linden and T. B. Reddy, <em>Handbook of batteries</em>, 3 ed., McGraw-Hill, 2002.</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Autonomous Low-Gravity Rotary-Percussive Bite-Drilling System (MBSE Digital Twin)</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>CAD models generated in code with the help of Claude (Anthropic)</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

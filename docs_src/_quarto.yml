@@ -1,0 +1,63 @@
+project:
+  type: website
+  output-dir: ../docs
+  resources:
+    - assets/cad/*.glb
+    - assets/cad/*.step
+    - assets/cad/*.stl
+    - assets/data/*.json
+    - assets/data/*.csv
+    - assets/js/*.js
+    - assets/renders/*.png
+    - assets/drawings/*.svg
+    - assets/drawings/*.pdf
+    - assets/handout/*.pdf
+    - assets/handout/*.png
+
+website:
+  title: "Lunar & Martian Bite Drill"
+  navbar:
+    background: "#ffffff"
+    foreground: "#000000"
+    search: false
+    left:
+      - text: "Design Showcase"
+        href: index.qmd
+      - text: "Results & Digital Twin"
+        href: digital_twin.qmd
+      - text: "Derivations & Design"
+        href: theory_and_sizing.qmd
+      - text: "3D CAD"
+        href: cad_architecture.qmd
+      - text: "Autonomous Control"
+        href: autonomous_control.qmd
+  page-footer:
+    left: "Autonomous Low-Gravity Rotary-Percussive Bite-Drilling System (MBSE Digital Twin)"
+    right: "CAD models generated in code with the help of Claude (Anthropic)"
+
+bibliography: references.bib
+csl: numbered.csl
+
+format:
+  html:
+    theme: cosmo
+    page-layout: full
+    css: styles.css
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    code-summary: "Show MBSE Python Source"
+    html-math-method: katex
+    include-in-header:
+      text: |
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300..900;1,300..900&display=swap">
+        <script>window.backupDefine = window.define; window.define = undefined;</script>
+        <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+        <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+execute:
+  echo: false
+  warning: false
+  message: false

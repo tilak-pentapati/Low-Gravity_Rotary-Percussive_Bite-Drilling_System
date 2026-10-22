@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jay Tilak P.">
+<meta name="dcterms.date" content="2022-09-07">
+
+<title>Design Showcase: a Rotary-Percussive Bite Drill for the Moon and Mars – Lunar &amp; Martian Bite Drill</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-d5af1ddb80ef99ea9e4d0c004ab93c6c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300..900;1,300..900&amp;display=swap">
+<script>window.backupDefine = window.define; window.define = undefined;</script>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Lunar &amp; Martian Bite Drill</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Design Showcase</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./digital_twin.html"> 
+<span class="menu-text">Results &amp; Digital Twin</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./theory_and_sizing.html"> 
+<span class="menu-text">Derivations &amp; Design</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./cad_architecture.html"> 
+<span class="menu-text">3D CAD</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./autonomous_control.html"> 
+<span class="menu-text">Autonomous Control</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#the-problem" id="toc-the-problem" class="nav-link active" data-scroll-target="#the-problem">The problem</a></li>
+  <li><a href="#four-constraints-that-drive-everything" id="toc-four-constraints-that-drive-everything" class="nav-link" data-scroll-target="#four-constraints-that-drive-everything">Four constraints that drive everything</a></li>
+  <li><a href="#key-design-decisions" id="toc-key-design-decisions" class="nav-link" data-scroll-target="#key-design-decisions">Key design decisions</a></li>
+  <li><a href="#comparison-with-a-field-tested-prototype" id="toc-comparison-with-a-field-tested-prototype" class="nav-link" data-scroll-target="#comparison-with-a-field-tested-prototype">Comparison with a field-tested prototype</a></li>
+  <li><a href="#engineering-drawings" id="toc-engineering-drawings" class="nav-link" data-scroll-target="#engineering-drawings">Engineering drawings</a></li>
+  <li><a href="#honest-limitations-and-next-steps" id="toc-honest-limitations-and-next-steps" class="nav-link" data-scroll-target="#honest-limitations-and-next-steps">Honest limitations and next steps</a></li>
+  <li><a href="#how-it-was-built" id="toc-how-it-was-built" class="nav-link" data-scroll-target="#how-it-was-built">How it was built</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Design Showcase: a Rotary-Percussive Bite Drill for the Moon and Mars</h1>
+<p class="subtitle lead">How a 45 kg lander takes 1 m ice-bearing samples with no drilling fluid. The design story in five minutes; every parameter is based on or derived from physics.</p>
+</div>
+
+
+
+<div class="quarto-title-meta column-page-left">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jay Tilak P. </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 07, 2022</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<figure class="sc-fig sc-hero figure"><img src="assets/renders/rig_deployed.png" alt="Full rig, mast deployed: lander deck, side-mounted feed mast, drill head and 2-axis solar wings" loading="lazy" class="figure-img"><figcaption>Full rig, mast deployed: lander deck, side-mounted feed mast, drill head and 2-axis solar wings</figcaption></figure>
+<div class="kpi-grid"><div class="kpi-card "><div class="kpi-label">Depth</div><div class="kpi-value">1.00 m</div><div class="kpi-sub">10 bites of 10 cm, Moon and Mars</div></div><div class="kpi-card "><div class="kpi-label">Mission time</div><div class="kpi-value">0.96 / 0.76 h</div><div class="kpi-sub">Moon / Mars, including warm-up and sample transfer</div></div><div class="kpi-card mars"><div class="kpi-label">Weight on bit</div><div class="kpi-value">52 / 119 N</div><div class="kpi-sub">Moon / Mars: lander weight / 1.4</div></div><div class="kpi-card mars"><div class="kpi-label">Drilling power</div><div class="kpi-value">68 / 105 W</div><div class="kpi-sub">Moon / Mars mean while drilling</div></div></div>
+<div class="sc-actions">
+  <a class="sc-btn" href="#engineering-drawings">Engineering drawings</a>
+  <a class="sc-btn" href="digital_twin.html">Interactive digital twin</a>
+  <a class="sc-btn" href="theory_and_sizing.html">Full derivations</a>
+</div>
+<section id="the-problem" class="level2">
+<h2 class="anchored" data-anchor-id="the-problem">The problem</h2>
+<p>Water ice in the top metre of the lunar south pole and of Mars’s northern plains is both a resource for future crews and a record of how volatiles got there. A science lander needs to bring it up <strong>in labelled depth intervals, without melting or sublimating the ice on the way</strong>. Terrestrial drilling relies on heavy rigs, tens of kN of weight on bit and drilling mud. None of that is available here.</p>
+<p>This project designs the complete drill system, from the carbide cutter edge to the solar wings, for a 45 kg lander at two sites: the lunar south pole (sun ~1.5° above the horizon) and Mars at 68° N.</p>
+</section>
+<section id="four-constraints-that-drive-everything" class="level2">
+<h2 class="anchored" data-anchor-id="four-constraints-that-drive-everything">Four constraints that drive everything</h2>
+<div class="sc-constraints"><div class="sc-con"><div class="sc-con-title">Low gravity</div><div class="sc-con-num">73 N</div><p>is all the lander can push on the Moon before it lifts off. Ice-cemented regolith needs more than that to start rotary cutting.</p></div><div class="sc-con"><div class="sc-con-title">No drilling fluid</div><div class="sc-con-num">0.64</div><p>lift ratio for cuttings on a spinning auger (Moon). Below 1, the flights cannot carry cuttings to the surface.</p></div><div class="sc-con"><div class="sc-con-title">Heat</div><div class="sc-con-num">164 K</div><p>bit temperature above which ice in the cuttings sublimates into vacuum (Moon). On Mars the limit is melting, at 263 K.</p></div><div class="sc-con"><div class="sc-con-title">Low sun</div><div class="sc-con-num">~1.5°</div><p>sun elevation at the lunar south pole. Flat panels collect almost nothing, so the solar array has to stand up and track.</p></div></div>
+<p>The lift-off limit is simply the lander’s weight in local gravity. The heat limit comes from the vapour pressure of ice <span class="citation" data-cites="murphy2005">[<a href="#ref-murphy2005" role="doc-biblioref">1</a>]</span>: above it, the ice in a 25 µm cuttings grain is lost to vacuum within one bite. At the lunar south pole the sun stays within a few degrees of the horizon <span class="citation" data-cites="paige2010 moonvillage2020">[<a href="#ref-paige2010" role="doc-biblioref">2</a>, <a href="#ref-moonvillage2020" role="doc-biblioref">3</a>]</span>.</p>
+<p>The design rule was <strong>no tuned numbers</strong>. A <em>tuned number</em> is a value picked or adjusted until the answer looks right: a fudge factor, a coefficient fitted to the result you want, or a size chosen by eye. None is used here. Every input carries one of four tags, each with its source:</p>
+<ul>
+<li><strong>Environment fact</strong>: gravity, temperature, regolith strength and density <span class="citation" data-cites="carrier1991 shaw2009">[<a href="#ref-carrier1991" role="doc-biblioref">4</a>, <a href="#ref-shaw2009" role="doc-biblioref">5</a>]</span>.</li>
+<li><strong>Design choice</strong>: for example the 10 cm bite or the 150 rpm spindle speed, each with its stated reason.</li>
+<li><strong>Literature coefficient</strong>: for example a friction coefficient, taken from a published range.</li>
+<li><strong>Safety criterion</strong>: a factor of safety or margin from a standard <span class="citation" data-cites="nasastd5001">[<a href="#ref-nasastd5001" role="doc-biblioref">6</a>]</span>.</li>
+</ul>
+<p>Everything else (176 derived quantities in the design ledger) is calculated from well-known engineering models:</p>
+<ul>
+<li>Teale’s mechanical specific energy and the Detournay–Defourny drag-bit model for rock cutting <span class="citation" data-cites="teale1965concept detournay1992 richard2012">[<a href="#ref-teale1965concept" role="doc-biblioref">7</a>–<a href="#ref-richard2012" role="doc-biblioref">9</a>]</span></li>
+<li>Lundberg’s one-dimensional stress-wave model for percussion <span class="citation" data-cites="lundberg1982">[<a href="#ref-lundberg1982" role="doc-biblioref">10</a>]</span></li>
+<li>Hertz contact theory for the cutter edge <span class="citation" data-cites="johnson1985">[<a href="#ref-johnson1985" role="doc-biblioref">11</a>]</span></li>
+<li>Goodman and Wahl fatigue checks for shafts and springs <span class="citation" data-cites="shigley">[<a href="#ref-shigley" role="doc-biblioref">12</a>]</span>, and the IIW FAT classes for welds <span class="citation" data-cites="hobbacher2016">[<a href="#ref-hobbacher2016" role="doc-biblioref">13</a>]</span></li>
+<li>Cycloidal cam motion and the 30° pressure-angle limit <span class="citation" data-cites="norton2009cam">[<a href="#ref-norton2009cam" role="doc-biblioref">14</a>]</span></li>
+<li>AGMA gear contact stress and ISO 281 bearing life <span class="citation" data-cites="agma2101 iso281">[<a href="#ref-agma2101" role="doc-biblioref">15</a>, <a href="#ref-iso281" role="doc-biblioref">16</a>]</span></li>
+<li>Euler–Bernoulli beam modes and Euler buckling for the drill string and mast <span class="citation" data-cites="rao2017 shigley">[<a href="#ref-shigley" role="doc-biblioref">12</a>, <a href="#ref-rao2017" role="doc-biblioref">17</a>]</span></li>
+<li>Rankine earth pressure and Janssen silo pressure for packed cuttings <span class="citation" data-cites="das2014 janssen1895versuche">[<a href="#ref-das2014" role="doc-biblioref">18</a>, <a href="#ref-janssen1895versuche" role="doc-biblioref">19</a>]</span></li>
+<li>Hertz–Knudsen sublimation of ice <span class="citation" data-cites="murphy2005">[<a href="#ref-murphy2005" role="doc-biblioref">1</a>]</span></li>
+<li>ECSS motorisation factors and AIAA mass-growth allowances for the mechanisms <span class="citation" data-cites="ecss3301 aiaa120">[<a href="#ref-ecss3301" role="doc-biblioref">20</a>, <a href="#ref-aiaa120" role="doc-biblioref">21</a>]</span></li>
+</ul>
+<p>A second-by-second mission simulation then checks the whole design.</p>
+</section>
+<section id="key-design-decisions" class="level2">
+<h2 class="anchored" data-anchor-id="key-design-decisions">Key design decisions</h2>
+<section id="the-bit-two-carbide-chisels-not-an-oilfield-pdc" class="level3">
+<h3 class="anchored" data-anchor-id="the-bit-two-carbide-chisels-not-an-oilfield-pdc">1. The bit: two carbide chisels, not an oilfield PDC</h3>
+<div class="sc-split"><figure class="sc-fig figure"><img src="assets/renders/bit_closeup.png" alt="Bit crown: two WC chisel inserts, gauge pads, junk slots and the sampling flutes" loading="lazy" class="figure-img"><figcaption>Bit crown: two WC chisel inserts, gauge pads, junk slots and the sampling flutes</figcaption></figure><figure class="sc-fig figure"><img src="assets/renders/bit_exploded.png" alt="Exploded bit: inserts, crown body, gauge pads, thermocouple, sampling sub and M12x1 joint" loading="lazy" class="figure-img"><figcaption>Exploded bit: inserts, crown body, gauge pads, thermocouple, sampling sub and M12x1 joint</figcaption></figure></div>
+<ul>
+<li><strong>Concentrated load.</strong> With only 52 N on the Moon, the load has to go into as few edges as possible. Two WC-10Co chisel inserts give a line load of 271 N/mm, enough to crush the hardest layer by a factor of 36. In drag-bit cutting models, a cutter only removes rock once its contact stress beats the rock strength <span class="citation" data-cites="detournay1992 richard2012">[<a href="#ref-detournay1992" role="doc-biblioref">8</a>, <a href="#ref-richard2012" role="doc-biblioref">9</a>]</span>. With so little weight available, spreading it over many cutters would leave each one below that threshold.</li>
+<li><strong>Edge sized by contact mechanics.</strong> The worst case is a blow landing on a basalt clast. A Hertz line-contact check sets the edge hone at R1.0 mm (FOS 2.1 on carbide). Carbide is very strong in compression but weak in tension. The −10° (negative) rake keeps the cutting edge in compression, the same reason oilfield PDC cutters are set at negative rake <span class="citation" data-cites="bellin2010pdc">[<a href="#ref-bellin2010pdc" role="doc-biblioref">22</a>]</span>.</li>
+<li><strong>Indexing.</strong> The bit turns 35° between blows, so each blow lands on fresh rock 6.3 mm from the last crater. Hitting the same crater again only re-grinds crushed material, which wastes energy and raises the specific energy of drilling <span class="citation" data-cites="teale1965concept lundberg1982">[<a href="#ref-teale1965concept" role="doc-biblioref">7</a>, <a href="#ref-lundberg1982" role="doc-biblioref">10</a>]</span>.</li>
+<li><strong>Why not PDC.</strong> PDC cutters are made for continuous shearing with drilling fluid flowing over them. Their thin diamond layer chips under impact, and the cobalt binder degrades the diamond above about 750 °C if the cutter is not cooled <span class="citation" data-cites="bellin2010pdc">[<a href="#ref-bellin2010pdc" role="doc-biblioref">22</a>]</span>. Under 26 Hz hammering and with no fluid, solid WC-Co carbide is the safer choice. Percussive rock-drill bits use tungsten-carbide button inserts for the same reason <span class="citation" data-cites="sme1981percussion">[<a href="#ref-sme1981percussion" role="doc-biblioref">23</a>]</span>.</li>
+</ul>
+</section>
+<section id="the-drill-head-a-cam-and-spring-hammer-around-a-hollow-spindle" class="level3">
+<h3 class="anchored" data-anchor-id="the-drill-head-a-cam-and-spring-hammer-around-a-hollow-spindle">2. The drill head: a cam-and-spring hammer around a hollow spindle</h3>
+<div class="sc-split sc-split-wide"><figure class="sc-fig figure"><img src="assets/renders/head_section.png" alt="Drill head quarter section: BLDC motors, planetary, cam-and-spring hammer, anvil and spindle" loading="lazy" class="figure-img"><figcaption>Drill head quarter section: BLDC motors, planetary, cam-and-spring hammer, anvil and spindle</figcaption></figure><div class="sc-facts"><div class="sc-facts-title">Derived, not chosen</div><ul>
+<li>Impact energy <b>2.25 J</b> at <b>26 Hz</b>; peak force 5.4 kN (1-D stress-wave model)</li>
+<li>Hammer spring: 6 mm 17-7PH wire, fatigue FOS 1.55; spring rate puts the hammer at 91 Hz, above 2× the blow rate so it re-seats every cycle</li>
+<li>Barrel cam: cycloidal rise, pressure angle 8.7° (limit 30°)</li>
+<li>Rotary drive: frameless BLDC through a 12/36/84 planetary and a 12T/24T spur; spur contact stress 923 MPa on carburised 9310</li>
+<li>Spindle bearing pair L10 104,061 h; WOB measured by a 500 N load cell</li>
+<li>Head stack 321 mm, sealed by labyrinth, PTFE lip seals and bellows</li>
+</ul></div></div>
+<p>Rotary cutting alone stalls in ice-cemented regolith at this weight on bit. The <strong>hammer</strong> solves this by breaking rock with impact energy instead of steady force. The bit only has to stay seated, which takes 44 N, below the Moon set-point. A two-lobe barrel cam lifts the hammer, then drops it off a cliff in the cam profile onto the anvil. The rotary train runs through the hollow spindle beside it. The controller turns percussion on only when the measured torque and penetration rate show that rotary cutting has stopped working.</p>
+<p>Each item in the card above comes from a standard method:</p>
+<ul>
+<li><strong>Impact energy and force.</strong> The blow is modelled as a stress wave travelling through the hammer, anvil and bit <span class="citation" data-cites="lundberg1982">[<a href="#ref-lundberg1982" role="doc-biblioref">10</a>]</span>. Percussion is the established answer to low weight on bit in planetary drilling. Both Icebreaker and TRIDENT use rotary-percussive heads <span class="citation" data-cites="zacny2008drilling zacny2013icebreaker zacny2022trident">[<a href="#ref-zacny2008drilling" role="doc-biblioref">24</a>–<a href="#ref-zacny2022trident" role="doc-biblioref">26</a>]</span>.</li>
+<li><strong>Hammer spring.</strong> It is sized with the Wahl stress factor and checked against Zimmerli fatigue data using the Goodman criterion <span class="citation" data-cites="shigley">[<a href="#ref-shigley" role="doc-biblioref">12</a>]</span>. The spring’s natural frequency must stay above twice the blow rate. Otherwise the hammer cannot settle back onto the cam before the next lift.</li>
+<li><strong>Barrel cam.</strong> A cycloidal rise has zero acceleration at both ends, so the follower sees no shock loads. The pressure angle is kept below the usual 30° limit so the follower does not jam <span class="citation" data-cites="norton2009cam">[<a href="#ref-norton2009cam" role="doc-biblioref">14</a>]</span>.</li>
+<li><strong>Gears and bearings.</strong> The spur gear contact stress is checked against the AGMA allowable <span class="citation" data-cites="agma2101">[<a href="#ref-agma2101" role="doc-biblioref">15</a>]</span>. The spindle bearing life follows ISO 281 <span class="citation" data-cites="iso281">[<a href="#ref-iso281" role="doc-biblioref">16</a>]</span>.</li>
+<li><strong>Margins.</strong> Structural factors of safety follow NASA-STD-5001 <span class="citation" data-cites="nasastd5001">[<a href="#ref-nasastd5001" role="doc-biblioref">6</a>]</span>.</li>
+</ul>
+</section>
+<section id="auger-brushing-station-drilling-in-bites" class="level3">
+<h3 class="anchored" data-anchor-id="auger-brushing-station-drilling-in-bites">3. Auger + brushing station: drilling in bites</h3>
+<div class="sc-split sc-split-eq"><figure class="sc-fig figure"><img src="assets/renders/brush_exploded.png" alt="Exploded brushing station: worm-wheel brush, spring arm, chute and sample cup" loading="lazy" class="figure-img"><figcaption>Exploded brushing station: worm-wheel brush, spring arm, chute and sample cup</figcaption></figure><figure class="sc-fig figure"><img src="assets/renders/mast_deployed.png" alt="Deployed mast on the lander deck: rails, leadscrew and brushing station" loading="lazy" class="figure-img"><figcaption>Deployed mast on the lander deck: rails, leadscrew and brushing station</figcaption></figure></div>
+<ul>
+<li><p><strong>Bite drilling.</strong> With no drilling fluid, the only way out of the hole for cuttings is up the auger flights. A cutting climbs the flight only if the friction from the borehole wall, which the spin presses it against (centrifugal force), is larger than its weight. In other words, the lift ratio <span class="math inline">\mu_w \omega^2 r / g</span> must exceed 1. Rotation speed is what governs dry auger conveying <span class="citation" data-cites="zacny2008drilling">[<a href="#ref-zacny2008drilling" role="doc-biblioref">24</a>]</span>. At the 150 rpm spindle speed this ratio is only 0.64 on the Moon and 0.28 on Mars. Continuous conveying would need more than 188 rpm on the Moon and 284 rpm on Mars.</p>
+<p>Spinning that fast is the wrong trade for this drill. The speed was set low (0.16 m/s at the gauge) to limit frictional heat at the bit, which has to stay below 164 K on the Moon or the ice sublimates out of the sample <span class="citation" data-cites="murphy2005">[<a href="#ref-murphy2005" role="doc-biblioref">1</a>]</span>. A faster spin would also open the index angle between hammer blows. Dry augers in lunar regolith also tend to bind: the Apollo 15 crew had great difficulty drilling past about 1 m <span class="citation" data-cites="zacny2008drilling">[<a href="#ref-zacny2008drilling" role="doc-biblioref">24</a>]</span>.</p>
+<p>The drill therefore works in <strong>bites</strong>, like Icebreaker and TRIDENT <span class="citation" data-cites="zacny2013icebreaker zacny2022trident">[<a href="#ref-zacny2013icebreaker" role="doc-biblioref">25</a>, <a href="#ref-zacny2022trident" role="doc-biblioref">26</a>]</span>. It drills a short interval, pulls the whole string out, and brushes the cuttings into a cup. The deep <strong>sampling flutes</strong> hold the cuttings from one bite. They fill completely after 12.2 cm of penetration, so the bite is set at 10 cm. Each bite is a depth-labelled sample, and the auger never has to carry cuttings the full depth, so it cannot choke.</p></li>
+<li><p><strong>Flights machined integral.</strong> Welded flights fail IIW weld-toe fatigue under hammer-wave inertia (2e+05 cycles against a 3.7e+07 requirement). Under the IIW recommendations, a fillet-welded attachment falls in fatigue class FAT 63, which is far too weak for this load <span class="citation" data-cites="hobbacher2016">[<a href="#ref-hobbacher2016" role="doc-biblioref">13</a>]</span>. A flight machined from the same bar, with a root fillet, has no weld toe. It gives a Goodman factor of safety of 2.2 <span class="citation" data-cites="shigley">[<a href="#ref-shigley" role="doc-biblioref">12</a>]</span>.</p></li>
+<li><p><strong>Guide bushing.</strong> Without it, the string’s first lateral mode falls to 19 Hz, inside the blow-rate band. With it, the mode is 46 Hz. A structure driven near its natural frequency resonates, so every mode is kept out of a ±20 % band around each forcing frequency <span class="citation" data-cites="rao2017">[<a href="#ref-rao2017" role="doc-biblioref">17</a>]</span>.</p></li>
+<li><p><strong>Passive brush.</strong> The brush is a 14-tuft wheel that meshes with the flights like a worm wheel, so the retracting auger drives it with no extra motor. The 0.1 mm bristles push at 59 kPa, 13× the cuttings’ passive pressure. The cuttings’ resistance is taken as Rankine passive earth pressure <span class="citation" data-cites="das2014">[<a href="#ref-das2014" role="doc-biblioref">18</a>]</span>, using lunar regolith cohesion <span class="citation" data-cites="carrier1991">[<a href="#ref-carrier1991" role="doc-biblioref">4</a>]</span>. A 32° chute then delivers the cuttings into a cup sized for 120 % of one bite. Each bite has its own cup: 10 sealed cups ride on an indexing carousel under the mast foot plate, so every depth interval is kept as a separate, sealed sample. The chute is steeper than the wall-friction angle, so dry cuttings slide in any gravity. Brushing cuttings off the auger into a sample cup is also how Icebreaker delivers its samples <span class="citation" data-cites="zacny2013icebreaker">[<a href="#ref-zacny2013icebreaker" role="doc-biblioref">25</a>]</span>.</p></li>
+</ul>
+</section>
+<section id="deployable-side-mounted-mast" class="level3">
+<h3 class="anchored" data-anchor-id="deployable-side-mounted-mast">4. Deployable side-mounted mast</h3>
+<div class="sc-split sc-split-eq"><figure class="sc-fig sc-fig-fill figure"><img src="assets/renders/rig_stowed.png" alt="Launch configuration: mast folded aft over the deck on two hold-downs" loading="lazy" class="figure-img"><figcaption>Launch configuration: mast folded aft over the deck on two hold-downs</figcaption></figure><div class="sc-facts"><div class="sc-facts-title">Launch and deploy</div><ul>
+<li>Spine <b>80x80x3 6061-T6 Al</b>, the lightest of 64 feasible designs out of 240 searched (material × section × brackets × latch height)</li>
+<li>Stowed first mode 97 Hz against a 50 Hz launch requirement; M8 A-286 frangible bolts released by SMA actuators (low-shock, non-pyrotechnic)</li>
+<li>Deployed first mode 20–21 Hz over the stroke, placed between the cam and blow-rate bands</li>
+<li>Deploy actuator 108 N·m (ECSS motorisation factors) through a 100:1 strain-wave gear</li>
+<li>Bit position error 3.7 mm at 1 m depth</li>
+</ul></div></div>
+<p>A 1.9 m mast does not fit on the lander upright for launch. It folds aft over the deck on a hinge, with two hold-downs carrying the 15 g launch load, and swings up on the surface. Mounting it on the side keeps the borehole clear of the lander’s own footprint and exhaust-disturbed soil. The price is that the lander <strong>tilts before it lifts</strong>, which costs some WOB margin (see the limitations below).</p>
+<p>The reasons behind the card above:</p>
+<ul>
+<li><strong>Launch stiffness.</strong> A stowed payload must have its first mode above the launcher’s minimum so that it does not couple with the launch-vehicle dynamics. Launch loads are taken as the larger of the quasi-static load and the Miles random-vibration estimate <span class="citation" data-cites="wijker2008">[<a href="#ref-wijker2008" role="doc-biblioref">27</a>]</span>.</li>
+<li><strong>Hold-down release.</strong> A shape-memory-alloy (SMA) actuator breaks a notched frangible bolt in tension. It produces far less release shock than a pyrotechnic bolt, which matters for the drill head’s bearings and sensors, and it can be tested and reset on the ground <span class="citation" data-cites="busch1992frangibolt">[<a href="#ref-busch1992frangibolt" role="doc-biblioref">28</a>]</span>. The bolt preload is sized with standard joint equations <span class="citation" data-cites="shigley">[<a href="#ref-shigley" role="doc-biblioref">12</a>]</span>.</li>
+<li><strong>Deployment.</strong> The deploy actuator is sized with the ECSS motorisation factors: twice the resistive torques (gravity, friction and harness) plus 1.25 times the inertial torque <span class="citation" data-cites="ecss3301">[<a href="#ref-ecss3301" role="doc-biblioref">20</a>]</span>.</li>
+<li><strong>Mass.</strong> All masses carry a 20 % mass-growth allowance <span class="citation" data-cites="aiaa120">[<a href="#ref-aiaa120" role="doc-biblioref">21</a>]</span>, and structural factors follow NASA-STD-5001 <span class="citation" data-cites="nasastd5001">[<a href="#ref-nasastd5001" role="doc-biblioref">6</a>]</span>.</li>
+<li><strong>Deployed modes.</strong> These are kept between the rotary, cam and blow-rate bands, for the same resonance reason as the drill string <span class="citation" data-cites="rao2017">[<a href="#ref-rao2017" role="doc-biblioref">17</a>]</span>.</li>
+</ul>
+</section>
+<section id="power-standing-tracking-solar-wings" class="level3">
+<h3 class="anchored" data-anchor-id="power-standing-tracking-solar-wings">5. Power: standing, tracking solar wings</h3>
+<div style="height:420px; width:100%;">                            <div id="a3aa4018-917a-4a7b-9f1a-d0660cdf994e" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("a3aa4018-917a-4a7b-9f1a-d0660cdf994e")) {                    Plotly.newPlot(                        "a3aa4018-917a-4a7b-9f1a-d0660cdf994e",                        [{"marker":{"color":"#0284c7"},"name":"Moon (south pole)","orientation":"h","x":[26.9,287.9,287.9,796.3,796.6],"y":["Fixed horizontal\u003cbr\u003e(cells up)","Fixed vertical\u003cbr\u003e2 wings facing +\u002f-X","Fixed vertical\u003cbr\u003e4 faces\u003cbr\u003e(+\u002f-X\u003cbr\u003e+\u002f-Y)","1-axis azimuth tracking\u003cbr\u003evertical","2-axis tracking\u003cbr\u003e(azimuth + elevation)"],"type":"bar"},{"marker":{"color":"#ea580c"},"name":"Mars (68\u00b0 N)","orientation":"h","x":[110.1,58.4,53.7,112.5,143.4],"y":["Fixed horizontal\u003cbr\u003e(cells up)","Fixed vertical\u003cbr\u003e2 wings facing +\u002f-X","Fixed vertical\u003cbr\u003e4 faces\u003cbr\u003e(+\u002f-X\u003cbr\u003e+\u002f-Y)","1-axis azimuth tracking\u003cbr\u003evertical","2-axis tracking\u003cbr\u003e(azimuth + elevation)"],"type":"bar"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","margin":{"b":0,"l":0,"r":0,"t":30},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"yaxis":{"autorange":"reversed","automargin":true},"legend":{"orientation":"h","yanchor":"top","y":-0.22,"x":0.5,"xanchor":"center"},"margin":{"l":10,"r":15,"t":10,"b":90},"height":420,"barmode":"group","xaxis":{"title":{"text":"Day-mean power (W)"}}},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div>
+<p>All five array layouts were simulated against the real sun track at each site. The <strong>2-axis tracking (azimuth + elevation)</strong> wings deliver 797 W on the Moon and 143 W on Mars (dust and the thin atmosphere included). That is at least twice the 73 W mission-mean load, so the battery never runs down during a mission. The array has to stand vertical and track because the polar sun moves around the horizon instead of rising overhead <span class="citation" data-cites="paige2010 moonvillage2020">[<a href="#ref-paige2010" role="doc-biblioref">2</a>, <a href="#ref-moonvillage2020" role="doc-biblioref">3</a>]</span>. Irradiance uses the measured solar constant <span class="citation" data-cites="kopp2011">[<a href="#ref-kopp2011" role="doc-biblioref">29</a>]</span>. On Mars, dust settling on the panels was measured by Pathfinder at about 0.3 % per day, and that loss is included <span class="citation" data-cites="landis2000dust">[<a href="#ref-landis2000dust" role="doc-biblioref">30</a>]</span>.</p>
+</section>
+</section>
+<section id="comparison-with-a-field-tested-prototype" class="level2">
+<h2 class="anchored" data-anchor-id="comparison-with-a-field-tested-prototype">Comparison with a field-tested prototype</h2>
+<p>Honeybee Robotics’ Icebreaker drill is the closest working prototype. Its field tests reported “1-1-100-100”: about 1 m in about 1 hour, with under 100 N on the bit and about 100 W <span class="citation" data-cites="zacny2013icebreaker">[<a href="#ref-zacny2013icebreaker" role="doc-biblioref">25</a>]</span>. No coefficient in this model was fitted to that benchmark.</p>
+<div class="mbse-table-wrap">
+<table class="mbse-table sc-bench caption-top table">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Metric</th>
+<th data-quarto-table-cell-role="th">Icebreaker</th>
+<th data-quarto-table-cell-role="th">Moon</th>
+<th data-quarto-table-cell-role="th">Mars</th>
+<th data-quarto-table-cell-role="th">vs benchmark</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Depth</strong> (m)</td>
+<td>1.00</td>
+<td class="moon">1.00</td>
+<td class="mars">1.00</td>
+<td>meets</td>
+</tr>
+<tr class="even">
+<td><strong>Mission time</strong> (h)</td>
+<td>1.00</td>
+<td class="moon">0.96</td>
+<td class="mars">0.76</td>
+<td>meets</td>
+</tr>
+<tr class="odd">
+<td><strong>WOB set-point</strong> (N)</td>
+<td>100</td>
+<td class="moon">52</td>
+<td class="mars">119</td>
+<td>Moon meets, Mars above</td>
+</tr>
+<tr class="even">
+<td><strong>Drilling power</strong> (W)</td>
+<td>100</td>
+<td class="moon">68</td>
+<td class="mars">105</td>
+<td>Moon meets, Mars above</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The results are the same order of magnitude as the hardware. The Mars weight on bit is above 100 N by design. The set-point is lander weight / 1.4, and Mars gravity is 2.3× the Moon’s. Mars spends longer actually drilling (10 vs 7 min) because its ice-rich layers start shallower. The Moon mission is still longer overall, because the drill first has to warm from 100 K, which takes 19 min. The bite-by-bite results and the full telemetry are on the <a href="digital_twin.html">digital twin</a> and <a href="autonomous_control.html">control</a> pages.</p>
+</section>
+<section id="engineering-drawings" class="level2">
+<h2 class="anchored" data-anchor-id="engineering-drawings">Engineering drawings</h2>
+<p>The views are hidden-line projections of the same B-rep solids exported as STEP. Dimensions come from the design parameters or are measured from those solids, so the drawings regenerate whenever the design changes.</p>
+<div class="sc-dwgs"><div class="sc-dwg"><a href="assets/drawings/DRL-001_drill_bit.svg" target="_blank" rel="noopener">
+<img src="assets/drawings/DRL-001_drill_bit.svg" alt="DRL-001 Drill bit crown &amp; bit sub engineering drawing" loading="lazy"></a>
+<div class="sc-dwg-cap"><strong>DRL-001</strong> Drill bit crown &amp; bit sub ·
+<a href="assets/drawings/DRL-001_drill_bit.pdf">PDF</a> · <a href="assets/drawings/DRL-001_drill_bit.svg">SVG</a></div></div><div class="sc-dwg"><a href="assets/drawings/DRL-002_drill_head.svg" target="_blank" rel="noopener">
+<img src="assets/drawings/DRL-002_drill_head.svg" alt="DRL-002 Enclosed rotary-percussive drill head engineering drawing" loading="lazy"></a>
+<div class="sc-dwg-cap"><strong>DRL-002</strong> Enclosed rotary-percussive drill head ·
+<a href="assets/drawings/DRL-002_drill_head.pdf">PDF</a> · <a href="assets/drawings/DRL-002_drill_head.svg">SVG</a></div></div></div>
+</section>
+<section id="honest-limitations-and-next-steps" class="level2">
+<h2 class="anchored" data-anchor-id="honest-limitations-and-next-steps">Honest limitations and next steps</h2>
+<ul>
+<li><strong>The mast mode is close to a forcing band.</strong> The deployed mast’s first mode (20–21 Hz) sits only 2 % from the edge of the blow-rate band. The first changes to test are a stiffer spine or a small shift in the blow rate.</li>
+<li><strong>Side mounting costs stability.</strong> The lander tips about its far legs before it lifts. The tilt margin at the WOB set-point is 1.15, against 1.4 for a centred drill.</li>
+<li><strong>Mass.</strong> The rotating mast assembly weighs 25 kg, and the steel rails are the largest single item. Lighter rails or a composite spine are the obvious next trade.</li>
+<li><strong>Sample transfer is slow.</strong> Brushing takes 87 s per bite (16 min per mission). It is limited by the low bristle force a 1.2 m cantilevered string can take.</li>
+<li><strong>The models are uncalibrated.</strong> Rock-cutting specific energy and the heat partition come from literature ranges. The sweeps on the <a href="theory_and_sizing.html">derivations page</a> show their effect: Mars mission time ranges from 0.68 to 0.84 h. Drilling tests in a cryogenic vacuum chamber are the next step.</li>
+</ul>
+</section>
+<section id="how-it-was-built" class="level2">
+<h2 class="anchored" data-anchor-id="how-it-was-built">How it was built</h2>
+<p>A single parameter file feeds a chain of Python models: design derivations, solar geometry, terramechanics, the six-state controller simulation and parametric build123d CAD. They export STEP, GLB, still renders and the drawings above. This site and the PDF summary are generated from those outputs, and automated tests check the physics and the exports. Change one input, and every number, model, render and drawing regenerates.</p>
+<div class="sc-actions">
+  <a class="sc-btn sc-btn-primary" href="assets/handout/design_summary.pdf">Download the one-page summary</a>
+  <a class="sc-btn" href="cad_architecture.html">3D CAD (STEP / GLB)</a>
+</div>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-murphy2005" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">D. M. Murphy and T. Koop, <span>“Review of the vapour pressures of ice and supercooled water for atmospheric applications,”</span> <em>Quarterly Journal of the Royal Meteorological Society</em>, vol. 131, pp. 1539–1565, 2005.</div>
+</div>
+<div id="ref-paige2010" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline"><span class="nocase">D. A. Paige <em>et al.</em></span>, <span>“Diviner lunar radiometer observations of cold traps in the moon’s south polar region,”</span> <em>Science</em>, vol. 330, no. 6003, pp. 479–482, 2010.</div>
+</div>
+<div id="ref-moonvillage2020" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline">Texas Tech University (ICES 2020), <span>“Solar array configurations for the moon village,”</span> https://ttu-ir.tdl.org/items/4b4c413c-d8ee-4540-8f97-c13c91f4532a, 2020, Sun elevation varies only about +/-1.5 deg near Shackleton; panels must face the horizon and track 360 deg.</div>
+</div>
+<div id="ref-carrier1991" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[4] </div><div class="csl-right-inline">W. D. Carrier, G. R. Olhoeft, and W. Mendell, <em>Physical properties of the lunar surface</em>, pp. 475–594, Cambridge University Press, 1991.</div>
+</div>
+<div id="ref-shaw2009" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[5] </div><div class="csl-right-inline"><span class="nocase">A. Shaw <em>et al.</em></span>, <span>“Phoenix soil physical properties investigation,”</span> <em>Journal of Geophysical Research: Planets</em>, vol. 114, no. E1, 2009.</div>
+</div>
+<div id="ref-nasastd5001" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[6] </div><div class="csl-right-inline">NASA, <em>Structural design and test factors of safety for spaceflight hardware</em>, NASA-STD-5001B, 2014.</div>
+</div>
+<div id="ref-teale1965concept" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[7] </div><div class="csl-right-inline">R. Teale, <span>“The concept of specific energy in rock drilling,”</span> <em>International Journal of Rock Mechanics and Mining Sciences &amp; Geomechanics Abstracts</em>, vol. 2, no. 1, pp. 57–73, Elsevier, 1965.</div>
+</div>
+<div id="ref-detournay1992" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[8] </div><div class="csl-right-inline">E. Detournay and P. Defourny, <span>“A phenomenological model for the drilling action of drag bits,”</span> <em>International Journal of Rock Mechanics and Mining Sciences &amp; Geomechanics Abstracts</em>, vol. 29, no. 1, pp. 13–23, 1992.</div>
+</div>
+<div id="ref-richard2012" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[9] </div><div class="csl-right-inline">T. Richard, F. Dagrain, E. Poyol, and E. Detournay, <span>“Rock strength determination from scratch tests,”</span> <em>Engineering Geology</em>, vol. 147–148, pp. 91–100, 2012.</div>
+</div>
+<div id="ref-lundberg1982" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[10] </div><div class="csl-right-inline">B. Lundberg, <span>“Computer simulation of percussive drilling of rock,”</span> <em>International Journal of Rock Mechanics and Mining Sciences &amp; Geomechanics Abstracts</em>, vol. 19, no. 5, pp. 229–249, 1982.</div>
+</div>
+<div id="ref-johnson1985" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[11] </div><div class="csl-right-inline">K. L. Johnson, <em>Contact mechanics</em>, Cambridge University Press, 1985.</div>
+</div>
+<div id="ref-shigley" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[12] </div><div class="csl-right-inline">R. G. Budynas and J. K. Nisbett, <em>Shigley’s mechanical engineering design</em>, 10 ed., McGraw-Hill, 2015.</div>
+</div>
+<div id="ref-hobbacher2016" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[13] </div><div class="csl-right-inline">A. F. Hobbacher, <em>Recommendations for fatigue design of welded joints and components</em>, 2 ed., Springer (IIW document IIW-2259-15), 2016.</div>
+</div>
+<div id="ref-norton2009cam" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[14] </div><div class="csl-right-inline">R. L. Norton, <em>Cam design and manufacturing handbook</em>, 2 ed., Industrial Press, 2009.</div>
+</div>
+<div id="ref-agma2101" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[15] </div><div class="csl-right-inline">American Gear Manufacturers Association, <em>Fundamental rating factors and calculation methods for involute spur and helical gear teeth (metric edition)</em>, ANSI/AGMA 2101-D04, 2004.</div>
+</div>
+<div id="ref-iso281" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[16] </div><div class="csl-right-inline">International Organization for Standardization, <em>Rolling bearings: Dynamic load ratings and rating life</em>, ISO 281:2007, 2007.</div>
+</div>
+<div id="ref-rao2017" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[17] </div><div class="csl-right-inline">S. S. Rao, <em>Mechanical vibrations</em>, 6 ed., Pearson, 2017.</div>
+</div>
+<div id="ref-das2014" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[18] </div><div class="csl-right-inline">B. M. Das and K. Sobhan, <em>Principles of geotechnical engineering</em>, 8 ed., Cengage Learning, 2014.</div>
+</div>
+<div id="ref-janssen1895versuche" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[19] </div><div class="csl-right-inline">H. A. Janssen, <span>“Versuche <span class="nocase">ü</span>ber getreidedruck in silozellen,”</span> <em>Zeitschrift des Vereines Deutscher Ingenieure</em>, vol. 39, no. 35, pp. 1045–1049, 1895.</div>
+</div>
+<div id="ref-ecss3301" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[20] </div><div class="csl-right-inline">European Cooperation for Space Standardization, <em>Space engineering: mechanisms</em>, ECSS-E-ST-33-01C Rev.2, 2019.</div>
+</div>
+<div id="ref-aiaa120" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[21] </div><div class="csl-right-inline">American Institute of Aeronautics; Astronautics, <em>Mass properties control for space systems</em>, AIAA S-120A-2015, 2015.</div>
+</div>
+<div id="ref-bellin2010pdc" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[22] </div><div class="csl-right-inline">F. Bellin, A. Dourfaye, W. King, and M. Thigpen, <span>“The current state of <span>PDC</span> bit technology,”</span> <em>World Oil</em>, vol. 231, no. 9–11, 2010.</div>
+</div>
+<div id="ref-sme1981percussion" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[23] </div><div class="csl-right-inline">Society for Mining, Metallurgy &amp; Exploration, <span>“Percussion rock bit selection and maintenance,”</span> OneMine, 1981.</div>
+</div>
+<div id="ref-zacny2008drilling" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[24] </div><div class="csl-right-inline"><span class="nocase">K. Zacny, Y. Bar-Cohen, M. Brennan, <em>et al.</em></span>, <span>“Drilling systems for extraterrestrial subsurface exploration,”</span> <em>Astrobiology</em>, vol. 8, no. 3, pp. 665–706, Mary Ann Liebert, Inc., 2008.</div>
+</div>
+<div id="ref-zacny2013icebreaker" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[25] </div><div class="csl-right-inline"><span class="nocase">K. Zacny, G. Paulsen, C. P. McKay, <em>et al.</em></span>, <span>“Reaching 1 m deep on mars: The icebreaker drill,”</span> <em>Astrobiology</em>, vol. 13, no. 12, pp. 1166–1198, 2013.</div>
+</div>
+<div id="ref-zacny2022trident" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[26] </div><div class="csl-right-inline"><span class="nocase">K. Zacny <em>et al.</em></span>, <span>“<span>TRIDENT</span> drill for <span>VIPER</span> and <span>PRIME-1</span> missions to the moon,”</span> in <em>Earth and space 2022: Space exploration, utilization, engineering, and construction in extreme environments</em>, ASCE, 2022, doi: <a href="https://doi.org/10.1061/9780784484470.043">10.1061/9780784484470.043</a>.</div>
+</div>
+<div id="ref-wijker2008" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[27] </div><div class="csl-right-inline">J. J. Wijker, <em>Spacecraft structures</em>, Springer, 2008.</div>
+</div>
+<div id="ref-busch1992frangibolt" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[28] </div><div class="csl-right-inline">J. D. Busch, A. D. Johnson, and W. E. Purdy, <span>“Development of a non-explosive release device for aerospace applications,”</span> in <em>26th aerospace mechanisms symposium (NASA CP-3147)</em>, NASA, 1992.</div>
+</div>
+<div id="ref-kopp2011" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[29] </div><div class="csl-right-inline">G. Kopp and J. L. Lean, <span>“A new, lower value of total solar irradiance: Evidence and climate significance,”</span> <em>Geophysical Research Letters</em>, vol. 38, no. 1, 2011.</div>
+</div>
+<div id="ref-landis2000dust" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[30] </div><div class="csl-right-inline">G. A. Landis and P. P. Jenkins, <span>“Measurement of the settling rate of atmospheric dust on <span>Mars</span> by the <span>MAE</span> instrument on <span>Mars Pathfinder</span>,”</span> <em>Journal of Geophysical Research: Planets</em>, vol. 105, no. E1, 2000, doi: <a href="https://doi.org/10.1029/1999JE001029">10.1029/1999JE001029</a>.</div>
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Autonomous Low-Gravity Rotary-Percussive Bite-Drilling System (MBSE Digital Twin)</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>CAD models generated in code with the help of Claude (Anthropic)</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

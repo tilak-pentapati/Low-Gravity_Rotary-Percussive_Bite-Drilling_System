@@ -1,0 +1,247 @@
+---
+title: "6-State Autonomous Control & Mission Telemetry"
+subtitle: "Second-by-second physics simulation of the full 1 m mission on the Moon and Mars"
+---
+
+```{python}
+#| output: asis
+import json
+from pathlib import Path
+
+import pandas as pd
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+root = Path("..").resolve()
+data = root / "exports" / "data"
+abcd = json.loads((data / "abcd_summary.json").read_text())
+des = json.loads((data / "design_derivations.json").read_text())
+cfg = __import__("yaml").safe_load((root / "config" / "system_params.yaml").read_text())
+df = {e: pd.read_csv(data / f"telemetry_{e}.csv") for e in ("moon", "mars")}
+off = {e: pd.read_csv(data / f"telemetry_{e}_offnominal.csv") for e in ("moon", "mars")}
+E = abcd["environments"]
+ctl = cfg["controller"]
+
+def emit_html(h: str) -> None:
+    print(f"\n```{{=html}}\n{h.strip()}\n```\n")
+
+def plot(fig, h=420):
+    fig.update_layout(template="plotly_white", height=h, margin=dict(l=60, r=30, t=60, b=130),
+                      legend=dict(orientation="h", yanchor="top", y=-110 / h, x=0.5, xanchor="center"))
+    emit_html(fig.to_html(full_html=False, include_plotlyjs=False, include_mathjax=False, config={'displayModeBar': False, 'responsive': True}))
+
+dm = {e: df[e][df[e]["state"] == "DRILL"] for e in df}
+# Fastest bit thermal time constant: C_bit / (k S) in the most conductive layer (same shape factor as the simulation)
+import math
+l_c, r_b = cfg["cutting_model"]["bit_conduction_length_m"], cfg["auger_geometry"]["outer_diameter_m"] / 2
+k_max = max(L["thermal_conductivity_w_mk"] for env in cfg["environments"].values() for L in env["stratigraphy"])
+tau_fast = des["bit_thermal_mass_j_k"] / (k_max * 2 * math.pi * l_c / math.log(2 * l_c / r_b))
+```
+
+A drilling mission is a set of quantities that change continuously in time: the depth of the bit, the torque on the auger, the temperature of the bit and the electrical power drawn. Each one obeys a physical law written as a rate of change, for example "the bit warms at a rate set by the heat flowing in minus the heat flowing out". A computer cannot follow a continuous change exactly, so the mission is advanced in small, equal time steps. This is called a discrete-time or time-stepping simulation [@ascher1998]. In this model the step is $\Delta t$ = 1 s, which is why the simulation is described as second-by-second. At each step the controller reads the simulated sensors, chooses its commands, and every state variable is moved forward by one step:
+
+$$
+x_{k+1} = x_k + \Delta t \, f(x_k, u_k)
+$$
+
+::: {.symbols}
+- $x_k$: the state of the system at step $k$, the list of bit depth (m), hole depth (m), bit temperature (K), battery energy (Wh) and controller state
+- $u_k$: the commands at step $k$: weight on bit (N), rotary speed (rpm), percussion on or off
+- $f$: the physical rate laws (cutting, cuttings removal, heat balance, power balance) that return how fast each state variable changes
+- $\Delta t$: the time step, 1 s
+:::
+
+This update is the explicit (forward) Euler method [@ascher1998]. It is accurate when $\Delta t$ is much shorter than the fastest physical process being followed. The fastest process here is the bit cooling into dense ice, with a thermal time constant of about `{python} f"{tau_fast:.0f}"` s from a lumped heat balance [@incropera2011], so a 1 s step resolves it with an error of a few per cent. The fastest drilling rate is 5 mm/s, so the bit moves at most 5 mm per step. Individual hammer blows (26 per second) are faster than the step and are not followed one by one; their average energy per second enters the cutting law instead [@lundberg1982]. The result is a full mission record, `{python} f"{len(df['moon'])}"` time steps on the Moon and `{python} f"{len(df['mars'])}"` on Mars, produced by the same physics that sizes the hardware on the other pages. A model of this kind, which runs the hardware's own physics and control logic forward in time, is the core of a digital twin [@grieves2017twin]. Nothing in the record is scripted: faults appear only when a physical quantity crosses a limit.
+
+## The 6-state algorithm
+
+```{mermaid}
+stateDiagram-v2
+  [*] --> IDLE
+  IDLE --> ACTIVE: 20 s health check done
+  ACTIVE --> SEARCH: actuators >= 213 K
+  SEARCH --> DRILL: load cell >= 5 N (bottom found)
+  DRILL --> RETRACTION: bite complete (10 cm)
+  DRILL --> RETRACTION: torque >= 5.53 N·m (fault)
+  DRILL --> RETRACTION: T_bit >= T_crit (fault)
+  RETRACTION --> SEARCH: thermal fault, bit cooled in hole
+  RETRACTION --> TRANSFER: flutes at brushing station (or cooling > 30 min)
+  TRANSFER --> SEARCH: next bite, or resume bite after torque fault
+  TRANSFER --> IDLE: 1.0 m reached, stow
+```
+
+The controller is a finite-state machine: at any moment it is in exactly one of six states, and each state has its own control law. It moves to another state only when a measured quantity meets a condition, called a guard, written on each arrow above. Statecharts of this kind are a standard way to specify reactive control software [@harel1987statecharts]. Because each state also drives continuous physics (depth, torque, temperature), the full system is a hybrid automaton, a machine with discrete modes and continuous dynamics inside each mode [@henzinger1996; @leeseshia2017]. The guards use only quantities a real drill can measure: a load cell for contact with the hole bottom, motor current for torque, a temperature sensor near the bit and the feed position for depth. The sequence SEARCH → DRILL → RETRACTION → TRANSFER is one "bite": the drill cuts 10 cm, pulls the auger out with the cuttings held in its flutes, and brushes them into a sample cup. The Icebreaker Mars drill and the TRIDENT lunar drill use the same bite cycle, so that each sample comes from a known depth interval and the hole cools between bites [@zacny2013icebreaker; @zacny2022trident]. Detecting faults from torque and temperature and recovering without an operator follows the approach demonstrated in Arctic field tests of autonomous planetary drills [@glass2008dame]. The diagram was checked against the simulation code: every arrow corresponds to a branch in the code, and the thresholds on the arrows are the values the simulation uses.
+
+```{python}
+#| output: asis
+rows = [
+    ("IDLE", f"{ctl['idle_health_check_s']} s avionics / sensor check; stow to home at the end."),
+    ("ACTIVE", f"95 W heaters until the actuators reach 213 K (lubricant limit + 20 K): {des['ledger']['warmup_duration_moon_s']['value']/60:.1f} min Moon, {des['ledger']['warmup_duration_mars_s']['value']/60:.1f} min Mars (lumped heat balance)."),
+    ("SEARCH", "Descend at 12.5 mm/s until 2 cm above the last hole bottom, then 5 mm/s until the load cell reads 5 N."),
+    ("DRILL", "Hold WOB at m g / 1.4. Each step, evaluate rotary-only and rotary-percussive and pick the lower specific energy. Derate RPM linearly over the last 30 K before T<sub>crit</sub>."),
+    ("RETRACTION", "Bite done or torque fault: trip out without rotation, so the cuttings stay in the flutes. Thermal fault: lift 3 cm off the bottom and wait until T<sub>bit</sub> < T<sub>crit</sub> − 15 K."),
+    ("TRANSFER", f"Rotate at 65 rpm while sweeping the {des['auger']['sampling_length_mm']} mm sampling zone past the brush at {des['auger']['brush_sweep_mm_s']} mm/s ({des['auger']['transfer_duration_s']} s)."),
+]
+emit_html('<div class="mbse-table-wrap"><table class="mbse-table"><thead><tr><th>State</th><th>Control law (as simulated)</th></tr></thead><tbody>'
+          + "".join(f"<tr><td><code>{a}</code></td><td>{b}</td></tr>" for a, b in rows) + "</tbody></table></div>")
+```
+
+The units and symbols in the table are:
+
+::: {.symbols .units}
+- s (second) and min (minute): time, used for durations such as the 20 s health check and the warm-up time
+- W (watt): power, the rate of energy use; the heaters draw 95 W, i.e. 95 J every second
+- K (kelvin): absolute temperature, where 0 K is absolute zero and 273.15 K is 0 °C; 213 K is −60 °C. A temperature *difference* in kelvin, such as the 30 K derating band or the 15 K margin, is the same size as one in °C
+- mm/s (millimetres per second): speed of the bit along the hole, for the feed during SEARCH and for the brush sweep during TRANSFER
+- cm and mm (centimetres, millimetres): lengths, such as the 2 cm approach clearance, the 3 cm lift after a thermal fault and the 225 mm sampling zone
+- N (newton): force, as read by the load cell; 5 N is roughly the weight of a 0.5 kg mass on Earth
+- WOB (weight on bit): the downward force pressing the bit into the ground (N)
+- $m g / 1.4$: the WOB set-point, where $m$ = `{python} f"{cfg['system']['lander_mass_kg']:.0f}"` kg is the mass of the lander that reacts the drilling force, $g$ is the local gravity (1.62 m/s² Moon, 3.71 m/s² Mars [@nssdc_moon; @nssdc_mars]) and 1.4 is a safety factor that keeps 40 % margin against lifting the lander. This gives `{python} f"{E['moon']['C_operational_wob_setpoint_n']:.0f}"` N on the Moon and `{python} f"{E['mars']['C_operational_wob_setpoint_n']:.0f}"` N on Mars
+- rpm or RPM (revolutions per minute): rotational speed of the auger; 65 rpm is just over one turn per second
+- $T_{bit}$: temperature of the bit (K)
+- $T_{crit}$: the highest bit temperature allowed before ice in the ground would sublimate (Moon) or melt (Mars), `{python} f"{E['moon']['critical_bit_temp_k']:.1f}"` K on the Moon and `{python} f"{E['mars']['critical_bit_temp_k']:.2f}"` K on Mars
+:::
+
+## Nominal mission telemetry
+
+```{python}
+#| output: asis
+fig = make_subplots(rows=4, cols=1, shared_xaxes=True, vertical_spacing=0.04,
+                    subplot_titles=("Bit depth (cm, negative = above surface)", "Auger torque (N·m)", "Bit temperature (K)", "Electrical load and solar supply (W)"))
+for env, col in (("moon", "#0284c7"), ("mars", "#ea580c")):
+    d = df[env]
+    t = d["time_s"] / 60
+    fig.add_trace(go.Scatter(x=t, y=d["depth_cm"], name=f"{env.title()} bit", line=dict(color=col)), 1, 1)
+    fig.add_trace(go.Scatter(x=t, y=d["hole_bottom_cm"], name=f"{env.title()} hole", line=dict(color=col, dash="dot"), showlegend=False), 1, 1)
+    fig.add_trace(go.Scatter(x=t, y=d["torque_nm"], name=f"{env.title()} torque", line=dict(color=col), showlegend=False), 2, 1)
+    fig.add_trace(go.Scatter(x=t, y=d["bit_temp_k"], name=f"{env.title()} T_bit", line=dict(color=col), showlegend=False), 3, 1)
+    fig.add_hline(y=E[env]["critical_bit_temp_k"], line=dict(color=col, dash="dash"), row=3, col=1)
+    fig.add_trace(go.Scatter(x=t, y=d["power_w"], name=f"{env.title()} load", line=dict(color=col), showlegend=False), 4, 1)
+    fig.add_trace(go.Scatter(x=t, y=d["solar_w"], name=f"{env.title()} solar", line=dict(color=col, dash="dot"), showlegend=False), 4, 1)
+fig.update_yaxes(autorange="reversed", row=1, col=1)
+fig.update_xaxes(title_text="Mission time (min)", row=4, col=1)
+plot(fig, 980)
+```
+
+The four panels share one time axis, so an event in one can be traced through the others.
+
+**Bit depth.** The solid line is the bit tip and the dotted line is the bottom of the hole. Each tooth of the saw pattern is one bite: the bit descends to the hole bottom, cuts 10 cm, then rises above the surface (negative depth) to the brushing station and returns. The hole bottom therefore climbs in ten steps to 100 cm. The slope of the solid line while it moves down with the hole bottom is the rate of penetration (ROP). It reaches the 5 mm/s feed limit in loose, dry soil and falls as low as `{python} f"{min(dm[e]['rop_mm_s'][dm[e]['rop_mm_s'] > 0].min() for e in dm):.1f}"` mm/s in ice-cemented ground, whose compressive strength is 5–22 MPa against a few kPa for dry soil [@gertsch2006; @schulson2009]. Stronger ground takes more energy to break per unit volume, so with the same power the hole advances more slowly [@teale1965concept]. The long flat stretches between cuts are trips in and out of the hole, which is why the bite cycle, not the cutting, sets the mission length [@zacny2013icebreaker].
+
+**Auger torque.** Torque is the twisting load the rotary motor must supply. On a drag bit it has two parts: the force needed to shear the ground ahead of the cutters, and friction on the worn cutter edges pressed down by the WOB [@detournay1992]. Retained cuttings rubbing on the hole wall add a third part. In the nominal mission the torque stays between `{python} f"{min(dm[e]['torque_nm'].min() for e in dm):.2f}"` and `{python} f"{max(dm[e]['torque_nm'].max() for e in dm):.2f}"` N·m, far below the `{python} f"{des['torque_fault_nm']:.2f}"` N·m fault threshold, because the WOB is small in low gravity and each 10 cm bite fits inside the flutes. Mars torque is higher because the WOB is `{python} f"{E['mars']['C_operational_wob_setpoint_n']/E['moon']['C_operational_wob_setpoint_n']:.1f}"` times larger (stronger gravity) and the ice-rich layers are thicker. In each step the controller also decides whether to switch on the hammer. It computes the mechanical specific energy (MSE), the energy spent per unit volume of hole, for rotary-only and for rotary-percussive cutting and keeps whichever is lower [@teale1965concept; @dupriest2005]. Percussion was chosen for `{python} f"{100*E['moon']['percussion_time_fraction']:.0f}"` % of drilling time on the Moon and `{python} f"{100*E['mars']['percussion_time_fraction']:.0f}"` % on Mars, almost entirely in the hard, ice-cemented layers where hammer blows chip the brittle ground more cheaply than scraping [@zacny2008drilling].
+
+**Bit temperature.** Cutting turns mechanical work into heat at the bit face, and about a quarter of it flows into the bit [@loui1997]. The bit loses heat by conduction into the surrounding ground and by the fresh cuttings carrying heat away; outside the hole it radiates to the sky. The simulation treats the bit as a single lumped mass, whose temperature changes at a rate equal to heat in minus heat out divided by its heat capacity [@incropera2011]. The bit warms during each cut and cools on every trip, so the trace rises and falls with the bites. The peak is `{python} f"{E['moon']['max_bit_temp_k']:.0f}"` K on the Moon (from `{python} f"{df['moon']['bit_temp_k'].iloc[0]:.0f}"` K ground) and `{python} f"{E['mars']['max_bit_temp_k']:.0f}"` K on Mars (from `{python} f"{df['mars']['bit_temp_k'].iloc[0]:.0f}"` K). The dashed lines are the limits $T_{crit}$. On the Moon the limit is set by sublimation: above about `{python} f"{E['moon']['critical_bit_temp_k']:.0f}"` K the vapour pressure of ice rises steeply and the sample would lose its water before analysis [@murphy2005; @andreas2007sublimation]. On Mars the limit is 10 K below the melting point of ice. Laboratory drilling under Martian conditions showed that ice melted by a warm bit refreezes on it and can trap the drill [@zacny2004lab]. Both stay well clear, with `{python} f"{E['moon']['critical_bit_temp_k']-E['moon']['max_bit_temp_k']:.0f}"` K of margin on the Moon and `{python} f"{E['mars']['critical_bit_temp_k']-E['mars']['max_bit_temp_k']:.0f}"` K on Mars, so the thermal derating and the thermal fault path are never triggered.
+
+**Electrical load and solar supply.** The solid line is the power drawn: avionics, plus heaters during warm-up, plus the rotary, hammer and feed motors during drilling. It peaks at `{python} f"{E['moon']['D_peak_electrical_power_w']:.0f}"` W. The dotted line is the output of the two-axis tracking solar array. At the lunar south pole the Sun stays within a few degrees of the horizon and has no atmosphere to cross, so a tracking array delivers a steady `{python} f"{df['moon']['solar_w'].mean():.0f}"` W over the hour-long mission [@mazarico2011illumination; @kopp2011]. Mars is 1.52 times farther from the Sun, so sunlight at the top of its atmosphere is only about 43 % as strong (inverse-square law), and suspended dust (optical depth 0.45) absorbs and scatters more of it [@appelbaum1989; @nssdc_mars]. The Mars array therefore gives `{python} f"{df['mars']['solar_w'].min():.0f}"`–`{python} f"{df['mars']['solar_w'].max():.0f}"` W, varying slowly with the Sun's height. Supply exceeds load at every step on both bodies, so the battery stays full and is never discharged.
+
+```{python}
+#| output: asis
+rows = []
+for env in ("moon", "mars"):
+    for s, m in E[env]["B_time_breakdown_min"].items():
+        rows.append((env, s, m))
+fig = go.Figure()
+for env, col in (("moon", "#0284c7"), ("mars", "#ea580c")):
+    b = E[env]["B_time_breakdown_min"]
+    fig.add_trace(go.Bar(y=list(b.keys()), x=list(b.values()), orientation="h", name=env.title(), marker_color=col))
+fig.update_xaxes(title_text="Minutes in each state")
+fig.update_layout(barmode="group", title="Where the mission time goes")
+plot(fig, 360)
+```
+
+Only `{python} f"{100*E['moon']['B_pure_drilling_time_min']/E['moon']['B_total_operational_duration_min']:.0f}"` % (Moon) and `{python} f"{100*E['mars']['B_pure_drilling_time_min']/E['mars']['B_total_operational_duration_min']:.0f}"` % (Mars) of the mission is spent cutting rock. Tripping in and out ten times and warming the actuators dominate. That is the real cost of bite-drilling, and the reason Icebreaker-class drills take about an hour per metre [@zacny2013icebreaker].
+
+**Time in each state.** The bar chart adds up the seconds spent in each state. ACTIVE (actuator warm-up) takes `{python} f"{E['moon']['B_time_breakdown_min']['ACTIVE']:.1f}"` min on the Moon but only `{python} f"{E['mars']['B_time_breakdown_min']['ACTIVE']:.1f}"` min on Mars. The lunar ground starts at 100 K against 192 K on Mars, so the heaters must lift the actuators by 113 K instead of 21 K to reach 213 K, the lowest temperature at which their lubricant works with a 20 K margin. SEARCH, RETRACTION and TRANSFER are identical on both bodies because they are set by feed speeds and the brushing sweep, not by the ground. TRANSFER is the largest of these at `{python} f"{des['auger']['transfer_duration_s']}"` s per bite: the brush must sweep the full sampling zone slowly enough to strip every flute. DRILL is longer on Mars (`{python} f"{E['mars']['B_time_breakdown_min']['DRILL']:.1f}"` min against `{python} f"{E['moon']['B_time_breakdown_min']['DRILL']:.1f}"` min) because more of its column is hard ice-cemented ground. Shortening the mission would mean longer bites (fewer trips), which the next section shows is limited by flute capacity.
+
+## Fault recovery
+
+```{python}
+#| output: asis
+nom = E["moon"]["num_faults"] + E["mars"]["num_faults"]
+aug = des["auger"]
+z_crit = aug["choking_onset_m"]
+emit_html(f"""<p><strong>Nominal mission: {nom} faults.</strong> With 10 cm bites inside the {z_crit*100:.2f} cm flute capacity,
+the auger never chokes. The bit also peaks at {E['moon']['max_bit_temp_k']:.0f} K (Moon) and {E['mars']['max_bit_temp_k']:.0f} K (Mars), well below
+the {E['moon']['critical_bit_temp_k']:.0f} K and {E['mars']['critical_bit_temp_k']:.0f} K limits. Nothing is scripted, so the fault paths stay quiet.</p>""")
+```
+
+### Flute capacity and choking onset
+
+The lower part of the auger is the sampling zone: a section with deep, closely spaced flutes (the helical grooves between the flights) that holds the cuttings of one bite while the auger is pulled out. Broken ground takes up more room than intact ground, because the grains no longer pack tightly; the ratio of loose to intact volume is the bulking factor [@carrier1991]. The flutes are therefore full once the bit has cut a certain length of hole. That length is the choking onset depth $z_{crit}$:
+
+$$
+z_{crit} = \frac{L_s \, A_{flute}}{A_{hole} \, B}
+$$
+
+::: {.symbols}
+- $z_{crit}$: choking onset, the length of hole that can be cut in one bite before the sampling flutes are completely full (m)
+- $L_s$: length of the sampling zone (m); here `{python} f"{aug['sampling_length_mm']}"` mm
+- $A_{flute}$: open cross-section of the flutes available for cuttings (m²); here `{python} f"{aug['flute_area_mm2']:.1f}"` mm²
+- $A_{hole}$: cross-section of the hole (m²); here `{python} f"{aug['hole_area_mm2']:.1f}"` mm². Cutting a length $z$ of hole removes a volume $A_{hole} z$ of intact ground
+- $B$: bulking factor, the volume of loose cuttings divided by the volume of intact ground they came from, `{python} f"{cfg['cutting_model']['cuttings_bulking_factor']}"` (dimensionless; 1.3–1.6 for granular regolith [@carrier1991])
+:::
+
+The numerator is the volume the flutes can hold, and the denominator is the loose volume of cuttings produced per metre of hole. Their ratio gives $z_{crit}$ = `{python} f"{z_crit:.4f}"` m, or `{python} f"{z_crit*100:.1f}"` cm. The sampling zone was sized to hold 120 % of one 10 cm bite, so a nominal bite fills the flutes to `{python} f"{100*cfg['system']['bite_depth_m']/z_crit:.0f}"` % and leaves margin.
+
+**Choking onset** is the moment cuttings have nowhere left to go in the sampling zone. Beyond $z_{crit}$, newly cut material is forced up into the narrower transport flutes above and packs into a plug. A plug of granular material in a tube behaves like grain in a silo: part of the push is turned sideways into pressure on the walls, and wall friction resists the motion. Janssen showed that this friction makes the force needed to move the plug grow exponentially with its length [@janssen1895versuche; @sperl2006janssen]:
+
+$$
+\sigma_{plug} = \sigma_0 \exp\!\left(\frac{4 \mu_w K L_{plug}}{D_h}\right), \qquad L_{plug} = \frac{(z_{bite} - z_{crit}) \, A_{hole} \, B}{A_{transport}}
+$$
+
+::: {.symbols}
+- $\sigma_{plug}$: pressure the auger flights must apply to push the plug along (Pa)
+- $\sigma_0$: strength of the loose cuttings at the start of the plug, from their cohesion and friction angle (Pa)
+- $\mu_w$: friction coefficient between cuttings and the hole wall, `{python} f"{cfg['auger_geometry']['wall_friction_coeff_soil']}"` (dimensionless)
+- $K$: ratio of sideways to axial pressure in the plug, $1 - \sin\phi$ with $\phi$ the friction angle of the cuttings [@das2014] (dimensionless)
+- $L_{plug}$: length of the compacted plug (m)
+- $D_h$: hydraulic diameter of the transport flute channel, four times its area divided by its perimeter (m)
+- $z_{bite}$: length of hole cut so far in the current bite (m)
+- $A_{transport}$: open cross-section of the transport flutes (m²)
+:::
+
+The auger must turn against this pressure, so the motor torque rises gently up to $z_{crit}$ and then steeply beyond it. The chart below evaluates the model at 90 cm depth for bites of increasing length. This sudden torque rise, ending in a stalled auger, is the failure that field and laboratory tests of planetary augers call choking [@zacny2005gas; @zacny2008drilling]; screw-conveyor theory gives the same picture of throughput collapsing once the flights are overfilled [@roberts1999].
+
+```{python}
+#| output: asis
+curves = json.loads((data / "terramechanics_curves.json").read_text())
+fig = go.Figure()
+for env, col in (("moon", "#0284c7"), ("mars", "#ea580c")):
+    c = curves[env]["choking"]
+    fig.add_trace(go.Scatter(x=[b * 100 for b in c["bite_m"]], y=c["torque_nm"], name=env.title(), line=dict(color=col)))
+fig.add_vline(x=z_crit * 100, line=dict(dash="dot", color="#555"), annotation_text="z_crit")
+fig.add_hline(y=des["torque_fault_nm"], line=dict(dash="dash", color="#ef4444"), annotation_text="fault threshold")
+fig.update_xaxes(title_text="Length cut in one bite (cm)")
+fig.update_yaxes(title_text="Auger torque (N·m)", range=[0, 2 * des["torque_fault_nm"]])
+fig.update_layout(title="Auger torque against bite length at 90 cm depth")
+plot(fig, 380)
+```
+
+### Off-nominal case: 15 cm bites
+
+To test the fault path, the same mission was simulated with 15 cm bites, longer than $z_{crit}$ = `{python} f"{z_crit*100:.1f}"` cm. Nothing else was changed and no fault was scripted. In each bite the torque stays low for the first `{python} f"{z_crit*100:.1f}"` cm, then climbs as the plug forms. When it reaches `{python} f"{des['torque_fault_nm']:.2f}"` N·m (85 % of the motor's `{python} f"{cfg['actuators']['rotary']['max_safe_torque_nm']:.1f}"` N·m limit, kept in reserve so the string is never twisted to its limit), the controller leaves DRILL. It stops rotation and pulls the auger out (RETRACTION), so the packed cuttings stay in the flutes rather than spilling back down the hole. It brushes them into the sample cup (TRANSFER), returns to the hole bottom (SEARCH) and finishes the bite with empty flutes. The table lists every fault the physics produced.
+
+```{python}
+#| output: asis
+rows = []
+for env in ("moon", "mars"):
+    for f in abcd["off_nominal"][env]["fault_events"]:
+        rows.append(f"<tr><td>{env.title()}</td><td>{f['time_s']/60:.1f}</td><td>{f['bite']}</td><td>{f['depth_m']*100:.1f}</td><td>{f['layer']}</td><td><code>{f['fault']}</code></td><td>{f['torque_nm']:.2f}</td></tr>")
+emit_html('<div class="mbse-table-wrap"><table class="mbse-table"><thead><tr><th>Body</th><th>Time (min)</th><th>Bite</th><th>Depth (cm)</th><th>Layer</th><th>Trigger</th><th>Torque (N·m)</th></tr></thead><tbody>'
+          + "".join(rows) + "</tbody></table></div>")
+fig = go.Figure()
+for env, col in (("moon", "#0284c7"), ("mars", "#ea580c")):
+    d = off[env]
+    fig.add_trace(go.Scatter(x=d["time_s"] / 60, y=d["torque_nm"], name=f"{env.title()} torque (15 cm bites)", line=dict(color=col)))
+fig.add_hline(y=des["torque_fault_nm"], line=dict(dash="dash", color="#ef4444"), annotation_text="fault threshold")
+fig.update_xaxes(title_text="Mission time (min)")
+fig.update_yaxes(title_text="Auger torque (N·m)")
+plot(fig, 380)
+o = abcd["off_nominal"]
+```
+
+The torque column is the value in the step that crossed the threshold; it can overshoot well past `{python} f"{des['torque_fault_nm']:.2f}"` N·m because plug resistance grows exponentially and the controller acts once per second. In nearly pure ground ice on Mars the modelled torque jumps to over 18 N·m within a single step. A real motor would stall at its current limit before that, which is why the trip point sits below the limit and why flight software samples torque much faster than once per second. Choking trips the fault in `{python} f"{o['mars']['num_faults']}"` of `{python} f"{o['mars']['A_num_bites']}"` bites on Mars, where most of the column is dense ice-cemented ground, and in `{python} f"{o['moon']['num_faults']}"` of `{python} f"{o['moon']['A_num_bites']}"` bites on the Moon. Both missions still reach `{python} f"{o['moon']['A_reached_depth_m']:.1f}"` m: the Moon in `{python} f"{o['moon']['B_total_operational_duration_min']:.0f}"` min (`{python} f"{E['moon']['B_total_operational_duration_min']:.0f}"` min nominal) and Mars in `{python} f"{o['mars']['B_total_operational_duration_min']:.0f}"` min (`{python} f"{E['mars']['B_total_operational_duration_min']:.0f}"` min nominal). The Moon finishes sooner because fewer, longer bites mean fewer trips; Mars takes longer because each choked bite needs an extra trip out and back. Longer bites are therefore possible, but every choke stresses the auger and mixes cuttings from a wider depth range into one cup, which is why the nominal design keeps each bite inside $z_{crit}$. Monitoring torque and retracting on overload is the same recovery used by autonomous drills tested in the field [@glass2008dame; @zacny2013icebreaker].
+
+## References {.unnumbered}
+
+::: {#refs}
+:::

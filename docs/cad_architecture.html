@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3D CAD Architecture &amp; Subassembly Breakdown – Lunar &amp; Martian Bite Drill</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-d5af1ddb80ef99ea9e4d0c004ab93c6c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300..900;1,300..900&amp;display=swap">
+<script>window.backupDefine = window.define; window.define = undefined;</script>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Lunar &amp; Martian Bite Drill</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Design Showcase</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./digital_twin.html"> 
+<span class="menu-text">Results &amp; Digital Twin</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./theory_and_sizing.html"> 
+<span class="menu-text">Derivations &amp; Design</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./cad_architecture.html" aria-current="page"> 
+<span class="menu-text">3D CAD</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./autonomous_control.html"> 
+<span class="menu-text">Autonomous Control</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#modelling-approach" id="toc-modelling-approach" class="nav-link active" data-scroll-target="#modelling-approach"><span class="header-section-number">1</span> Modelling approach</a>
+  <ul class="collapse">
+  <li><a href="#drill-bit" id="toc-drill-bit" class="nav-link" data-scroll-target="#drill-bit"><span class="header-section-number">1.1</span> Drill bit</a></li>
+  <li><a href="#dual-zone-auger-string" id="toc-dual-zone-auger-string" class="nav-link" data-scroll-target="#dual-zone-auger-string"><span class="header-section-number">1.2</span> Dual-zone auger string</a></li>
+  <li><a href="#rotary-percussive-drill-head" id="toc-rotary-percussive-drill-head" class="nav-link" data-scroll-target="#rotary-percussive-drill-head"><span class="header-section-number">1.3</span> Rotary-percussive drill head</a></li>
+  <li><a href="#deployable-mast-and-lander-interface" id="toc-deployable-mast-and-lander-interface" class="nav-link" data-scroll-target="#deployable-mast-and-lander-interface"><span class="header-section-number">1.4</span> Deployable mast and lander interface</a></li>
+  <li><a href="#brushing-station-and-sample-carousel" id="toc-brushing-station-and-sample-carousel" class="nav-link" data-scroll-target="#brushing-station-and-sample-carousel"><span class="header-section-number">1.5</span> Brushing station and sample carousel</a></li>
+  <li><a href="#power-system" id="toc-power-system" class="nav-link" data-scroll-target="#power-system"><span class="header-section-number">1.6</span> Power system</a></li>
+  </ul></li>
+  <li><a href="#integrated-drill-rig-and-kinematic-structure" id="toc-integrated-drill-rig-and-kinematic-structure" class="nav-link" data-scroll-target="#integrated-drill-rig-and-kinematic-structure"><span class="header-section-number">2</span> Integrated drill rig and kinematic structure</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">3D CAD Architecture &amp; Subassembly Breakdown</h1>
+<p class="subtitle lead">Parametric boundary-representation (B-rep) solids, sized by the physics-based design derivations and made interactive in the browser through WebGL, a JavaScript graphics API</p>
+</div>
+
+
+
+<div class="quarto-title-meta column-page-left">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+<script>
+  // Download menus: close any open menu when the reader clicks elsewhere
+  document.addEventListener("click", (e) => {
+    document.querySelectorAll("details.cad-dl[open]").forEach((d) => { if (!d.contains(e.target)) d.removeAttribute("open"); });
+  });
+</script>
+<p>Each component on this page is a solid model generated from the system’s design parameters, not drawn by hand. Its dimensions come from the physics-based sizing (loads, stresses, fatigue, vibration and thermal limits), and the browser shows the result as an interactive 3D model.</p>
+<p>A <strong>boundary representation (B-rep)</strong> describes a solid by the surfaces that enclose it. It stores the faces (pieces of planes, cylinders, cones, tori or NURBS surfaces), the edges where faces meet and the vertices where edges meet, together with the topology that records which face borders which <span class="citation" data-cites="requicha1980 stroud2006brep piegl1997nurbs">[<a href="#ref-requicha1980" role="doc-biblioref">1</a>–<a href="#ref-piegl1997nurbs" role="doc-biblioref">3</a>]</span>. Because the boundary is exact, a bearing bore is a true cylinder of a known diameter, and volume, mass, centre of gravity and moments of inertia follow directly from the geometry. A B-rep model is <strong>parametric</strong> when every dimension is an expression of named inputs, such as auger diameter, flight pitch, bearing size or mast section, instead of a fixed number <span class="citation" data-cites="shah1995parametric">[<a href="#ref-shah1995parametric" role="doc-biblioref">4</a>]</span>. When a derivation changes a value (for example the flute depth set by the fatigue check), the solids rebuild with the new value and every dependent dimension follows.</p>
+<p>An <strong>application programming interface (API)</strong> is the set of functions that one piece of software publishes so that other programs can use it. <strong>WebGL</strong> is such an interface: a JavaScript API, standardised by the Khronos Group, through which a web page sends triangles, material colours and lights to the computer’s graphics processor (GPU) <span class="citation" data-cites="webgl2">[<a href="#ref-webgl2" role="doc-biblioref">5</a>]</span>. The viewers on this page use it to draw each model at interactive frame rates in any modern browser, with no plug-in.</p>
+<p>The models are published in three file formats, each suited to a different task:</p>
+<ul>
+<li><strong>STEP</strong> (ISO 10303-21) is the neutral exchange format for engineering CAD <span class="citation" data-cites="iso10303_21">[<a href="#ref-iso10303_21" role="doc-biblioref">6</a>]</span>. It carries the exact B-rep geometry, the assembly tree, part names and colours, and it opens in any major CAD package for further design, analysis or manufacture.</li>
+<li><strong>STL</strong> stores only a list of flat triangles and their normals, with no units, colours or assembly structure <span class="citation" data-cites="stl1988">[<a href="#ref-stl1988" role="doc-biblioref">7</a>]</span>. It is the usual input for 3D printing and for many meshing tools.</li>
+<li><strong>glTF</strong> (GL Transmission Format) is the Khronos format for delivering 3D scenes to real-time renderers, and <strong>GLB</strong> is its single-file binary form <span class="citation" data-cites="gltf2">[<a href="#ref-gltf2" role="doc-biblioref">8</a>]</span>. It holds triangle meshes, physically based material properties and a hierarchy of nodes, and it is the format the viewers below load.</li>
+</ul>
+<section id="modelling-approach" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="modelling-approach"><span class="header-section-number">1</span> Modelling approach</h2>
+<p>Every part is modelled once as a parametric B-rep solid by the CAD generator, sized from the same parameter set and design derivations used in the sizing calculations. The same solids are written to colour-labelled, assembly-structured STEP files (mm), tessellated to STL (mm), and tessellated to glTF <code>.glb</code> (m, Y-up) for the viewers below. The web models and the engineering STEP files therefore always match.</p>
+<p><strong>Tessellation.</strong> The STEP file keeps the exact curved surfaces, but a GPU or a 3D printer can only process flat triangles. Tessellation replaces each curved face by a mesh of triangles whose vertices lie on the true surface, so each triangle edge is a chord across the curve. The error is the chordal deviation, the largest gap between a triangle and the surface it replaces. For a face of radius <span class="math inline">r</span> divided into segments that each span an angle <span class="math inline">\theta</span>:</p>
+<p><span class="math display">
+\delta = r\left(1 - \cos\frac{\theta}{2}\right)
+</span></p>
+<div class="symbols">
+<ul>
+<li><span class="math inline">\delta</span>: chordal deviation, the largest distance between the true surface and the triangle that replaces it (mm)</li>
+<li><span class="math inline">r</span>: local radius of curvature of the face (mm)</li>
+<li><span class="math inline">\theta</span>: angle one segment spans at the centre of curvature (rad)</li>
+</ul>
+</div>
+<p>The generator holds <span class="math inline">\delta \le</span> 0.08 mm and <span class="math inline">\theta \le</span> 0.25 rad. On the 10 mm radius of the auger flight, the deviation limit alone would allow <span class="math inline">\theta =</span> 0.253 rad, so the angular limit governs and a full circle becomes 26 segments. The worst-case error is 0.8 % of the radius, below what a screen can show and below ordinary machining tolerances. Thin, repeated features (helical flights, bristle tufts, coil springs) use coarser limits to keep the files small. The web copy is also converted to the glTF convention of metres with <span class="math inline">+Y</span> up <span class="citation" data-cites="gltf2">[<a href="#ref-gltf2" role="doc-biblioref">8</a>]</span>: a CAD point <span class="math inline">(x, y, z)</span> in millimetres with <span class="math inline">Z</span> up becomes <span class="math inline">(x,\ z,\ -y)\times10^{-3}</span> m. That is a rotation of <span class="math inline">-90^\circ</span> about the <span class="math inline">x</span>-axis followed by a scale, so the frame stays right-handed and lengths, angles and the hand of every helix are preserved.</p>
+<p><strong>Home pose.</strong> The rig is drawn at 1:1 scale in its <em>home</em> pose, the reference configuration from which every motion is measured. In robot-kinematics terms it is the zero position of the prismatic feed joint <span class="citation" data-cites="craig2005robotics">[<a href="#ref-craig2005robotics" role="doc-biblioref">9</a>]</span>. The carriage sits at the top of its travel on the rails, so the drill string is fully withdrawn and the bit tip hangs 300 mm above the regolith. That height clears the mast foot plate (100 mm) and the top of the brush (about 223 mm), so the parked bit touches neither the brushing station nor the ground and the load cell reads no weight on bit. To reach the 1.0 m target depth the carriage therefore needs a stroke of 0.30 + 1.00 = 1.30 m. A mission starts and ends here: the controller leaves home, approaches at 5 mm/s until the load cell detects 5 N of contact, and returns to home after the last bite. The digital twin moves the carriage by the displacement <span class="math inline">\Delta z = z_\text{tip} - z_\text{home}</span> from this pose.</p>
+<div class="symbols">
+<ul>
+<li><span class="math inline">\Delta z</span>: carriage displacement from the home pose, positive upward (m)</li>
+<li><span class="math inline">z_\text{tip}</span>: bit-tip height above the regolith surface at the current instant, negative once the bit is in the hole (m)</li>
+<li><span class="math inline">z_\text{home}</span>: bit-tip height in the home pose, 0.30 m</li>
+</ul>
+</div>
+<p><strong>Colour code.</strong> The colours carry engineering meaning. Each part is coloured by the job it does in the machine, so a load or energy path can be traced by eye, as in the cutaway drawings of engineering manuals. Finishes are matte, in the manner of technical illustration, so that hue rather than mirror-like highlights carries the information <span class="citation" data-cites="gooch1998">[<a href="#ref-gooch1998" role="doc-biblioref">10</a>]</span>. The eight function hues are the Okabe–Ito colour-universal-design set, chosen so the classes stay distinguishable for readers with colour-vision deficiency, about one man in twelve <span class="citation" data-cites="okabe2008cud wong2011color">[<a href="#ref-okabe2008cud" role="doc-biblioref">11</a>, <a href="#ref-wong2011color" role="doc-biblioref">12</a>]</span>. Two neutral greys mark the primary structure and the lander. The same colours are written into the STEP part labels, so the code carries into any CAD package.</p>
+<div class="mbse-table-wrap">
+<table class="mbse-table cc-table caption-top table">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Colour</th>
+<th data-quarto-table-cell-role="th">Function class</th>
+<th data-quarto-table-cell-role="th">Parts and role</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="cc-swatch" style="background:#262626"></span></td>
+<td><strong>Rock-cutting interface</strong></td>
+<td>Tungsten-carbide inserts and gauge pads: the only parts that touch intact rock</td>
+</tr>
+<tr class="even">
+<td><span class="cc-swatch" style="background:#cc79a7"></span></td>
+<td><strong>Seals, bushings &amp; dust control</strong></td>
+<td>PTFE / Vespel sliding contacts, lip seals, labyrinths, bellows and wipers that keep regolith out</td>
+</tr>
+<tr class="odd">
+<td><span class="cc-swatch" style="background:#0072b2"></span></td>
+<td><strong>Electromechanical conversion &amp; sensing</strong></td>
+<td>BLDC motors, encoders, slip ring, load cell, thermocouple path and solar cells</td>
+</tr>
+<tr class="even">
+<td><span class="cc-swatch" style="background:#d55e00"></span></td>
+<td><strong>Percussive (impact) path</strong></td>
+<td>Barrel cam, followers, hammer, spring and anvil: stores and releases the blow energy</td>
+</tr>
+<tr class="odd">
+<td><span class="cc-swatch" style="background:#56b4e9"></span></td>
+<td><strong>Deployment &amp; launch restraint</strong></td>
+<td>Hinge, latch, hold-down and release hardware that only works before drilling</td>
+</tr>
+<tr class="even">
+<td><span class="cc-swatch" style="background:#009e73"></span></td>
+<td><strong>Drill string &amp; sample path</strong></td>
+<td>Every part that carries or touches the regolith sample: bit body, auger, brush, chute, cups</td>
+</tr>
+<tr class="odd">
+<td><span class="cc-swatch" style="background:#e69f00"></span></td>
+<td><strong>Rotary &amp; linear drive train</strong></td>
+<td>Gears, spindle, shafts, bearings, leadscrew, nut and rails that transmit torque and feed force</td>
+</tr>
+<tr class="even">
+<td><span class="cc-swatch" style="background:#f0e442"></span></td>
+<td><strong>Thermal control &amp; energy storage</strong></td>
+<td>Avionics warm box, radiator and H<sub>2</sub>/O<sub>2</sub> reactant tanks</td>
+</tr>
+<tr class="odd">
+<td><span class="cc-swatch" style="background:#7a766e"></span></td>
+<td><strong>Lander interface (context)</strong></td>
+<td>Deck section, legs and footpads that the drill reacts against</td>
+</tr>
+<tr class="even">
+<td><span class="cc-swatch" style="background:#beb8aa"></span></td>
+<td><strong>Primary structure</strong></td>
+<td>Housings, mast spine, plates, brackets, frames and clamps that carry the loads</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Read together, the classes follow the energy through the machine: electrical power is converted in the motors (blue), carried as torque and feed force through the drive train (orange) or stored and released as impact in the percussion path (vermillion), delivered to the rock by the carbide (black), and the reactions return to the lander through the structure (greys). A part’s class follows its role, not its material: the bronze leadscrew nut is orange because it transmits feed force, while the bronze chute is green because it carries the sample.</p>
+<p>In every viewer below, drag to orbit, scroll to zoom and right-drag to pan. The tag under each title gives the part count and the overall envelope (width × depth × height). The <strong>Download</strong> menu offers each model in the three file formats.</p>
+<section id="drill-bit" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="drill-bit"><span class="header-section-number">1.1</span> Drill bit</h3>
+<div class="cad-viewer-grid">
+  <figure class="cad-card figure">
+    <div class="cad-card-header">
+      <div><h4 class="anchored">Crown, sampling sub &amp; joint</h4><span class="cad-tag">11 parts · envelope 21 × 20 × 273 mm</span></div>
+      <details class="cad-dl"><summary>Download</summary><div class="cad-dl-menu"><a href="assets/cad/drill_bit_crown.step" download=""><strong>STEP</strong><span>exact B-rep, assembly tree, mm</span></a><a href="assets/cad/drill_bit_crown.stl" download=""><strong>STL</strong><span>triangle mesh, mm</span></a><a href="assets/cad/drill_bit_crown.glb" download=""><strong>glTF binary (.glb)</strong><span>web mesh with materials, m</span></a></div></details>
+    </div>
+    <model-viewer src="assets/cad/drill_bit_crown.glb" alt="Drill bit close-up" camera-controls="" touch-action="pan-y" environment-image="neutral" tone-mapping="neutral" shadow-intensity="0.55" shadow-softness="0.9" exposure="0.75" camera-orbit="25deg 110deg 0.075m" interaction-prompt="none" loading="eager" camera-target="0m 0.015m 0m" field-of-view="28deg" min-camera-orbit="auto auto 0.02m">
+      <div class="cad-load-error" slot="error">Model failed to load. Serve the site over HTTP; browsers block <code>.glb</code> files opened directly from disk.</div>
+    </model-viewer>
+  </figure>
+  <figure class="cad-card figure">
+    <div class="cad-card-header">
+      <div><h4 class="anchored">Exploded view</h4><span class="cad-tag">11 parts · envelope 55 × 42 × 176 mm</span></div>
+      <details class="cad-dl"><summary>Download</summary><div class="cad-dl-menu"><a href="assets/cad/drill_bit_exploded.step" download=""><strong>STEP</strong><span>exact B-rep, assembly tree, mm</span></a><a href="assets/cad/drill_bit_exploded.stl" download=""><strong>STL</strong><span>triangle mesh, mm</span></a><a href="assets/cad/drill_bit_exploded.glb" download=""><strong>glTF binary (.glb)</strong><span>web mesh with materials, m</span></a></div></details>
+    </div>
+    <model-viewer src="assets/cad/drill_bit_exploded.glb" alt="Exploded drill bit" camera-controls="" touch-action="pan-y" environment-image="neutral" tone-mapping="neutral" shadow-intensity="0.55" shadow-softness="0.9" exposure="0.75" camera-orbit="35deg 80deg auto" interaction-prompt="none" loading="eager">
+      <div class="cad-load-error" slot="error">Model failed to load. Serve the site over HTTP; browsers block <code>.glb</code> files opened directly from disk.</div>
+    </model-viewer>
+  </figure></div>
+<ul class="cad-notes"><li><strong>Cutters:</strong> two WC-10Co chisel inserts, -10° rake / 15° clearance (wedge 85°), edges on the line through the axis so the centre is cut, 2 mm proud of the face. Edge radius <strong>1.00 mm</strong> from Hertz contact: carbide FOS 2.08 on a basalt clast, yet 36× the strength of the hardest ice.</li><li><strong>Junk slots:</strong> two 8 mm slots ahead of each rake face, sized so their area equals the sampling-flute channel (never the bottleneck). Carbide gauge pads with back-reaming chamfers on the trailing quadrants.</li><li><strong>Indexing:</strong> the bit turns 34.6° between hammer blows, so each blow lands 6.3 mm from the last crater at the gauge.</li><li><strong>Sensing &amp; joint:</strong> thermocouple pocket ends 0.5 mm above the inserts (carbide conducts the edge heat). M12×1 right-hand joint: drilling torque tightens it, and impact passes through the shoulder (62 MPa), not the thread.</li><li><strong>Exploded view:</strong> inserts, gauge pads, thermocouple probe, crown body, sampling sub and coupling pulled apart to show how the bit is built and brazed.</li></ul>
+</section>
+<section id="dual-zone-auger-string" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="dual-zone-auger-string"><span class="header-section-number">1.2</span> Dual-zone auger string</h3>
+<div class="cad-viewer-single">
+  <figure class="cad-card figure">
+    <div class="cad-card-header">
+      <div><h4 class="anchored">Auger string, bit to hex drive</h4><span class="cad-tag">19 parts · envelope 30 × 20 × 1280 mm</span></div>
+      <details class="cad-dl"><summary>Download</summary><div class="cad-dl-menu"><a href="assets/cad/auger_bit.step" download=""><strong>STEP</strong><span>exact B-rep, assembly tree, mm</span></a><a href="assets/cad/auger_bit.stl" download=""><strong>STL</strong><span>triangle mesh, mm</span></a><a href="assets/cad/auger_bit.glb" download=""><strong>glTF binary (.glb)</strong><span>web mesh with materials, m</span></a></div></details>
+    </div>
+    <model-viewer src="assets/cad/auger_bit.glb" alt="20 mm auger" camera-controls="" touch-action="pan-y" environment-image="neutral" tone-mapping="neutral" shadow-intensity="0.55" shadow-softness="0.9" exposure="0.75" camera-orbit="25deg 80deg auto" interaction-prompt="none" loading="eager">
+      <div class="cad-load-error" slot="error">Model failed to load. Serve the site over HTTP; browsers block <code>.glb</code> files opened directly from disk.</div>
+    </model-viewer>
+  </figure></div>
+<ul class="cad-notes"><li><strong>Flights:</strong> 20 mm OD over the full length. The upper transport flight runs on a 14/12 mm hollow tube at 39.0 mm pitch (36.1° helix, the screw-efficiency optimum 45° − φ/2).</li><li><strong>Flight attachment:</strong> the root carries the stall plug pressure (3.5 MPa, 65 MPa bending) plus an inertial load at every blow's stress-wave front (136 MPa, 3.7e+07 cycles). Fillet welds are strong enough statically, but the weld toe would last only 2.0e+05 cycles (IIW FAT 63), so the flight is <strong>machined integral</strong> with the tube with a root fillet of t/2: Goodman FOS 2.21.</li><li><strong>String dynamics:</strong> a beam model of the 1240 mm string (sampling root, joint, tube, hex) gives a first lateral mode of 46 Hz at the start of the hole (1.77× the blow rate). <strong>Without the mast-foot guide bushing</strong> (22 mm Vespel liner) it would be 19 Hz, inside the ±20&nbsp;% resonance band. Buckling 3,294 N vs a 167 N lift-off WOB; first torsional mode 393 Hz; wind-up 13.2° at 6.5 N·m, mostly in the 6 mm sampling root.</li><li><strong>Drive interface:</strong> a 16 mm hex sits 52 mm deep in the anvil socket (flank pressure 3.5 MPa, torsion 13 MPa, impact 47 MPa at the pin section). The tube is brazed into the collar (3 mm lap, FOS 19) and its end bears on the socket floor, so the blow never loads the braze. A cross pin (35 MPa at the load-cell rating) carries the hanging string.</li><li><strong>Thermocouple path:</strong> a 1 mm type-T lead runs from the bit probe through a spring-loaded coaxial contact at the bit joint (so the bit screws on without twisting it), up the tube and the chamfered hex bore to the slip ring; it fills 6 % of the narrowest bore.</li></ul>
+</section>
+<section id="rotary-percussive-drill-head" class="level3" data-number="1.3">
+<h3 data-number="1.3" class="anchored" data-anchor-id="rotary-percussive-drill-head"><span class="header-section-number">1.3</span> Rotary-percussive drill head</h3>
+<div class="cad-viewer-grid">
+  <figure class="cad-card figure">
+    <div class="cad-card-header">
+      <div><h4 class="anchored">Enclosed drill head</h4><span class="cad-tag">68 parts · envelope 220 × 177 × 339 mm</span></div>
+      <details class="cad-dl"><summary>Download</summary><div class="cad-dl-menu"><a href="assets/cad/drill_head.step" download=""><strong>STEP</strong><span>exact B-rep, assembly tree, mm</span></a><a href="assets/cad/drill_head.stl" download=""><strong>STL</strong><span>triangle mesh, mm</span></a><a href="assets/cad/drill_head.glb" download=""><strong>glTF binary (.glb)</strong><span>web mesh with materials, m</span></a></div></details>
+    </div>
+    <model-viewer src="assets/cad/drill_head.glb" alt="Drill head" camera-controls="" touch-action="pan-y" environment-image="neutral" tone-mapping="neutral" shadow-intensity="0.55" shadow-softness="0.9" exposure="0.75" camera-orbit="-35deg 70deg auto" interaction-prompt="none" loading="eager">
+      <div class="cad-load-error" slot="error">Model failed to load. Serve the site over HTTP; browsers block <code>.glb</code> files opened directly from disk.</div>
+    </model-viewer>
+  </figure>
+  <figure class="cad-card figure">
+    <div class="cad-card-header">
+      <div><h4 class="anchored">Quarter section</h4><span class="cad-tag">68 parts · envelope 220 × 177 × 339 mm</span></div>
+      <details class="cad-dl"><summary>Download</summary><div class="cad-dl-menu"><a href="assets/cad/drill_head_section.step" download=""><strong>STEP</strong><span>exact B-rep, assembly tree, mm</span></a><a href="assets/cad/drill_head_section.stl" download=""><strong>STL</strong><span>triangle mesh, mm</span></a><a href="assets/cad/drill_head_section.glb" download=""><strong>glTF binary (.glb)</strong><span>web mesh with materials, m</span></a></div></details>
+    </div>
+    <model-viewer src="assets/cad/drill_head_section.glb" alt="Drill head quarter section" camera-controls="" touch-action="pan-y" environment-image="neutral" tone-mapping="neutral" shadow-intensity="0.55" shadow-softness="0.9" exposure="0.75" camera-orbit="40deg 72deg 0.5m" interaction-prompt="none" loading="eager" camera-target="0m 1.700m 0m">
+      <div class="cad-load-error" slot="error">Model failed to load. Serve the site over HTTP; browsers block <code>.glb</code> files opened directly from disk.</div>
+    </model-viewer>
+  </figure></div>
+<ul class="cad-notes"><li><strong>Rotary drive:</strong> frameless BLDC sized from the 6.5 N·m spindle limit: 0.46 N·m at the rotor gives a Ø31 mm rotor in a Ø54 mm stator. It drives an 8:1 planetary (12/36/84 teeth, 3 planets, module 0.5) and a 12T/24T spur stage (module 1.25). Bending stress is 123 MPa and contact stress 923 MPa, both within AGMA limits for carburised 9310.</li><li><strong>Percussion:</strong> a second BLDC drives a 54T ring gear on a two-lobe barrel cam. The cycloidal rise lasts 150°, followed by a 30° dwell, twice the 2.7 ms the hammer takes to fall. The pressure angle peaks at 8.7° and roller contact stress at 528 MPa. The spring is the thinnest stock wire that passes every check: 6.0 mm wire, 3.14 active coils, 360 MPa, fatigue FOS 1.55, surge 682 Hz.</li><li><strong>Load paths:</strong> the hammer and anvil both slide on a DIN 5480 spline (flank pressure 4.6 MPa). The 5.4 kN blow travels from hammer to anvil to hex shank and never crosses a bearing. Weight on bit takes a different route: nut, yoke, a 500 N load cell (error 1.2 N, well under the 5 N contact threshold), the housing, the 7004 ACD pair, and the spindle end face. The Tr16×4 screw is self-locking.</li><li><strong>Bearings (SKF catalogue):</strong> 7004 ACD pair L<sub>10</sub> = 104,061 h, 61804 35,847 h, 61812 cam bearing 18,528 h. The requirement is 400 h, 4× the drilling time. <strong>Dust:</strong> labyrinth and PTFE lip seal at the spindle exit, a stationary bellows over the 4 mm anvil float, and rail wipers on the LM16UU bushings.</li><li><strong>Quarter section:</strong> the housing and the coaxial stack are cut away in one quadrant. From the bottom up: anvil with hex socket, hammer with follower rollers on the barrel cam, spring, 7004 bearing pair, slip ring, 61804 bearing, 24T gear, then the planetary and motor in the offset pod, the load cell and the yoke.</li></ul>
+</section>
+<section id="deployable-mast-and-lander-interface" class="level3" data-number="1.4">
+<h3 data-number="1.4" class="anchored" data-anchor-id="deployable-mast-and-lander-interface"><span class="header-section-number">1.4</span> Deployable mast and lander interface</h3>
+<div class="cad-viewer-grid">
+  <figure class="cad-card figure">
+    <div class="cad-card-header">
+      <div><h4 class="anchored">Deployed, on the lander deck</h4><span class="cad-tag">118 parts · envelope 1260 × 2249 × 1977 mm</span></div>
+      <details class="cad-dl"><summary>Download</summary><div class="cad-dl-menu"><a href="assets/cad/mast_and_brush.step" download=""><strong>STEP</strong><span>exact B-rep, assembly tree, mm</span></a><a href="assets/cad/mast_and_brush.stl" download=""><strong>STL</strong><span>triangle mesh, mm</span></a><a href="assets/cad/mast_and_brush.glb" download=""><strong>glTF binary (.glb)</strong><span>web mesh with materials, m</span></a></div></details>
+    </div>
+    <model-viewer src="assets/cad/mast_and_brush.glb" alt="Deployed mast on the lander deck" camera-controls="" touch-action="pan-y" environment-image="neutral" tone-mapping="neutral" shadow-intensity="0.55" shadow-softness="0.9" exposure="0.75" camera-orbit="-35deg 72deg auto" interaction-prompt="none" loading="eager">
+      <div class="cad-load-error" slot="error">Model failed to load. Serve the site over HTTP; browsers block <code>.glb</code> files opened directly from disk.</div>
+    </model-viewer>
+  </figure>
+  <figure class="cad-card figure">
+    <div class="cad-card-header">
+      <div><h4 class="anchored">Launch configuration (stowed)</h4><span class="cad-tag">205 parts · envelope 1260 × 2696 × 884 mm</span></div>
+      <details class="cad-dl"><summary>Download</summary><div class="cad-dl-menu"><a href="assets/cad/mast_stowed.step" download=""><strong>STEP</strong><span>exact B-rep, assembly tree, mm</span></a><a href="assets/cad/mast_stowed.stl" download=""><strong>STL</strong><span>triangle mesh, mm</span></a><a href="assets/cad/mast_stowed.glb" download=""><strong>glTF binary (.glb)</strong><span>web mesh with materials, m</span></a></div></details>
+    </div>
+    <model-viewer src="assets/cad/mast_stowed.glb" alt="Stowed mast on the lander deck" camera-controls="" touch-action="pan-y" environment-image="neutral" tone-mapping="neutral" shadow-intensity="0.55" shadow-softness="0.9" exposure="0.75" camera-orbit="-60deg 65deg auto" interaction-prompt="none" loading="eager">
+      <div class="cad-load-error" slot="error">Model failed to load. Serve the site over HTTP; browsers block <code>.glb</code> files opened directly from disk.</div>
+    </model-viewer>
+  </figure></div>
+<ul class="cad-notes"><li><strong>Architecture:</strong> the drill rides on the fore edge of a 0.6 × 1.5 m lander deck section. It launches folded aft over the deck; a strain-wave hinge actuator swings it 90° to vertical, where spring latch pins on two deck posts lock it 250 mm above the hinge. Sequence: SMA hold-down release → carriage to home → deploy → latch → release the brush arm.</li><li><strong>Spine:</strong> 80×80×3 mm 6061-T6 Al box, the lightest of 240 (material, section, bracket count, latch height) combinations that passes every check (64 pass the deployed ones). Deployed first mode 20.0–21.2 Hz over the drilling stroke: between the cam (13 Hz) and blow (26 Hz) bands with ≥20% separation, 2% from the nearest band edge. Spine 5.4 kg, rotating assembly 24.9 kg incl. 20% growth allowance. The spine is in tension while drilling; buckling matters only when pulling a stuck string (FOS 218).</li><li><strong>Rails &amp; alignment:</strong> 4 brackets support the Ø16 rails every 357 mm; their necks pass the slot of open LM16UU-OP bushings. An end-supported rail would be a 10 Hz string at launch. Under the 167 N lift-off WOB plus a 619 N single-cutter side load, spine bending, slope and rail flex move the string 0.49 mm off the guide-bushing axis (clearance 0.5 mm): a 3.7 mm bit alignment error at 1 m.</li><li><strong>Leadscrew:</strong> buckling 2,005 N on the compression side (FOS 12); whirl critical speed 558 rpm, with retraction at 34% of it (limit 80 %). The self-locking Tr16×4 nut holds the carriage at launch (3.5 MPa).</li><li><strong>Hinge, latch &amp; actuator:</strong> Ø6 mm 17-4PH pins in double shear at a 14.5 kN launch lug load (FOS 2.4). Deploying needs 53 N·m against Mars gravity with the mast horizontal. ECSS motorisation (2× gravity, friction and harness + 1.25× inertia) gives 108 N·m, a Ø48 mm rotor through a 100:1 strain-wave gear. Earth tests need a g-offload. The latch is sized by stiffness (647 N per pin).</li><li><strong>Lander tilt:</strong> a side-mounted drill pushes up 0.35 m from the lander CG, so the near legs unload at 0.82&nbsp;m&nbsp;g, before the lander lifts. The set-point stays m&nbsp;g&nbsp;/&nbsp;1.4. The far legs sit 1.94 m behind the drill so the tilt limit (60 N Moon, 137 N Mars) stays above the set-point plus the load-cell error. The tilt margin is 1.15, against 1.4 for a drill through the CG. Footpad friction alone reacts the torque limit (FOS 2.4 on the Moon), so no regolith anchors are needed.</li><li><strong>Stow pose:</strong> the carriage parks 701 mm below home, chosen to maximise the weakest local mode. The nut then splits the leadscrew (22 Hz) and the guide bushing props the string (23 Hz); left at home both would be ~10 Hz. At 15 g (GEVS Miles 3σ) the screw sees 124 MPa and the string 200 MPa.</li><li><strong>Stowed primary mode:</strong> 97 Hz on the hinge plus 2 hold-downs (requirement 50 Hz; a single hold-down at the crosshead would give 45 Hz with this spine). Launch loads are the larger of 15 g quasi-static and the Miles 3σ response; spine stress 47 MPa (yield FOS 5.1).</li><li><strong>Hold-downs:</strong> pyro-free SMA-released A-286 M8 frangible bolts in cup-cone pedestals. They carry 6.6 kN at launch, and the preload keeps the joint closed with NASA-STD-5020 separation and ultimate factors. The cones carry shear, the hinge carries load along the mast, and the actuator gearbox carries none.</li></ul>
+</section>
+<section id="brushing-station-and-sample-carousel" class="level3" data-number="1.5">
+<h3 data-number="1.5" class="anchored" data-anchor-id="brushing-station-and-sample-carousel"><span class="header-section-number">1.5</span> Brushing station and sample carousel</h3>
+<div class="cad-viewer-single">
+  <figure class="cad-card figure">
+    <div class="cad-card-header">
+      <div><h4 class="anchored">Brushing station, exploded</h4><span class="cad-tag">60 parts · envelope 210 × 239 × 255 mm</span></div>
+      <details class="cad-dl"><summary>Download</summary><div class="cad-dl-menu"><a href="assets/cad/brush_station_exploded.step" download=""><strong>STEP</strong><span>exact B-rep, assembly tree, mm</span></a><a href="assets/cad/brush_station_exploded.stl" download=""><strong>STL</strong><span>triangle mesh, mm</span></a><a href="assets/cad/brush_station_exploded.glb" download=""><strong>glTF binary (.glb)</strong><span>web mesh with materials, m</span></a></div></details>
+    </div>
+    <model-viewer src="assets/cad/brush_station_exploded.glb" alt="Exploded brushing station" camera-controls="" touch-action="pan-y" environment-image="neutral" tone-mapping="neutral" shadow-intensity="0.55" shadow-softness="0.9" exposure="0.75" camera-orbit="-30deg 70deg auto" interaction-prompt="none" loading="eager" camera-target="0m 0.15m 0.045m">
+      <div class="cad-load-error" slot="error">Model failed to load. Serve the site over HTTP; browsers block <code>.glb</code> files opened directly from disk.</div>
+    </model-viewer>
+  </figure></div>
+<ul class="cad-notes"><li><strong>Brush as a worm wheel:</strong> the sampling flight is a single-start worm, and the 14 bristle tufts are the wheel teeth on a 29.0 mm pitch radius (35.5 mm from the auger axis), leaning 17.7° at the flight lead. The tuft count is the smallest that enters and leaves the flute without touching a flight and still leaves a 1 mm hub ligament. The brush turns one tuft per auger revolution. The 39 mm transport pitch is exactly 3× the sampling pitch, so the transport flight meshes too.</li><li><strong>Bristles:</strong> 0.10 mm 17-7PH wire, tips 0.2 mm past the flute root. Their tip pressure is 59 kPa, 13× the cuttings' Rankine passive pressure, at 72 MPa (Goodman FOS 12.8). Thicker wire would wear longer, but with the bit above the guide bushing the string is a 1.24 m cantilever. The total contact force (0.36 N) must stay under the 0.44 N that would push the bit past the bushing lead-in.</li><li><strong>Drag &amp; mission:</strong> derived drag 2.9 mN·m with full flutes (plough + bristle friction + bushings), 0.67 mN·m on empty flights. Both feed the state machine. The root-contact patch sets the sweep speed to 2.6 mm/s (87 s per bite).</li><li><strong>Spring-loaded arm:</strong> two 55 mm arms hang from pivot pins below the axle, so the line-of-centres force acts at 90° to them and the arm load does not depend on gravity. The arm floats on the bristles: a 0.8 mm torsion spring, wound up 14°, preloads it with exactly the required bristle force (0.36 N). When the bit crown's gauge step passes, the force rises only 3.7 %. The axle runs in Vespel SP-3 bushings (PV 9 Pa·m/s, far below the limit).</li><li><strong>Chute &amp; cup:</strong> one bite gives 52 cm³ of bulked cuttings. The bronze chute is pitched at 32°, 10° steeper than the cuttings-on-bronze friction angle, and its inlet wraps the auger at the bit's largest re-entry excursion. The lunar flow layer is only 0.2 mm deep. A bronze funnel carries the stream through a port in the mast foot plate into that bite's cup.</li><li><strong>Sample carousel:</strong> each bite gets its own cup. The 10 cups (Ø37.8 mm × 55.5 mm, 120 % of one bite) hang on a turntable under the foot plate, on a 82 mm pitch radius with one blank station (11 stations). The cups are as deep as the ground clearance allows, which keeps the bore and the carousel small. The plate is their lid: PTFE face seals on every rim bear on its underside, and only the cup under the port is open. A stepper with a planetary gearhead on the plate indexes one station in 6 s while the auger descends for the next bite, so indexing adds no mission time. With every cup full, ECSS motorisation needs 0.31 N·m, most of it seal drag, against 0.70 N·m rated, at 0.07 W. The carousel adds 0.82 kg to the mast foot, which the mast frequency, hold-down and deployment sizing above already include.</li><li><strong>Planetary protection:</strong> the arm swings 13° to a stowed position that a launch lock holds through launch and the pre-flight dry-heat bake-out, with the tips clear of the bit. Every brush-station material (17-4PH, 17-7PH, phosphor bronze, Vespel, Ti) tolerates the bake-out temperature. Open risk: a thin layer of cohesive fines may still cling to the chute in lunar gravity. Every cup except the one being filled stays sealed, and the blank station keeps all ten sealed through launch, bake-out and after the last bite, which limits cross-contamination between samples.</li></ul>
+</section>
+<section id="power-system" class="level3" data-number="1.6">
+<h3 data-number="1.6" class="anchored" data-anchor-id="power-system"><span class="header-section-number">1.6</span> Power system</h3>
+<div class="cad-viewer-single">
+  <figure class="cad-card figure">
+    <div class="cad-card-header">
+      <div><h4 class="anchored">Sun-tracking wings and energy storage</h4><span class="cad-tag">81 parts · envelope 3593 × 828 × 1822 mm</span></div>
+      <details class="cad-dl"><summary>Download</summary><div class="cad-dl-menu"><a href="assets/cad/power_system.step" download=""><strong>STEP</strong><span>exact B-rep, assembly tree, mm</span></a><a href="assets/cad/power_system.stl" download=""><strong>STL</strong><span>triangle mesh, mm</span></a><a href="assets/cad/power_system.glb" download=""><strong>glTF binary (.glb)</strong><span>web mesh with materials, m</span></a></div></details>
+    </div>
+    <model-viewer src="assets/cad/power_system.glb" alt="Sun-tracking solar wings and energy storage" camera-controls="" touch-action="pan-y" environment-image="neutral" tone-mapping="neutral" shadow-intensity="0.55" shadow-softness="0.9" exposure="0.75" camera-orbit="30deg 75deg auto" interaction-prompt="none" loading="eager">
+      <div class="cad-load-error" slot="error">Model failed to load. Serve the site over HTTP; browsers block <code>.glb</code> files opened directly from disk.</div>
+    </model-viewer>
+  </figure></div>
+<ul class="cad-notes"><li><strong>Solar (selected by trade study):</strong> two 2-axis sun-tracking wings, each two 0.68 m² GaInP/GaAs/Ge panels (800 × 1700 mm), on azimuth turntables at the ends of deck outriggers 2.68 m apart at the lander CG station (derived so a wing tilted to the steepest Mars sun clears the legs), with an elevation yoke through each wing centre. Tracking gives about 2.8× the output of fixed vertical panels at the lunar pole.</li><li><strong>Storage &amp; avionics:</strong> Kapton-wrapped warm box with top radiator, plus four clamped H<sub>2</sub>/O<sub>2</sub> reactant tanks for the 1375 Wh store (see the storage trade on the Derivations &amp; Design page).</li></ul>
+<hr>
+</section>
+</section>
+<section id="integrated-drill-rig-and-kinematic-structure" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="integrated-drill-rig-and-kinematic-structure"><span class="header-section-number">2</span> Integrated drill rig and kinematic structure</h2>
+<div class="cad-viewer-single cad-viewer-tall">
+  <figure class="cad-card figure">
+    <div class="cad-card-header">
+      <div><h4 class="anchored">Complete drill rig, home pose</h4><span class="cad-tag">286 parts · envelope 3593 × 2249 × 2222 mm</span></div>
+      <details class="cad-dl"><summary>Download</summary><div class="cad-dl-menu"><a href="assets/cad/full_drill_rig.step" download=""><strong>STEP</strong><span>exact B-rep, assembly tree, mm</span></a><a href="assets/cad/full_drill_rig.stl" download=""><strong>STL</strong><span>triangle mesh, mm</span></a><a href="assets/cad/full_drill_rig.glb" download=""><strong>glTF binary (.glb)</strong><span>web mesh with materials, m</span></a></div></details>
+    </div>
+    <model-viewer src="assets/cad/full_drill_rig.glb" alt="Complete drill rig" camera-controls="" touch-action="pan-y" environment-image="neutral" tone-mapping="neutral" shadow-intensity="0.55" shadow-softness="0.9" exposure="0.75" camera-orbit="-25deg 75deg auto" interaction-prompt="none" loading="eager">
+      <div class="cad-load-error" slot="error">Model failed to load. Serve the site over HTTP; browsers block <code>.glb</code> files opened directly from disk.</div>
+    </model-viewer>
+  </figure></div>
+<p>The complete assembly brings every subassembly above onto the lander at its true position. It is stored as a <strong>scene graph</strong>: a tree of nodes, each holding a coordinate frame (a position and an orientation relative to its <em>parent node</em>) and the parts attached to that frame <span class="citation" data-cites="foley1990">[<a href="#ref-foley1990" role="doc-biblioref">13</a>]</span>. A node inherits every motion of its parent and adds its own. A part’s pose in the world is therefore the product of the transforms along the path from the root of the tree to the node that holds it:</p>
+<p><span class="math display">
+\mathbf{T}_\text{world} = \mathbf{T}_1\,\mathbf{T}_2 \cdots \mathbf{T}_n
+</span></p>
+<div class="symbols">
+<ul>
+<li><span class="math inline">\mathbf{T}_\text{world}</span>: <span class="math inline">4\times4</span> homogeneous transform giving the part’s position (m) and orientation in the world frame</li>
+<li><span class="math inline">\mathbf{T}_1 \ldots \mathbf{T}_n</span>: transform of each node relative to its parent, from the root (<span class="math inline">1</span>) down to the node that holds the part (<span class="math inline">n</span>); each combines a <span class="math inline">3\times3</span> rotation and a translation (m)</li>
+</ul>
+</div>
+<p>This is the forward-kinematics rule used for serial robot arms <span class="citation" data-cites="craig2005robotics">[<a href="#ref-craig2005robotics" role="doc-biblioref">9</a>]</span>. The tree follows the physical joints of the machine: parts that are bolted together share one node, because a rigid body has a single pose, and a new node starts wherever a joint lets one group move relative to another. The solar wings show the nesting most clearly. Each elevation node is the child of an azimuth node, which is the child of the static power-system node, so turning a turntable carries the yoke and panels round with it, and the elevation tilt is then applied in the turned frame, exactly as in a two-axis gimbal. The drill-head nodes (carriage, auger, hammer, cam) sit side by side under the root and receive the same feed displacement, which is equivalent to a rigid attachment to the carriage. With this structure, one number per joint is enough to pose the whole machine.</p>
+<p>The numbers come from <strong>state-machine telemetry</strong>. The drill’s autonomy software is a finite-state machine: at every instant it is in exactly one of six states (IDLE, ACTIVE, SEARCH, DRILL, RETRACTION, TRANSFER) and it moves to another only when a defined physical condition is met <span class="citation" data-cites="harel1987statecharts">[<a href="#ref-harel1987statecharts" role="doc-biblioref">14</a>]</span>. For example, SEARCH becomes DRILL when the load cell reads the contact force, and DRILL becomes RETRACTION when the bite reaches its length or when a temperature or torque limit trips. The mission simulation steps this machine forward once per second, solving the cutting mechanics, the bit’s heat balance and the sun geometry at each step. It records the result as telemetry, a time series of 29 columns that include bit-tip depth, weight on bit, spindle speed and torque, percussion duty, bit temperature, sun azimuth and elevation, and carousel station. The digital twin on the Results &amp; Digital Twin page <span class="citation" data-cites="grieves2017twin">[<a href="#ref-grieves2017twin" role="doc-biblioref">15</a>]</span> reads this record and turns each channel into a joint coordinate: depth sets the carriage translation, spindle speed is integrated over time into the auger’s spin angle, the sun angles set the wing gimbals and the bite counter sets the carousel index. The animation is therefore a replay of what the simulated controller did, not a scripted sequence.</p>
+<div class="mbse-table-wrap">
+  
+<table class="mbse-table caption-top table">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">glTF node</th>
+<th data-quarto-table-cell-role="th">Parts</th>
+<th data-quarto-table-cell-role="th">Contents</th>
+<th data-quarto-table-cell-role="th">Motion in the digital twin</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Frame_Node</code></td>
+<td>76</td>
+<td>Lander Deck Panel, Deck Face Sheet, Hinge Tongue L, Hinge Pin L, Hinge Tongue R, Hinge Pin R …</td>
+<td>Static. Lander deck, legs, hinge, latch posts and the deployed mast, latched on its posts.</td>
+</tr>
+<tr class="even">
+<td><code>Solar_Node</code></td>
+<td>25</td>
+<td>H2O2 Reactant Tank 1, Tank 1 Clamp 1, Tank 1 Clamp 2, H2O2 Reactant Tank 2, Tank 2 Clamp 1, Tank 2 Clamp 2 …</td>
+<td>Static. Tanks, warm box, outriggers and turntable housings.</td>
+</tr>
+<tr class="odd">
+<td><code>Carriage_Node</code></td>
+<td>56</td>
+<td>Cam Bearing 61812 Rings, Cam Bearing 61812 Balls, Cam Bearing Spigot, Percussive Pinion 18T, Percussive BLDC Stator, Percussive BLDC End Turns …</td>
+<td>Vertical translation along the rails: 1.30 m stroke (home → 1.0 m bit depth).</td>
+</tr>
+<tr class="even">
+<td><code>Auger_Node</code></td>
+<td>24</td>
+<td>WC Insert 1, WC Insert 2, Bit Crown Body, Gauge Reamer Pad 1, Gauge Reamer Pad 2, Thermocouple Probe …</td>
+<td>Same translation as the carriage, plus spin about the auger axis at the commanded RPM.</td>
+</tr>
+<tr class="odd">
+<td><code>Hammer_Cam_Node</code></td>
+<td>5</td>
+<td>Hammer Mass, Cam Follower Stud 1, Cam Follower Roller 1, Cam Follower Stud 2, Cam Follower Roller 2</td>
+<td>Carriage translation, plus spindle rotation (splined hammer) and a 26 Hz cam-lift / drop stroke while percussing.</td>
+</tr>
+<tr class="even">
+<td><code>Cam_Ring_Node</code></td>
+<td>2</td>
+<td>Barrel Cam Ring Gear, Barrel Cam Track 2 Lobe</td>
+<td>Carriage translation, plus barrel-cam spin while percussing.</td>
+</tr>
+<tr class="odd">
+<td><code>Brush_Gear_Node</code></td>
+<td>20</td>
+<td>Brush Axle, Brush Hub, Bristle Tuft 01, Bristle Tuft 02, Bristle Tuft 03, Bristle Tuft 04 …</td>
+<td>Worm-wheel spin about its own axle: one tuft per auger revolution (14:1), plus the axial auger speed over the 29 mm pitch radius.</td>
+</tr>
+<tr class="even">
+<td><code>Carousel_Node</code></td>
+<td>22</td>
+<td>Carousel Turntable, Carousel Hub, Sample Cup 01, Cup Seal Ring 01, Sample Cup 02, Cup Seal Ring 02 …</td>
+<td>Index rotation about the carousel axis under the foot plate: one station (32.7°) per bite, so bite n always fills cup n.</td>
+</tr>
+<tr class="odd">
+<td><code>Solar_Wing_Port_Az_Node</code></td>
+<td>9</td>
+<td>Port Azimuth Platter, Port Mast Post, Port Post Foot, Port Yoke Crossbar, Port Yoke Arm 1, Port Elevation Bearing 1 …</td>
+<td>Azimuth rotation about the turntable axis, following the computed sun azimuth.</td>
+</tr>
+<tr class="even">
+<td><code>Solar_Wing_Port_Elev_Node</code></td>
+<td>19</td>
+<td>Port Panel Upper Substrate, Port Panel Upper GaInP Cells, Port Panel Upper Busbar 1, Port Panel Upper Busbar 2, Port Panel Upper Busbar 3, Port Panel Upper Busbar 4 …</td>
+<td>Elevation tilt about the yoke axis, so the cell normal follows the sun elevation.</td>
+</tr>
+<tr class="odd">
+<td><code>Solar_Wing_Starboard_Az_Node</code></td>
+<td>9</td>
+<td>Starboard Azimuth Platter, Starboard Mast Post, Starboard Post Foot, Starboard Yoke Crossbar, Starboard Yoke Arm 1, Starboard Elevation Bearing 1 …</td>
+<td>As port.</td>
+</tr>
+<tr class="even">
+<td><code>Solar_Wing_Starboard_Elev_Node</code></td>
+<td>19</td>
+<td>Starboard Panel Upper Substrate, Starboard Panel Upper GaInP Cells, Starboard Panel Upper Busbar 1, Starboard Panel Upper Busbar 2, Starboard Panel Upper Busbar 3, Starboard Panel Upper Busbar 4 …</td>
+<td>As port.</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<p>The table lists each node of the scene graph: how many parts it carries, what they are, and the motion the digital twin gives it. Two nodes are static. The frame node (lander deck, legs, hinge, latch and the deployed, latched mast) and the power-system base carry loads but do not move while drilling. Counting the remaining joints gives the mobility of the machine. <strong>Eight coordinates are independent</strong>, each driven by its own actuator: the carriage feed (a prismatic joint, leadscrew motor), the spindle rotation (rotary motor), the barrel-cam rotation (percussion motor), the carousel index (stepper) and the azimuth and elevation of both solar wings (four gimbal motors). <strong>The other motions are dependent</strong>, fixed by kinematic constraints rather than by motors. The auger, hammer and cam translate with the carriage. The hammer turns with the spindle through its spline and rises and drops as a function of the cam angle. The brush has no motor at all: it is a worm wheel meshing with the auger flight, so its speed follows from the flight lead and the motion of the string,</p>
+<p><span class="math display">
+\omega_b = \frac{1}{r_p}\left(\frac{\omega_a\,p}{2\pi} + v_z\right)
+</span></p>
+<div class="symbols">
+<ul>
+<li><span class="math inline">\omega_b</span>: angular speed of the brush (rad/s)</li>
+<li><span class="math inline">r_p</span>: pitch radius of the brush tufts, 29.0 mm</li>
+<li><span class="math inline">\omega_a</span>: angular speed of the auger (rad/s)</li>
+<li><span class="math inline">p</span>: lead of the flight passing the brush, 13.0 mm in the sampling zone and 39.0 mm in the transport zone</li>
+<li><span class="math inline">v_z</span>: axial speed of the string past the brush (m/s)</li>
+</ul>
+</div>
+<p>This split between independent and dependent motions is why the controller needs only eight commanded set-points to pose a 286-part machine. The barrel cam’s spin is drawn at a reduced rate so it stays readable. The hammer stroke is drawn at the true blow rate of 26 Hz, which a 60 Hz display can only just resolve: about 2.3 frames per blow, against the minimum of two samples per cycle set by the sampling theorem <span class="citation" data-cites="shannon1949">[<a href="#ref-shannon1949" role="doc-biblioref">16</a>]</span>.</p>
+</section>
+<section id="references" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-requicha1980" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">A. A. G. Requicha, <span>“Representations for rigid solids: Theory, methods, and systems,”</span> <em>ACM Computing Surveys</em>, vol. 12, no. 4, pp. 437–464, 1980.</div>
+</div>
+<div id="ref-stroud2006brep" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline">I. Stroud, <em>Boundary representation modelling techniques</em>, Springer, 2006.</div>
+</div>
+<div id="ref-piegl1997nurbs" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline">L. Piegl and W. Tiller, <em>The <span>NURBS</span> book</em>, 2 ed., Springer, 1997.</div>
+</div>
+<div id="ref-shah1995parametric" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[4] </div><div class="csl-right-inline">J. J. Shah and M. Mäntylä, <em>Parametric and feature-based <span>CAD/CAM</span>: Concepts, techniques, and applications</em>, John Wiley &amp; Sons, 1995.</div>
+</div>
+<div id="ref-webgl2" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[5] </div><div class="csl-right-inline">The Khronos Group, <span>“<span>WebGL</span> 2.0 specification,”</span> <a href="https://registry.khronos.org/webgl/specs/latest/2.0/" class="uri">https://registry.khronos.org/webgl/specs/latest/2.0/</a>, 2017.</div>
+</div>
+<div id="ref-iso10303_21" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[6] </div><div class="csl-right-inline">International Organization for Standardization, <em><span>ISO</span> 10303-21:2016 industrial automation systems and integration – product data representation and exchange – part 21: Implementation methods: Clear text encoding of the exchange structure</em>, 2016.</div>
+</div>
+<div id="ref-stl1988" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[7] </div><div class="csl-right-inline">3D Systems, Inc., <span>“<span>StereoLithography</span> interface specification,”</span> 3D Systems, Inc., Valencia, CA, 1988.</div>
+</div>
+<div id="ref-gltf2" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[8] </div><div class="csl-right-inline">The Khronos Group, <span>“<span class="nocase">glTF</span> 2.0 specification (also published as <span>ISO/IEC</span> 12113:2022),”</span> <a href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html" class="uri">https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html</a>, 2021.</div>
+</div>
+<div id="ref-craig2005robotics" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[9] </div><div class="csl-right-inline">J. J. Craig, <em>Introduction to robotics: Mechanics and control</em>, 3 ed., Pearson Prentice Hall, 2005.</div>
+</div>
+<div id="ref-gooch1998" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[10] </div><div class="csl-right-inline">A. Gooch, B. Gooch, P. Shirley, and E. Cohen, <span>“A non-photorealistic lighting model for automatic technical illustration,”</span> in <em>Proceedings of the 25th annual conference on computer graphics and interactive techniques (SIGGRAPH ’98)</em>, pp. 447–452, 1998.</div>
+</div>
+<div id="ref-okabe2008cud" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[11] </div><div class="csl-right-inline">M. Okabe and K. Ito, <span>“Color universal design (<span>CUD</span>): How to make figures and presentations that are friendly to colorblind people,”</span> J*Fly, <a href="https://jfly.uni-koeln.de/color/" class="uri">https://jfly.uni-koeln.de/color/</a>, 2008.</div>
+</div>
+<div id="ref-wong2011color" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[12] </div><div class="csl-right-inline">B. Wong, <span>“Points of view: Color blindness,”</span> <em>Nature Methods</em>, vol. 8, no. 6, pp. 441, 2011.</div>
+</div>
+<div id="ref-foley1990" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[13] </div><div class="csl-right-inline">J. D. Foley, A. van Dam, S. K. Feiner, and J. F. Hughes, <em>Computer graphics: Principles and practice</em>, 2 ed., Addison-Wesley, 1990.</div>
+</div>
+<div id="ref-harel1987statecharts" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[14] </div><div class="csl-right-inline">D. Harel, <span>“Statecharts: A visual formalism for complex systems,”</span> <em>Science of Computer Programming</em>, vol. 8, no. 3, pp. 231–274, 1987.</div>
+</div>
+<div id="ref-grieves2017twin" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[15] </div><div class="csl-right-inline">M. Grieves and J. Vickers, <span>“Digital twin: Mitigating unpredictable, undesirable emergent behavior in complex systems,”</span> in <em>Transdisciplinary perspectives on complex systems</em>, pp. 85–113, Springer, 2017.</div>
+</div>
+<div id="ref-shannon1949" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[16] </div><div class="csl-right-inline">C. E. Shannon, <span>“Communication in the presence of noise,”</span> <em>Proceedings of the IRE</em>, vol. 37, no. 1, pp. 10–21, 1949.</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Autonomous Low-Gravity Rotary-Percussive Bite-Drilling System (MBSE Digital Twin)</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>CAD models generated in code with the help of Claude (Anthropic)</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

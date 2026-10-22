@@ -1,0 +1,678 @@
+{
+  "units": {
+    "glb": "m (Y-up)",
+    "step_stl": "mm (Z-up)"
+  },
+  "layout": {
+    "auger_od_mm": 20.0,
+    "auger_tube_od_mm": 14.0,
+    "auger_tube_id_mm": 12.0,
+    "sampling_flute_depth_mm": 7.0,
+    "sampling_section_length_mm": 225.0,
+    "sampling_pitch_mm": 13.0,
+    "transport_pitch_mm": 39.0,
+    "auger_length_mm": 1240.0,
+    "mast_top_mm": 1897.0,
+    "mast_section_mm": [
+      80.0,
+      80.0,
+      3.0
+    ],
+    "mast_material": "6061-T6 Al",
+    "deck_size_mm": [
+      600.0,
+      1500.0
+    ],
+    "deck_top_mm": 450.0,
+    "hinge_yz_mm": [
+      188.0,
+      465.0
+    ],
+    "stow_carriage_drop_mm": 700.9999999999978,
+    "wing_size_mm": [
+      800.0,
+      1700.0
+    ],
+    "wing_separation_mm": 2678.274307078732,
+    "wing_station_y_mm": 349.02552412008305,
+    "sampling_root_od_mm": 6.0,
+    "transport_helix_deg": 36.13,
+    "rotary_gear_train": "8:1 planetary x 24T/12T spur = 16:1",
+    "leadscrew_y_mm": 65.0,
+    "head_stack_mm": {
+      "base_plate": 10.0,
+      "housing_bottom": 12.0,
+      "nose_top": 22.0,
+      "anvil_bottom": -12.0,
+      "hex_top": 40.0,
+      "anvil_shoulder": 26.0,
+      "web_top": 46.0,
+      "anvil_top": 62.0,
+      "hammer_top": 84.0,
+      "roller_z": 73.0,
+      "track_base": 66.0,
+      "cam_gear_bottom": 48.5,
+      "spring_top": 121.8,
+      "seat_top": 127.8,
+      "pair_bottom": 129.8,
+      "pair_top": 153.8,
+      "slip_bottom": 156.8,
+      "slip_top": 182.8,
+      "upper_bottom": 184.8,
+      "upper_top": 191.8,
+      "gear_bottom": 194.8,
+      "gear_top": 207.3,
+      "planetary_top": 229.3,
+      "motor_top": 284.16,
+      "housing_top": 289.16,
+      "load_cell_top": 309.16,
+      "yoke_top": 321.16
+    },
+    "brush_axle_offset_mm": 35.46619964272495,
+    "brush_tip_radius_mm": 32.66619964272495,
+    "guide_bushing_bore_mm": 22.000000000000004
+  },
+  "kinematics": {
+    "home_tip_m": 0.3,
+    "brush_axle_m": [
+      0.0,
+      0.19,
+      0.03546619964272495
+    ],
+    "brush_radius_m": 0.02896619964272495,
+    "brush_tufts": 14,
+    "transport_pitch_m": 0.039,
+    "sampling_pitch_m": 0.013,
+    "sampling_zone_from_tip_m": [
+      0.026,
+      0.251
+    ],
+    "bit": {
+      "edge_radius_m": 0.001,
+      "wedge_deg": 85.0,
+      "index_deg": 34.61538461538461,
+      "slot_width_m": 0.008
+    },
+    "wing_nodes": [
+      "Solar_Wing_Port_Az_Node",
+      "Solar_Wing_Starboard_Az_Node"
+    ],
+    "cam_lift_m": 0.006,
+    "blow_hz": 26.0,
+    "cam_rps": 13.0,
+    "carousel": {
+      "axis_m": [
+        0.0,
+        0.0,
+        0.12538037736704333
+      ],
+      "pitch_radius_m": 0.08196984451699801,
+      "stations": 11,
+      "cups": 10,
+      "port_deg": 90.0,
+      "cup_id_m": 0.03782106570009065,
+      "cup_floor_m": 0.034,
+      "cup_rim_m": 0.08950000000000001,
+      "index_time_s": 6.0
+    },
+    "chute": {
+      "inlet_m": [
+        0.0,
+        0.15233380035727506,
+        0.0125
+      ],
+      "outlet_m": [
+        0.0,
+        0.13301875572809527,
+        0.04341053285004533
+      ],
+      "plate_top_m": 0.1
+    }
+  },
+  "colour_code": [
+    {
+      "key": "cutting",
+      "label": "Rock-cutting interface",
+      "function": "Tungsten-carbide inserts and gauge pads: the only parts that touch intact rock",
+      "hex": "#262626"
+    },
+    {
+      "key": "tribology",
+      "label": "Seals, bushings &amp; dust control",
+      "function": "PTFE / Vespel sliding contacts, lip seals, labyrinths, bellows and wipers that keep regolith out",
+      "hex": "#cc79a7"
+    },
+    {
+      "key": "electrical",
+      "label": "Electromechanical conversion &amp; sensing",
+      "function": "BLDC motors, encoders, slip ring, load cell, thermocouple path and solar cells",
+      "hex": "#0072b2"
+    },
+    {
+      "key": "percussion",
+      "label": "Percussive (impact) path",
+      "function": "Barrel cam, followers, hammer, spring and anvil: stores and releases the blow energy",
+      "hex": "#d55e00"
+    },
+    {
+      "key": "deployment",
+      "label": "Deployment &amp; launch restraint",
+      "function": "Hinge, latch, hold-down and release hardware that only works before drilling",
+      "hex": "#56b4e9"
+    },
+    {
+      "key": "sample",
+      "label": "Drill string &amp; sample path",
+      "function": "Every part that carries or touches the regolith sample: bit body, auger, brush, chute, cups",
+      "hex": "#009e73"
+    },
+    {
+      "key": "drive",
+      "label": "Rotary &amp; linear drive train",
+      "function": "Gears, spindle, shafts, bearings, leadscrew, nut and rails that transmit torque and feed force",
+      "hex": "#e69f00"
+    },
+    {
+      "key": "thermal",
+      "label": "Thermal control &amp; energy storage",
+      "function": "Avionics warm box, radiator and H<sub>2</sub>/O<sub>2</sub> reactant tanks",
+      "hex": "#f0e442"
+    },
+    {
+      "key": "lander",
+      "label": "Lander interface (context)",
+      "function": "Deck section, legs and footpads that the drill reacts against",
+      "hex": "#7a766e"
+    },
+    {
+      "key": "structure",
+      "label": "Primary structure",
+      "function": "Housings, mast spine, plates, brackets, frames and clamps that carry the loads",
+      "hex": "#beb8aa"
+    }
+  ],
+  "nodes": {
+    "Frame_Node": [
+      "Lander_Deck_Panel",
+      "Deck_Face_Sheet",
+      "Hinge_Tongue_L",
+      "Hinge_Pin_L",
+      "Hinge_Tongue_R",
+      "Hinge_Pin_R",
+      "Deploy_Torque_Shaft",
+      "Deploy_Actuator_BLDC_StrainWave",
+      "Deploy_Actuator_Band",
+      "Deploy_Actuator_Mount",
+      "Latch_Post_L",
+      "Latch_Post_Brace_Aft_L",
+      "Latch_Post_Brace_Out_L",
+      "Latch_Pin_L",
+      "Latch_Spring_Housing_L",
+      "Latch_Post_R",
+      "Latch_Post_Brace_Aft_R",
+      "Latch_Post_Brace_Out_R",
+      "Latch_Pin_R",
+      "Latch_Spring_Housing_R",
+      "Hold_Down_Pedestal_1",
+      "SMA_Frangibolt_1",
+      "Hold_Down_Pedestal_2",
+      "SMA_Frangibolt_2",
+      "Leg_1_Main",
+      "Leg_1_Brace",
+      "Leg_1_Footpad",
+      "Leg_2_Main",
+      "Leg_2_Brace",
+      "Leg_2_Footpad",
+      "Leg_3_Main",
+      "Leg_3_Brace",
+      "Leg_3_Footpad",
+      "Leg_4_Main",
+      "Leg_4_Brace",
+      "Leg_4_Footpad",
+      "Mast_Spine_80x80x3",
+      "Rail_Bracket_1",
+      "Rail_Bracket_2",
+      "Rail_Bracket_3",
+      "Rail_Bracket_4",
+      "Guide_Rail_L",
+      "Rail_Foot_Block_L",
+      "Guide_Rail_R",
+      "Rail_Foot_Block_R",
+      "Leadscrew_Tr16x4",
+      "Leadscrew_Support_Bearing",
+      "Leadscrew_Fixed_Bearing",
+      "Mast_Crosshead",
+      "Z_Feed_Motor",
+      "Z_Feed_Motor_Band",
+      "Mast_Foot_Plate",
+      "Hinge_Fork_L",
+      "Hinge_Fork_R",
+      "Latch_Lug_L",
+      "Latch_Lug_R",
+      "Hold_Down_Cone_1",
+      "Hold_Down_Cone_2",
+      "Guide_Bushing_Liner_SP3",
+      "Guide_Bushing_Boss",
+      "Brush_Arm_L",
+      "Brush_Axle_Bushing_L",
+      "Brush_Pivot_Pin_L",
+      "Brush_Pivot_Bracket_L",
+      "Brush_Arm_R",
+      "Brush_Axle_Bushing_R",
+      "Brush_Pivot_Pin_R",
+      "Brush_Pivot_Bracket_R",
+      "Brush_Torsion_Spring",
+      "Stow_Launch_Lock",
+      "Sample_Transfer_Chute",
+      "Chute_Post_1",
+      "Chute_Post_2",
+      "Sample_Port_Funnel",
+      "Carousel_Index_Motor",
+      "Carousel_Hub_Bearing"
+    ],
+    "Solar_Node": [
+      "H2O2_Reactant_Tank_1",
+      "Tank_1_Clamp_1",
+      "Tank_1_Clamp_2",
+      "H2O2_Reactant_Tank_2",
+      "Tank_2_Clamp_1",
+      "Tank_2_Clamp_2",
+      "H2O2_Reactant_Tank_3",
+      "Tank_3_Clamp_1",
+      "Tank_3_Clamp_2",
+      "H2O2_Reactant_Tank_4",
+      "Tank_4_Clamp_1",
+      "Tank_4_Clamp_2",
+      "Tank_Saddle_Rail",
+      "Avionics_WarmBox",
+      "Avionics_Radiator",
+      "Port_Outrigger_Beam_1",
+      "Port_Outrigger_Beam_2",
+      "Port_Outrigger_Diagonal",
+      "Port_Turntable_Housing",
+      "Port_Azimuth_Motor",
+      "Starboard_Outrigger_Beam_1",
+      "Starboard_Outrigger_Beam_2",
+      "Starboard_Outrigger_Diagonal",
+      "Starboard_Turntable_Housing",
+      "Starboard_Azimuth_Motor"
+    ],
+    "Carriage_Node": [
+      "Cam_Bearing_61812_Rings",
+      "Cam_Bearing_61812_Balls",
+      "Cam_Bearing_Spigot",
+      "Percussive_Pinion_18T",
+      "Percussive_BLDC_Stator",
+      "Percussive_BLDC_End_Turns",
+      "Percussive_BLDC_PM_Rotor",
+      "Percussive_BLDC_Shaft",
+      "Percussive_Encoder_Disc",
+      "Spindle_Bearing_7004ACD_A_Rings",
+      "Spindle_Bearing_7004ACD_A_Balls",
+      "Spindle_Bearing_7004ACD_B_Rings",
+      "Spindle_Bearing_7004ACD_B_Balls",
+      "Upper_Bearing_61804_Rings",
+      "Upper_Bearing_61804_Balls",
+      "Slip_Ring_Stator",
+      "Slip_Ring_Brush_Block",
+      "Primary_Pinion_12T",
+      "Planetary_Ring_Gear_84T",
+      "Planetary_Sun_12T",
+      "Planet_Gear_36T_1",
+      "Planet_Gear_36T_2",
+      "Planet_Gear_36T_3",
+      "Planet_Carrier_Output",
+      "Planetary_Cover",
+      "Rotary_BLDC_Stator",
+      "Rotary_BLDC_End_Turns",
+      "Rotary_BLDC_PM_Rotor",
+      "Rotary_BLDC_Shaft",
+      "Rotary_Encoder_Disc",
+      "Head_Housing_Ti",
+      "Slip_Ring_Cable_Gland",
+      "Spindle_Bearing_Bulkhead",
+      "Labyrinth_Seal_Cartridge",
+      "PTFE_Lip_Seal",
+      "Dust_Cap_PTFE_Lip",
+      "Dust_Bellows",
+      "Diaphragm_Flexure",
+      "Carriage_Base_Plate",
+      "Carriage_Top_Yoke",
+      "Carriage_Tie_Rod_00",
+      "Carriage_Tie_Rod_01",
+      "Carriage_Tie_Rod_10",
+      "Carriage_Tie_Rod_11",
+      "Linear_Bearing_Block_L_Lower",
+      "LM16UU_OP_L_Lower",
+      "Linear_Bearing_Block_L_Upper",
+      "LM16UU_OP_L_Upper",
+      "Rail_Wiper_L",
+      "Linear_Bearing_Block_R_Lower",
+      "LM16UU_OP_R_Lower",
+      "Linear_Bearing_Block_R_Upper",
+      "LM16UU_OP_R_Upper",
+      "Rail_Wiper_R",
+      "Leadscrew_Nut_Tr16x4_Bronze",
+      "WOB_Load_Cell_500N"
+    ],
+    "Auger_Node": [
+      "WC_Insert_1",
+      "WC_Insert_2",
+      "Bit_Crown_Body",
+      "Gauge_Reamer_Pad_1",
+      "Gauge_Reamer_Pad_2",
+      "Thermocouple_Probe",
+      "Sampling_Root_Shaft",
+      "Sampling_Flight",
+      "Bit_Sub_Shoulder",
+      "Bit_Sub_Pin_Thread",
+      "Joint_Coupling",
+      "Transport_Core_Tube",
+      "Transport_Helix_Flight",
+      "Hex_Drive_Shank",
+      "Retention_Spring_Pin",
+      "Shank_Braze_Fillet",
+      "TC_Coax_Contact",
+      "Thermocouple_Lead",
+      "Lead_Exit_Grommet",
+      "Splined_Hollow_Spindle",
+      "Spindle_Gear_24T",
+      "Slip_Ring_Rotor",
+      "Anvil",
+      "Hammer_Compression_Spring"
+    ],
+    "Hammer_Cam_Node": [
+      "Hammer_Mass",
+      "Cam_Follower_Stud_1",
+      "Cam_Follower_Roller_1",
+      "Cam_Follower_Stud_2",
+      "Cam_Follower_Roller_2"
+    ],
+    "Cam_Ring_Node": [
+      "Barrel_Cam_Ring_Gear",
+      "Barrel_Cam_Track_2_Lobe"
+    ],
+    "Brush_Gear_Node": [
+      "Brush_Axle",
+      "Brush_Hub",
+      "Bristle_Tuft_01",
+      "Bristle_Tuft_02",
+      "Bristle_Tuft_03",
+      "Bristle_Tuft_04",
+      "Bristle_Tuft_05",
+      "Bristle_Tuft_06",
+      "Bristle_Tuft_07",
+      "Bristle_Tuft_08",
+      "Bristle_Tuft_09",
+      "Bristle_Tuft_10",
+      "Bristle_Tuft_11",
+      "Bristle_Tuft_12",
+      "Bristle_Tuft_13",
+      "Bristle_Tuft_14",
+      "Brush_Hub_End_Cap_L",
+      "Brush_Axle_Spacer_L",
+      "Brush_Hub_End_Cap_R",
+      "Brush_Axle_Spacer_R"
+    ],
+    "Carousel_Node": [
+      "Carousel_Turntable",
+      "Carousel_Hub",
+      "Sample_Cup_01",
+      "Cup_Seal_Ring_01",
+      "Sample_Cup_02",
+      "Cup_Seal_Ring_02",
+      "Sample_Cup_03",
+      "Cup_Seal_Ring_03",
+      "Sample_Cup_04",
+      "Cup_Seal_Ring_04",
+      "Sample_Cup_05",
+      "Cup_Seal_Ring_05",
+      "Sample_Cup_06",
+      "Cup_Seal_Ring_06",
+      "Sample_Cup_07",
+      "Cup_Seal_Ring_07",
+      "Sample_Cup_08",
+      "Cup_Seal_Ring_08",
+      "Sample_Cup_09",
+      "Cup_Seal_Ring_09",
+      "Sample_Cup_10",
+      "Cup_Seal_Ring_10"
+    ],
+    "Solar_Wing_Port_Az_Node": [
+      "Port_Azimuth_Platter",
+      "Port_Mast_Post",
+      "Port_Post_Foot",
+      "Port_Yoke_Crossbar",
+      "Port_Yoke_Arm_1",
+      "Port_Elevation_Bearing_1",
+      "Port_Yoke_Arm_2",
+      "Port_Elevation_Bearing_2",
+      "Port_Elevation_Motor"
+    ],
+    "Solar_Wing_Port_Elev_Node": [
+      "Port_Panel_Upper_Substrate",
+      "Port_Panel_Upper_GaInP_Cells",
+      "Port_Panel_Upper_Busbar_1",
+      "Port_Panel_Upper_Busbar_2",
+      "Port_Panel_Upper_Busbar_3",
+      "Port_Panel_Upper_Busbar_4",
+      "Port_Panel_Upper_Busbar_5",
+      "Port_Panel_Lower_Substrate",
+      "Port_Panel_Lower_GaInP_Cells",
+      "Port_Panel_Lower_Busbar_1",
+      "Port_Panel_Lower_Busbar_2",
+      "Port_Panel_Lower_Busbar_3",
+      "Port_Panel_Lower_Busbar_4",
+      "Port_Panel_Lower_Busbar_5",
+      "Port_Wing_Side_Frame_1",
+      "Port_Elevation_Pin_1",
+      "Port_Wing_Side_Frame_2",
+      "Port_Elevation_Pin_2",
+      "Port_Wing_Back_Spar"
+    ],
+    "Solar_Wing_Starboard_Az_Node": [
+      "Starboard_Azimuth_Platter",
+      "Starboard_Mast_Post",
+      "Starboard_Post_Foot",
+      "Starboard_Yoke_Crossbar",
+      "Starboard_Yoke_Arm_1",
+      "Starboard_Elevation_Bearing_1",
+      "Starboard_Yoke_Arm_2",
+      "Starboard_Elevation_Bearing_2",
+      "Starboard_Elevation_Motor"
+    ],
+    "Solar_Wing_Starboard_Elev_Node": [
+      "Starboard_Panel_Upper_Substrate",
+      "Starboard_Panel_Upper_GaInP_Cells",
+      "Starboard_Panel_Upper_Busbar_1",
+      "Starboard_Panel_Upper_Busbar_2",
+      "Starboard_Panel_Upper_Busbar_3",
+      "Starboard_Panel_Upper_Busbar_4",
+      "Starboard_Panel_Upper_Busbar_5",
+      "Starboard_Panel_Lower_Substrate",
+      "Starboard_Panel_Lower_GaInP_Cells",
+      "Starboard_Panel_Lower_Busbar_1",
+      "Starboard_Panel_Lower_Busbar_2",
+      "Starboard_Panel_Lower_Busbar_3",
+      "Starboard_Panel_Lower_Busbar_4",
+      "Starboard_Panel_Lower_Busbar_5",
+      "Starboard_Wing_Side_Frame_1",
+      "Starboard_Elevation_Pin_1",
+      "Starboard_Wing_Side_Frame_2",
+      "Starboard_Elevation_Pin_2",
+      "Starboard_Wing_Back_Spar"
+    ]
+  },
+  "assemblies": {
+    "auger_bit": {
+      "parts": 19,
+      "triangles": 29270,
+      "glb_kb": 1036.5,
+      "bbox_mm": [
+        [
+          -14.8,
+          -10.0,
+          300.2
+        ],
+        [
+          14.8,
+          10.0,
+          1580.0
+        ]
+      ]
+    },
+    "drill_bit_crown": {
+      "parts": 11,
+      "triangles": 14006,
+      "glb_kb": 503.7,
+      "bbox_mm": [
+        [
+          -10.5,
+          -10.0,
+          0.2
+        ],
+        [
+          10.5,
+          10.0,
+          273.0
+        ]
+      ]
+    },
+    "drill_bit_exploded": {
+      "parts": 11,
+      "triangles": 8714,
+      "glb_kb": 317.6,
+      "bbox_mm": [
+        [
+          -24.5,
+          -21.1,
+          -27.8
+        ],
+        [
+          30.8,
+          21.1,
+          148.0
+        ]
+      ]
+    },
+    "drill_head": {
+      "parts": 68,
+      "triangles": 70802,
+      "glb_kb": 2147.1,
+      "bbox_mm": [
+        [
+          -110.0,
+          -93.8,
+          1528.0
+        ],
+        [
+          110.0,
+          83.0,
+          1867.2
+        ]
+      ]
+    },
+    "drill_head_section": {
+      "parts": 68,
+      "triangles": 63968,
+      "glb_kb": 1954.0,
+      "bbox_mm": [
+        [
+          -110.0,
+          -93.9,
+          1528.0
+        ],
+        [
+          110.0,
+          83.0,
+          1867.2
+        ]
+      ]
+    },
+    "mast_and_brush": {
+      "parts": 118,
+      "triangles": 53884,
+      "glb_kb": 1643.0,
+      "bbox_mm": [
+        [
+          -629.8,
+          -230.8,
+          0.0
+        ],
+        [
+          630.0,
+          2018.0,
+          1977.0
+        ]
+      ]
+    },
+    "mast_stowed": {
+      "parts": 205,
+      "triangles": 153956,
+      "glb_kb": 5076.5,
+      "bbox_mm": [
+        [
+          -629.8,
+          -677.8,
+          0.0
+        ],
+        [
+          630.0,
+          2018.0,
+          883.8
+        ]
+      ]
+    },
+    "brush_station_exploded": {
+      "parts": 60,
+      "triangles": 28412,
+      "glb_kb": 893.3,
+      "bbox_mm": [
+        [
+          -103.2,
+          -228.7,
+          -30.0
+        ],
+        [
+          106.6,
+          10.0,
+          225.0
+        ]
+      ]
+    },
+    "power_system": {
+      "parts": 81,
+      "triangles": 14372,
+      "glb_kb": 316.1,
+      "bbox_mm": [
+        [
+          -1774.1,
+          120.2,
+          400.0
+        ],
+        [
+          1819.1,
+          948.0,
+          2222.0
+        ]
+      ]
+    },
+    "full_drill_rig": {
+      "parts": 286,
+      "triangles": 168328,
+      "glb_kb": 5092.2,
+      "bbox_mm": [
+        [
+          -1774.1,
+          -230.8,
+          0.0
+        ],
+        [
+          1819.1,
+          2018.0,
+          2222.0
+        ]
+      ]
+    }
+  }
+}

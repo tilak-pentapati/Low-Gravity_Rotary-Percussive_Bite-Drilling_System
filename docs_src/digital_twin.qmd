@@ -1,0 +1,284 @@
+---
+title: "Mission Results & Digital Twin"
+subtitle: "Physics-based design and simulation of 1 m sampling missions on the Moon and Mars, with a 3D replay of each mission"
+---
+
+```{python}
+#| output: asis
+import json
+from pathlib import Path
+
+root = Path("..").resolve()
+data = root / "exports" / "data"
+abcd = json.loads((data / "abcd_summary.json").read_text())
+des = json.loads((data / "design_derivations.json").read_text())
+sol = json.loads((data / "solar_trade.json").read_text())
+kf_raw = (root / "docs_src" / "assets" / "data" / "kinematic_keyframes.json").read_text()
+moon, mars = abcd["environments"]["moon"], abcd["environments"]["mars"]
+led = des["ledger"]
+V = lambda k: led[k]["value"]
+rot_thr = max(json.loads((data / "terramechanics_curves.json").read_text())["moon"]["w_threshold_n"])
+
+def emit_html(html_str: str) -> None:
+    print(f"\n```{{=html}}\n{html_str.strip()}\n```\n")
+
+emit_html(f"<script>window.DRILL_KEYFRAMES_DATA = {kf_raw};</script>")
+```
+
+## Project objective
+
+**The goal** is to collect ice-bearing samples from 1 m below the surface at the lunar south pole and in Mars's northern high latitudes. Water ice in the top metre has been detected at both sites: in the LCROSS impact plume at the lunar south pole [@colaprete2010detection] and directly under the Phoenix lander at 68° N on Mars [@smith2009h2o; @mellon2009]. That ice is both a resource for future missions and a record of how volatiles reached and survived on these bodies. Each depth interval has to come up intact and correctly labelled. The ice must not be lost to the heat of drilling.
+
+Four physical constraints make this difficult, and each one shaped the design:
+
+- **Low gravity limits how hard the bit can be pushed.** A small lander can only press the bit down with its own weight. Surface gravity is 1.62 m/s² on the Moon and 3.71 m/s² on Mars [@nssdc_moon; @nssdc_mars], so a 45 kg lander weighs only `{python} f"{V('wob_lift_off_moon_n'):.0f}"` N on the Moon and `{python} f"{V('wob_lift_off_mars_n'):.0f}"` N on Mars. Pushing harder than that lifts the lander off the ground, and the drill runs with a safety margin below that limit. Laboratory tests on icy regolith show that its strength rises steeply with ice content and falling temperature, reaching about 5–20 MPa in compression at cryogenic temperatures [@gertsch2006]. Frozen Martian ground and ice at about 190 K fall in the same range [@schulson2009]. In such material a rotary drag bit needs about `{python} f"{rot_thr:.0f}"` N before its cutters start to cut rather than rub [@detournay1992]. So rotary drilling alone stalls. A **cam-and-spring hammer** solves this, as it did on the Icebreaker and TRIDENT prototypes [@zacny2013icebreaker; @zacny2022trident]: it delivers `{python} f"{V('impact_energy_j'):.2f}"` J per blow, `{python} f"{V('blow_frequency_hz'):.0f}"` times a second, breaking rock with impact energy instead of steady force [@lundberg1982].
+- **There is no drilling fluid.** In vacuum or a thin CO₂ atmosphere of about 6 mbar [@nssdc_mars], cuttings cannot be flushed out with mud or air as they are on Earth, so an **auger** carries them [@zacny2008drilling; @barcohen2009extreme]. At a safe rotation speed, centrifugal friction is too weak to lift cuttings against gravity on either body. The drill therefore works in **10 cm "bites"**, the approach Icebreaker uses [@zacny2013icebreaker]: it cuts, holds the cuttings in deep sampling flutes, pulls the auger out, and a passive brush strips them into a sample cup. The flutes are sized to hold one bite. Drilling further in one pass packs the cuttings into a plug whose wall friction grows exponentially with length, as Janssen's silo analysis predicts [@janssen1895versuche], and the auger chokes.
+- **Heat can destroy the sample.** Friction warms the bit. Lunar polar cold traps sit below about 110 K [@paige2010], and ice in the cuttings sublimates into vacuum quickly once warmed. Using the measured vapour pressure of ice [@murphy2005; @andreas2007sublimation], the model sets the bit limit at about `{python} f"{V('critical_bit_temp_moon_k'):.0f}"` K on the Moon. On Mars, ice that melts and refreezes can freeze the bit into the hole, which Icebreaker field tests experienced [@zacny2013icebreaker]. The controller watches the bit temperature and backs off before either limit.
+- **Sunlight arrives almost horizontally.** At the lunar south pole the sun stays within about 1.5° of the horizon [@mazarico2011illumination]. Flat panels collect almost nothing, so the **solar wings stand near-vertical and track the sun** [@moonvillage2020]. On Mars they also tilt in elevation.
+
+**Modelling approach.** The model starts from four kinds of input, each with a cited source: measured properties of the Moon and Mars (gravity, soil strength, temperature, sunlight), design choices (lander mass, bit size, bite length), published values from drilling and materials research, and safety factors from NASA and ECSS engineering standards [@nasastd5001; @ecss3301]. Every other figure on this site is calculated from those inputs with established engineering models: drag-bit cutting mechanics [@detournay1992], impact stress waves [@lundberg1982], Goodman fatigue [@shigley], Janssen granular friction [@janssen1895versuche], ice vapour pressure [@murphy2005], sun geometry and heat balance. A second-by-second simulation then runs the whole 1 m mission. No value is adjusted to reach a target. The results are compared with the closest field-tested prototype, Honeybee Robotics' Icebreaker drill [@zacny2013icebreaker], and the same models also generate the 3D CAD shown on this site.
+
+## Bit design compared with oilfield practice
+
+An oilfield PDC (polycrystalline diamond compact) bit has a wide body with many blades of diamond cutters, nozzles for drilling mud and a threaded pin [@bellin2010pdc; @iadc1992fixedcutter]. Extraterrestrial drills, such as Honeybee Robotics' Icebreaker and the TRIDENT drill built for NASA's PRIME-1 and VIPER missions, use a small carbide-tipped bit on the end of an auger instead [@zacny2013icebreaker; @zacny2022trident]. The conditions are too different for the oilfield design to work:
+
+| | Oilfield PDC bit | Extraterrestrial bit (this design) |
+|---|---|---|
+| Diameter | 150–300 mm | 21 mm |
+| Weight on bit | Tens of kN | `{python} f"{V('wob_setpoint_moon_n'):.0f}"`–`{python} f"{V('wob_setpoint_mars_n'):.0f}"` N (the lander's weight only) |
+| Cooling and cleaning | Drilling mud through nozzles | None: no fluid in vacuum, the auger carries the cuttings |
+| Cutting action | Pure rotary shearing | Rotary cutting plus hammer impacts |
+| Cutter material | Polycrystalline diamond (PDC) | Tungsten carbide (WC-10Co) |
+| Number of cutters | 20–60 on 4–8 blades | 2 chisel inserts |
+
+: Oilfield PDC bits after the IADC fixed-cutter classification and Bellin et al. [@iadc1992fixedcutter; @bellin2010pdc]; extraterrestrial bit practice after Zacny et al. [@zacny2008drilling; @zacny2013icebreaker].
+
+Three physical reasons rule the PDC design out:
+
+1. **Heat.** Without mud to cool them, diamond cutters overheat. The diamond layer degrades above roughly 700 °C, because the cobalt binder expands faster than the diamond, and frictional heating in dry or poorly cooled drilling can reach that at the cutting edge [@glowka1986pdc].
+2. **Impact.** Diamond is brittle and chips under hammer blows. Cemented carbide is tough enough to take `{python} f"{V('blow_frequency_hz'):.0f}"` blows per second, which is why percussion bits in mining use carbide inserts [@sme1981percussion; @barcohen2009extreme].
+3. **Load per cutter.** A cutter only bites when it carries enough force. A few tens of newtons shared across dozens of cutters gives almost nothing per cutter, so a low-gravity bit concentrates its load on two edges [@detournay1992].
+
+Some oilfield practice does carry over. The bit uses negative back-rake (`{python} f"{90 - 15 - des['ledger']['bit_wedge_angle_deg']['value']:.0f}"`°), as PDC cutters do to resist chipping [@bellin2010pdc]. It also has gauge pads to hold the hole size and junk slots between the cutters to clear cuttings.
+
+## Model output
+
+```{python}
+#| output: asis
+def kpi(label, val, sub, cls=""):
+    return f'<div class="kpi-card {cls}"><div class="kpi-label">{label}</div><div class="kpi-value">{val}</div><div class="kpi-sub">{sub}</div></div>'
+
+emit_html('<div class="kpi-grid">' + "".join([
+    kpi("A - Depth", f"{moon['A_reached_depth_m']:.2f} m", f"{moon['A_num_bites']} bites of {moon['A_bite_increment_m']*100:.0f} cm (both bodies)"),
+    kpi("B - Mission time", f"{moon['B_total_operational_duration_hr']:.2f} h / {mars['B_total_operational_duration_hr']:.2f} h",
+        f"Moon / Mars. Pure drilling {moon['B_pure_drilling_time_min']:.1f} / {mars['B_pure_drilling_time_min']:.1f} min"),
+    kpi("C - Weight on bit", f"{moon['C_operational_wob_setpoint_n']:.0f} N / {mars['C_operational_wob_setpoint_n']:.0f} N",
+        f"Moon / Mars. Lander weight ÷ safety factor 1.4 (lift-off at {moon['C_wob_max_limit_n']:.0f} / {mars['C_wob_max_limit_n']:.0f} N)", "mars"),
+    kpi("D - Drilling power", f"{moon['D_mean_drilling_power_w']:.0f} W / {mars['D_mean_drilling_power_w']:.0f} W",
+        f"Moon / Mars, while drilling. Mission mean {moon['D_mean_electrical_power_w']:.0f} / {mars['D_mean_electrical_power_w']:.0f} W, peak {moon['D_peak_electrical_power_w']:.0f} W (heaters)", "mars"),
+]) + "</div>")
+```
+
+The four cards summarise what the simulation returns for each body. Each value comes out of the model; none is an input.
+
+**What goes into the model.**
+
+- **Ground column.** Each site is described as a stack of layers with a compressive strength (UCS) for each. The lunar column runs from loose dry regolith [@carrier1991] to icy regolith of about 5 and 20 MPa [@gertsch2006]. The Martian column follows the Phoenix site: ice-cemented ground from a few centimetres down, over nearly pure ice [@smith2009h2o; @mellon2009; @schulson2009].
+- **Lander and drill.** A 45 kg lander, a 21 mm bit with two carbide cutters, a 10 cm bite, a 150 RPM nominal auger speed and a 5 mm/s feed-rate ceiling.
+- **Safety criteria.** A safety factor on lander lift-off, a temperature limit on the bit and a torque limit on the auger string.
+
+**How the model turns those inputs into the cards.**
+
+1. **Weight on bit (card C).** Weight on bit (WOB) is the downward force pressing the bit into the ground. The lander can only supply its own weight, *m g*: `{python} f"{moon['C_wob_max_limit_n']:.0f}"` N on the Moon and `{python} f"{mars['C_wob_max_limit_n']:.0f}"` N on Mars. Pushing harder lifts the lander. The controller's **set-point**, the force it is told to hold, is that weight divided by a **factor of safety (FOS)** of 1.4: WOB<sub>set</sub> = *m g* / FOS. This gives `{python} f"{moon['C_operational_wob_setpoint_n']:.0f}"` N on the Moon and `{python} f"{mars['C_operational_wob_setpoint_n']:.0f}"` N on Mars, so the drill never uses more than about 71 % of the lander's weight. The value 1.4 is the ultimate-load factor NASA-STD-5001B applies to tested spaceflight structures [@nasastd5001]. A load cell under the drill head closes the loop around this set-point.
+2. **Cutting mode and penetration rate.** At each depth the model compares the set-point with the force a rotary drag bit needs before it cuts, from the Detournay–Defourny cutter model [@detournay1992]. It then works out the penetration rate in both rotary and rotary-percussive mode, using specific energy (the energy needed to remove a unit volume of rock) [@teale1965concept; @rabia1982]. The controller picks whichever mode removes rock with less energy. The rate is capped at the 5 mm/s feed ceiling.
+3. **Power (card D).** Drilling power is the sum of rotary power (torque × speed), hammer power, feed power and avionics, each divided by its motor and gearbox efficiency. Heaters add to the peak when the actuators are warmed before motion.
+4. **Time and depth (cards A and B).** A state machine steps through the mission one second at a time: warm-up, search for the surface, drill one bite, retract, brush the cuttings into the cup, and repeat ten times. Bit temperature, battery charge and solar input are integrated on every step. The mission time is the sum of these phases. Pure drilling takes only `{python} f"{moon['B_pure_drilling_time_min']:.1f}"` min on the Moon and `{python} f"{mars['B_pure_drilling_time_min']:.1f}"` min on Mars. Most of the rest is retraction and sample transfer, plus `{python} f"{moon['B_time_breakdown_min']['ACTIVE']:.0f}"` min of actuator warm-up on the colder Moon.
+
+**Comparison with a field-tested prototype.** Honeybee Robotics' Icebreaker drill is the closest working prototype. Its field tests reported a "1-1-100-100" result: about 1 m in about 1 hour, with under 100 N weight on bit and about 100 W [@zacny2013icebreaker]. This model predicts `{python} f"{mars['B_total_operational_duration_hr']:.2f}"` h, `{python} f"{mars['C_operational_wob_setpoint_n']:.0f}"` N and `{python} f"{mars['D_mean_drilling_power_w']:.0f}"` W while drilling on Mars. These are the same order of magnitude as the prototype, and no coefficient was fitted to that benchmark. Model uncertainty is shown on the [Derivations & Design](theory_and_sizing.html) page.
+
+---
+
+## Interactive digital twin
+
+The 3D view replays the simulated mission at true 1:1 scale. The strip charts under it plot the same simulation against time; click or drag on them to move the replay.
+
+- **Ground:** the cut-away borehole shows the layers of the ground model, coloured by unconfined compressive strength (UCS) on a logarithmic cividis scale, so stronger ground reads lighter and more yellow.
+- **Bit:** the bit is tinted by its temperature as a share of the limit, from start temperature (steel grey) to the limit (red). The auger spins at the commanded RPM, and the hammer pulses only when the controller picks percussion.
+- **Drilling mode:** the panel beside the view states which mode the controller chose and why: it runs both modes at the current weight on bit and keeps the one that needs less energy per cubic metre of rock (mechanical specific energy, MSE).
+- **Bite sample:** as the bit cuts, the sampling flutes fill from the bottom up, coloured by the layer each slice came from. On the way out the brush strips them and the cuttings slide down the chute, through a port in the mast foot plate, into that bite's own cup. The ten cups ride on an indexing carousel under the plate, which is their sealing lid; the carousel turns one station while the auger descends for the next bite. "Sample carousel" moves the camera to the cups, drawn see-through so the samples show.
+- **Brush and solar:** the brush wheel is driven by the flights it meshes with, and both solar wings track the computed sun azimuth and elevation.
+
+```{=html}
+<div class="digital-twin-workbench" id="twin">
+  <div class="twin-head">
+    <div class="twin-title">
+      <span class="twin-title-main">Mission replay</span>
+      <span id="twin-env-caption" class="twin-title-sub">Moon, lunar south pole, g = 1.62 m/s²</span>
+    </div>
+    <div class="twin-seg" role="group" aria-label="Environment">
+      <button id="hud-env-moon" class="twin-seg-btn is-on" type="button" aria-pressed="true">Moon</button>
+      <button id="hud-env-mars" class="twin-seg-btn" type="button" aria-pressed="false">Mars</button>
+    </div>
+  </div>
+
+  <div class="twin-main">
+    <div class="twin-view">
+      <div id="drill-canvas-container"></div>
+      <div class="twin-view-tools">
+        <div class="twin-seg twin-seg-sm" role="group" aria-label="Camera">
+          <button class="twin-seg-btn is-on" data-view="rig" type="button">Whole rig</button>
+          <button class="twin-seg-btn" data-view="bit" type="button">Follow bit</button>
+          <button class="twin-seg-btn" data-view="cup" type="button">Sample carousel</button>
+        </div>
+      </div>
+      <div class="twin-hint">Drag to orbit, scroll to zoom, right-drag to pan</div>
+    </div>
+
+    <div class="twin-side">
+      <div class="twin-state-row">
+        <span id="hud-val-state" class="twin-state">DRILL</span>
+        <span id="hud-val-bite" class="twin-bite">Bite 1 of 10</span>
+      </div>
+      <div id="hud-fault-banner" class="twin-fault" hidden></div>
+
+      <dl class="twin-read">
+        <dt>Bit depth / hole</dt><dd id="hud-val-depth">-</dd>
+        <dt>Weight on bit / lift-off</dt><dd id="hud-val-wob">-</dd>
+        <dt>Rotary speed</dt><dd id="hud-val-rpm">-</dd>
+        <dt>Torque</dt><dd id="hud-val-torque">-</dd>
+        <dt>Penetration rate</dt><dd id="hud-val-rop">-</dd>
+        <dt>Electrical load</dt><dd id="hud-val-power">-</dd>
+        <dt>Bit temp. / limit</dt><dd id="hud-val-temp">-</dd>
+        <dt>Solar / battery</dt><dd id="hud-val-solar">-</dd>
+      </dl>
+
+      <section class="twin-block">
+        <h4 class="twin-h">Ground at the bit</h4>
+        <div class="twin-layer">
+          <span id="twin-layer-swatch" class="twin-swatch"></span>
+          <span id="hud-val-layer">-</span>
+        </div>
+        <div id="twin-layer-props" class="twin-small">-</div>
+        <div class="twin-scale" aria-label="UCS colour scale, MPa, logarithmic">
+          <div class="twin-cbar"><span id="twin-cbar-mark" class="twin-cbar-mark"></span></div>
+          <div class="twin-cbar-ticks"><span>0.001</span><span>0.01</span><span>0.1</span><span>1</span><span>10</span><span>100 MPa</span></div>
+        </div>
+      </section>
+
+      <section class="twin-block">
+        <h4 class="twin-h">Bit temperature, share of limit</h4>
+        <div class="twin-scale">
+          <div class="twin-tbar"><span id="twin-tbar-mark" class="twin-cbar-mark"></span></div>
+          <div class="twin-cbar-ticks"><span>start</span><span>50 %</span><span>limit</span></div>
+        </div>
+      </section>
+
+      <section class="twin-block">
+        <h4 class="twin-h">Samples collected, by bite</h4>
+        <div id="twin-tray" class="twin-tray" aria-label="One cell per bite, shallowest material on top, coloured by the layer it came from"></div>
+        <p id="twin-tray-note" class="twin-small">-</p>
+      </section>
+
+      <section class="twin-block">
+        <h4 class="twin-h">Drilling mode</h4>
+        <div id="twin-mode" class="twin-mode">-</div>
+        <p id="twin-mode-why" class="twin-small">-</p>
+      </section>
+
+      <section class="twin-block">
+        <h4 class="twin-h">Jump to, bite 3</h4>
+        <div class="twin-jump">
+          <button class="hud-override-btn" data-bookmark="SEARCH" type="button">Search</button>
+          <button class="hud-override-btn" data-bookmark="DRILL_BITE_3" type="button">Drilling</button>
+          <button class="hud-override-btn" data-bookmark="TRANSFER" type="button">Transfer</button>
+          <button class="hud-override-btn" data-bookmark="FAULT_RETRACT" type="button">Fault recovery</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="twin-charts">
+    <canvas id="twin-strip" aria-label="Strip charts of the mission: controller state, depth, weight on bit, electrical load and bit temperature against time. Click or drag to move the replay."></canvas>
+  </div>
+
+  <div class="twin-transport">
+    <button id="hud-btn-play" class="twin-play" type="button">Pause</button>
+    <span id="hud-time-label" class="twin-time">T+00:00</span>
+    <input id="hud-timeline-scrubber" class="twin-scrub" type="range" min="0" max="600" value="0" step="1" aria-label="Mission time" />
+    <div class="twin-seg twin-seg-sm" role="group" aria-label="Replay speed">
+      <button class="twin-seg-btn hud-speed-btn is-on" data-speed="1" type="button">1×</button>
+      <button class="twin-seg-btn hud-speed-btn" data-speed="0.5" type="button">0.5×</button>
+      <button class="twin-seg-btn hud-speed-btn" data-speed="0.25" type="button">0.25×</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="assets/js/drill_kinematics.js"></script>
+```
+
+---
+
+## Moon vs. Mars results matrix
+
+```{python}
+#| output: asis
+def row(pid, name, m, r, why):
+    return f"<tr><td><span class='badge-param'>{pid}</span></td><td><strong>{name}</strong></td><td>{m}</td><td>{r}</td><td>{why}</td></tr>"
+
+E = abcd["environments"]
+rows = [
+    row("ENV", "Gravity, atmosphere", "1.62 m/s², hard vacuum", "3.71 m/s², ~600 Pa CO<sub>2</sub>", "Sets WOB, cooling and sky"),
+    row("A", "Depth reached", f"{E['moon']['A_reached_depth_m']:.2f} m", f"{E['mars']['A_reached_depth_m']:.2f} m", f"10 cm bites < flute capacity z<sub>crit</sub> = {V('choking_onset_bite_m')*100:.1f} cm"),
+    row("B", "Total time", f"{E['moon']['B_total_operational_duration_hr']:.2f} h", f"{E['mars']['B_total_operational_duration_hr']:.2f} h", f"Moon warm-up {V('warmup_duration_moon_s')/60:.0f} min (100 K start) vs Mars {V('warmup_duration_mars_s')/60:.1f} min"),
+    row("C", "WOB set-point / lift-off", f"{E['moon']['C_operational_wob_setpoint_n']:.1f} / {E['moon']['C_wob_max_limit_n']:.1f} N", f"{E['mars']['C_operational_wob_setpoint_n']:.1f} / {E['mars']['C_wob_max_limit_n']:.1f} N", "WOB = m g / FOS"),
+    row("D", "Drilling / mean / peak power", f"{E['moon']['D_mean_drilling_power_w']:.0f} / {E['moon']['D_mean_electrical_power_w']:.0f} / {E['moon']['D_peak_electrical_power_w']:.0f} W", f"{E['mars']['D_mean_drilling_power_w']:.0f} / {E['mars']['D_mean_electrical_power_w']:.0f} / {E['mars']['D_peak_electrical_power_w']:.0f} W", "Rotary + percussion + feed + avionics (+ heaters)"),
+    row("SOLAR", "Array output (day mean)", f"{E['moon']['solar_day_mean_w']:.0f} W", f"{E['mars']['solar_day_mean_w']:.0f} W", f"{abcd['solar_configuration']}; cell temperature, packing, shading, Mars dust"),
+    row("ENERGY", "Mission energy / max DoD", f"{E['moon']['D_total_mission_energy_wh']:.0f} Wh / {E['moon']['D_max_depth_of_discharge_pct']:.1f} %", f"{E['mars']['D_total_mission_energy_wh']:.0f} Wh / {E['mars']['D_max_depth_of_discharge_pct']:.1f} %", "Battery integrated against the tracked array each second"),
+    row("THERMAL", "Peak bit temperature / limit", f"{E['moon']['max_bit_temp_k']:.0f} / {E['moon']['critical_bit_temp_k']:.0f} K", f"{E['mars']['max_bit_temp_k']:.0f} / {E['mars']['critical_bit_temp_k']:.0f} K", "Moon: ice sublimation limit; Mars: melt margin"),
+]
+emit_html(f"""<div class="mbse-table-wrap"><table class="mbse-table"><thead><tr><th>ID</th><th>Metric</th><th>Moon</th><th>Mars</th><th>Physics behind it</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>""")
+```
+
+---
+
+## Bite-by-bite performance
+
+```{python}
+#| output: asis
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+fig = make_subplots(rows=3, cols=1, shared_xaxes=True, vertical_spacing=0.09,
+                    subplot_titles=("Penetration rate (mm/s)", "Drilling power (W)", "Specific energy (MJ/m³, log)"))
+for env, col in (("moon", "#0284c7"), ("mars", "#ea580c")):
+    b = E[env]["bite_breakdown"]
+    n = [x["bite_number"] for x in b]
+    name = "Moon" if env == "moon" else "Mars"
+    fig.add_trace(go.Bar(x=n, y=[x["rop_mm_s"] for x in b], name=name, legendgroup=env, marker_color=col), 1, 1)
+    fig.add_trace(go.Scatter(x=n, y=[x["mean_bite_power_w"] for x in b], name=name, legendgroup=env, showlegend=False,
+                             mode="lines+markers", line=dict(color=col, width=3)), 2, 1)
+    fig.add_trace(go.Scatter(x=n, y=[x["mse_mj_m3"] for x in b], name=name, legendgroup=env, showlegend=False,
+                             mode="lines+markers", line=dict(color=col, width=3)), 3, 1)
+fig.update_xaxes(dtick=1)
+fig.update_xaxes(title_text="Bite number (10 cm each)", row=3, col=1)
+fig.update_yaxes(type="log", dtick=1, row=3, col=1)
+fig.update_layout(template="plotly_white", height=760, barmode="group",
+                  legend=dict(orientation="h", yanchor="top", y=-0.09, x=0.5, xanchor="center"),
+                  margin=dict(l=55, r=20, t=40, b=110))
+emit_html(fig.to_html(full_html=False, include_plotlyjs=False, include_mathjax=False, config={'displayModeBar': False, 'responsive': True}))
+```
+
+The three panels show, for each 10 cm bite, the average penetration rate, the mean drilling power and the **mechanical specific energy (MSE)**. MSE is the energy spent to remove one cubic metre of ground. Teale introduced it as a measure of drilling efficiency [@teale1965concept], and it is now used to monitor oilfield drilling in real time [@dupriest2005]. For an efficient cutter, MSE is close to the compressive strength of the rock [@rabia1982; @richard2012]. A rise in MSE therefore means harder ground or a less efficient cutting mode. It is plotted on a log scale because it spans almost two orders of magnitude.
+
+**Moon.**
+
+- **Bites 1–5 (dry regolith).** Loose regolith has almost no strength [@carrier1991]. The bit drills at the 5 mm/s feed ceiling with rotary cutting alone, and MSE is only about `{python} f"{E['moon']['bite_breakdown'][0]['mse_mj_m3']:.1f}"` MJ/m³. Each bite takes `{python} f"{E['moon']['bite_breakdown'][0]['drill_duration_s']}"` s.
+- **Bites 6–8 (icy regolith, about 5 MPa).** The rotary threshold is now about 35 N, still below the `{python} f"{moon['C_operational_wob_setpoint_n']:.0f}"` N set-point, so the bit keeps cutting in rotary mode. The rate falls to `{python} f"{E['moon']['bite_breakdown'][5]['rop_mm_s']:.1f}"` mm/s.
+- **Bites 9–10 (ice-rich regolith, about 20 MPa).** The rotary threshold rises to about `{python} f"{rot_thr:.0f}"` N, well above the set-point, so rotary cutting would stall. The controller switches on the hammer. Power jumps to about `{python} f"{E['moon']['bite_breakdown'][8]['mean_bite_power_w']:.0f}"` W and MSE to about `{python} f"{E['moon']['bite_breakdown'][8]['mse_mj_m3']:.0f}"` MJ/m³. Percussion is less efficient than clean rotary cutting, in line with field experience [@dupriest2005; @lundberg1982], but it is the only way to make progress with the force available. The bit warms to `{python} f"{E['moon']['max_bit_temp_k']:.0f}"` K, well below the `{python} f"{E['moon']['critical_bit_temp_k']:.0f}"` K sublimation limit.
+
+**Mars.**
+
+- **Bites 1–8 (ice-cemented ground, 18–22 MPa).** At the Phoenix site, ice-cemented ground starts a few centimetres below the surface [@mellon2009]. Even with Mars's stronger gravity, the `{python} f"{mars['C_operational_wob_setpoint_n']:.0f}"` N set-point is below the rotary threshold of about 125–152 N, so the hammer runs almost all the time. The rate is `{python} f"{E['mars']['bite_breakdown'][1]['rop_mm_s']:.1f}"`–`{python} f"{E['mars']['bite_breakdown'][6]['rop_mm_s']:.1f}"` mm/s at about 125 W.
+- **Bites 9–10 (nearly pure ice, about 12 MPa).** Ice at about 190 K is weaker than ice-cemented soil [@schulson2009]. The rotary threshold drops to about 83 N, below the set-point, so rotary cutting becomes possible again. Rotary-percussive mode would actually be faster here, but rotary cutting removes the ice with about `{python} f"{E['mars']['bite_breakdown'][8]['mse_mj_m3']:.0f}"` MJ/m³ against roughly double that with the hammer. Because the controller chooses the lower-energy mode, power falls to about `{python} f"{E['mars']['bite_breakdown'][8]['mean_bite_power_w']:.0f}"` W at a rate of `{python} f"{E['mars']['bite_breakdown'][8]['rop_mm_s']:.1f}"` mm/s. The bit stays at or below `{python} f"{E['mars']['max_bit_temp_k']:.0f}"` K, far from the melt margin.
+
+**What this shows.** Across both bodies, percussion runs for `{python} f"{moon['percussion_time_fraction']*100:.0f}"` % of drilling time on the Moon and `{python} f"{mars['percussion_time_fraction']*100:.0f}"` % on Mars. Percussion is what lets a light lander drill hard frozen ground, as the Icebreaker and TRIDENT prototypes showed [@zacny2013icebreaker; @zacny2022trident]. Bite length, not drilling rate, sets most of the mission time: each 10 cm bite needs a full retract-and-brush cycle, which takes longer than the cutting itself.

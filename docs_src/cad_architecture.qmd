@@ -1,0 +1,308 @@
+---
+title: "3D CAD Architecture & Subassembly Breakdown"
+subtitle: "Parametric boundary-representation (B-rep) solids, sized by the physics-based design derivations and made interactive in the browser through WebGL, a JavaScript graphics API"
+---
+
+```{=html}
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+<script>
+  // Download menus: close any open menu when the reader clicks elsewhere
+  document.addEventListener("click", (e) => {
+    document.querySelectorAll("details.cad-dl[open]").forEach((d) => { if (!d.contains(e.target)) d.removeAttribute("open"); });
+  });
+</script>
+```
+
+```{python}
+#| output: asis
+import json
+import math
+from pathlib import Path
+
+root = Path("..").resolve()
+man = json.loads((root / "exports" / "data" / "cad_manifest.json").read_text())
+L = man["layout"]
+des = json.loads((root / "exports" / "data" / "design_derivations.json").read_text())
+DA = des["auger"]
+LB = lambda k: des["ledger"][k]["value"]
+MA = des["mast"]
+MG = MA["geometry_m"]
+import yaml
+_cfg = yaml.safe_load((root / "config" / "system_params.yaml").read_text())
+p_bit = _cfg["drill_bit"]
+P_ROT = _cfg["actuators"]["rotary"]
+A = man["assemblies"]
+N = man["nodes"]
+
+def emit_html(html_str: str) -> None:
+    print(f"\n```{{=html}}\n{html_str.strip()}\n```\n")
+
+def size_mm(name: str) -> str:
+    (x0, y0, z0), (x1, y1, z1) = A[name]["bbox_mm"]
+    return f"{x1 - x0:.0f} &times; {y1 - y0:.0f} &times; {z1 - z0:.0f} mm"
+
+FORMATS = [
+    ("step", "STEP", "exact B-rep, assembly tree, mm"),
+    ("stl", "STL", "triangle mesh, mm"),
+    ("glb", "glTF binary (.glb)", "web mesh with materials, m"),
+]
+
+def downloads(name):
+    items = "".join(f'<a href="assets/cad/{name}.{ext}" download><strong>{lab}</strong><span>{note}</span></a>' for ext, lab, note in FORMATS)
+    return f'<details class="cad-dl"><summary>Download</summary><div class="cad-dl-menu">{items}</div></details>'
+
+def card(name, title, orbit, alt, extra_attrs=""):
+    """Viewer card only: header, model, download menu. The explanation is written outside the card."""
+    return f"""
+  <figure class="cad-card">
+    <div class="cad-card-header">
+      <div><h4>{title}</h4><span class="cad-tag">{A[name]['parts']} parts &middot; envelope {size_mm(name)}</span></div>
+      {downloads(name)}
+    </div>
+    <model-viewer src="assets/cad/{name}.glb" alt="{alt}" camera-controls touch-action="pan-y"
+      environment-image="neutral" tone-mapping="neutral" shadow-intensity="0.55" shadow-softness="0.9" exposure="0.75"
+      camera-orbit="{orbit}" interaction-prompt="none" loading="eager" {extra_attrs}>
+      <div class="cad-load-error" slot="error">Model failed to load. Serve the site over HTTP; browsers block <code>.glb</code> files opened directly from disk.</div>
+    </model-viewer>
+  </figure>"""
+
+def notes(bullets):
+    return '<ul class="cad-notes">' + "".join(f"<li>{b}</li>" for b in bullets) + "</ul>"
+
+def subsection(heading, cards, bullets, lead=""):
+    print(f"\n### {heading}\n")
+    if lead:
+        print(f"\n{lead}\n")
+    grid = "cad-viewer-grid" if len(cards) > 1 else "cad-viewer-single"
+    emit_html(f'<div class="{grid}">' + "".join(cards) + "</div>")
+    emit_html(notes(bullets))
+
+CC = man["colour_code"]
+LAYC = _cfg["cad_layout"]
+r_ex = L["auger_od_mm"] / 2
+delta_ex, ang_ex = 0.08, 0.25
+theta_dev = 2 * math.acos(1 - delta_ex / r_ex)
+n_seg = math.ceil(2 * math.pi / min(theta_dev, ang_ex))
+HOME = man["kinematics"]["home_tip_m"]
+STROKE = HOME + 1.0
+GOVERNS = "the angular limit governs" if ang_ex < theta_dev else "the deviation limit governs"
+N_TEL = len((root / "exports" / "data" / "telemetry_moon.csv").open().readline().strip().split(","))
+SEARCH = _cfg["actuators"]["z_axis_feed"]
+```
+
+Each component on this page is a solid model generated from the system's design parameters, not drawn by hand. Its dimensions come from the physics-based sizing (loads, stresses, fatigue, vibration and thermal limits), and the browser shows the result as an interactive 3D model.
+
+A **boundary representation (B-rep)** describes a solid by the surfaces that enclose it. It stores the faces (pieces of planes, cylinders, cones, tori or NURBS surfaces), the edges where faces meet and the vertices where edges meet, together with the topology that records which face borders which [@requicha1980; @stroud2006brep; @piegl1997nurbs]. Because the boundary is exact, a bearing bore is a true cylinder of a known diameter, and volume, mass, centre of gravity and moments of inertia follow directly from the geometry. A B-rep model is **parametric** when every dimension is an expression of named inputs, such as auger diameter, flight pitch, bearing size or mast section, instead of a fixed number [@shah1995parametric]. When a derivation changes a value (for example the flute depth set by the fatigue check), the solids rebuild with the new value and every dependent dimension follows.
+
+An **application programming interface (API)** is the set of functions that one piece of software publishes so that other programs can use it. **WebGL** is such an interface: a JavaScript API, standardised by the Khronos Group, through which a web page sends triangles, material colours and lights to the computer's graphics processor (GPU) [@webgl2]. The viewers on this page use it to draw each model at interactive frame rates in any modern browser, with no plug-in.
+
+The models are published in three file formats, each suited to a different task:
+
+- **STEP** (ISO 10303-21) is the neutral exchange format for engineering CAD [@iso10303_21]. It carries the exact B-rep geometry, the assembly tree, part names and colours, and it opens in any major CAD package for further design, analysis or manufacture.
+- **STL** stores only a list of flat triangles and their normals, with no units, colours or assembly structure [@stl1988]. It is the usual input for 3D printing and for many meshing tools.
+- **glTF** (GL Transmission Format) is the Khronos format for delivering 3D scenes to real-time renderers, and **GLB** is its single-file binary form [@gltf2]. It holds triangle meshes, physically based material properties and a hierarchy of nodes, and it is the format the viewers below load.
+
+## Modelling approach
+
+Every part is modelled once as a parametric B-rep solid by the CAD generator, sized from the same parameter set and design derivations used in the sizing calculations. The same solids are written to colour-labelled, assembly-structured STEP files (mm), tessellated to STL (mm), and tessellated to glTF `.glb` (m, Y-up) for the viewers below. The web models and the engineering STEP files therefore always match.
+
+**Tessellation.** The STEP file keeps the exact curved surfaces, but a GPU or a 3D printer can only process flat triangles. Tessellation replaces each curved face by a mesh of triangles whose vertices lie on the true surface, so each triangle edge is a chord across the curve. The error is the chordal deviation, the largest gap between a triangle and the surface it replaces. For a face of radius $r$ divided into segments that each span an angle $\theta$:
+
+$$
+\delta = r\left(1 - \cos\frac{\theta}{2}\right)
+$$
+
+::: {.symbols}
+- $\delta$: chordal deviation, the largest distance between the true surface and the triangle that replaces it (mm)
+- $r$: local radius of curvature of the face (mm)
+- $\theta$: angle one segment spans at the centre of curvature (rad)
+:::
+
+The generator holds $\delta \le$ `{python} f"{delta_ex:.2f}"` mm and $\theta \le$ `{python} f"{ang_ex:.2f}"` rad. On the `{python} f"{r_ex:.0f}"` mm radius of the auger flight, the deviation limit alone would allow $\theta =$ `{python} f"{theta_dev:.3f}"` rad, so `{python} GOVERNS` and a full circle becomes `{python} f"{n_seg}"` segments. The worst-case error is `{python} f"{100 * delta_ex / r_ex:.1f}"` % of the radius, below what a screen can show and below ordinary machining tolerances. Thin, repeated features (helical flights, bristle tufts, coil springs) use coarser limits to keep the files small. The web copy is also converted to the glTF convention of metres with $+Y$ up [@gltf2]: a CAD point $(x, y, z)$ in millimetres with $Z$ up becomes $(x,\ z,\ -y)\times10^{-3}$ m. That is a rotation of $-90^\circ$ about the $x$-axis followed by a scale, so the frame stays right-handed and lengths, angles and the hand of every helix are preserved.
+
+**Home pose.** The rig is drawn at 1:1 scale in its *home* pose, the reference configuration from which every motion is measured. In robot-kinematics terms it is the zero position of the prismatic feed joint [@craig2005robotics]. The carriage sits at the top of its travel on the rails, so the drill string is fully withdrawn and the bit tip hangs `{python} f"{HOME * 1000:.0f}"` mm above the regolith. That height clears the mast foot plate (`{python} f"{LAYC['foot_top_m'] * 1000:.0f}"` mm) and the top of the brush (about `{python} f"{LAYC['brush_axle_height_m'] * 1000 + L['brush_tip_radius_mm']:.0f}"` mm), so the parked bit touches neither the brushing station nor the ground and the load cell reads no weight on bit. To reach the 1.0 m target depth the carriage therefore needs a stroke of `{python} f"{HOME:.2f}"` + 1.00 = `{python} f"{STROKE:.2f}"` m. A mission starts and ends here: the controller leaves home, approaches at `{python} f"{SEARCH['search_speed_m_s'] * 1000:.0f}"` mm/s until the load cell detects `{python} f"{SEARCH['contact_detect_wob_n']:.0f}"` N of contact, and returns to home after the last bite. The digital twin moves the carriage by the displacement $\Delta z = z_\text{tip} - z_\text{home}$ from this pose.
+
+::: {.symbols}
+- $\Delta z$: carriage displacement from the home pose, positive upward (m)
+- $z_\text{tip}$: bit-tip height above the regolith surface at the current instant, negative once the bit is in the hole (m)
+- $z_\text{home}$: bit-tip height in the home pose, `{python} f"{HOME:.2f}"` m
+:::
+
+**Colour code.** The colours carry engineering meaning. Each part is coloured by the job it does in the machine, so a load or energy path can be traced by eye, as in the cutaway drawings of engineering manuals. Finishes are matte, in the manner of technical illustration, so that hue rather than mirror-like highlights carries the information [@gooch1998]. The eight function hues are the Okabe–Ito colour-universal-design set, chosen so the classes stay distinguishable for readers with colour-vision deficiency, about one man in twelve [@okabe2008cud; @wong2011color]. Two neutral greys mark the primary structure and the lander. The same colours are written into the STEP part labels, so the code carries into any CAD package.
+
+```{python}
+#| output: asis
+rows_cc = "".join(
+    f'<tr><td><span class="cc-swatch" style="background:{c["hex"]}"></span></td><td><strong>{c["label"]}</strong></td><td>{c["function"]}</td></tr>'
+    for c in CC
+)
+emit_html(f"""<div class="mbse-table-wrap"><table class="mbse-table cc-table">
+<thead><tr><th>Colour</th><th>Function class</th><th>Parts and role</th></tr></thead>
+<tbody>{rows_cc}</tbody></table></div>""")
+```
+
+Read together, the classes follow the energy through the machine: electrical power is converted in the motors (blue), carried as torque and feed force through the drive train (orange) or stored and released as impact in the percussion path (vermillion), delivered to the rock by the carbide (black), and the reactions return to the lander through the structure (greys). A part's class follows its role, not its material: the bronze leadscrew nut is orange because it transmits feed force, while the bronze chute is green because it carries the sample.
+
+In every viewer below, drag to orbit, scroll to zoom and right-drag to pan. The tag under each title gives the part count and the overall envelope (width &times; depth &times; height). The **Download** menu offers each model in the three file formats.
+
+```{python}
+#| output: asis
+B = {}
+B["drill_bit_crown"] = [
+    f"<strong>Cutters:</strong> two WC-10Co chisel inserts, {p_bit['rake_angle_deg']:.0f}&deg; rake / {p_bit['clearance_angle_deg']:.0f}&deg; clearance (wedge {LB('bit_wedge_angle_deg'):.0f}&deg;), edges on the line through the axis so the centre is cut, 2 mm proud of the face. Edge radius <strong>{LB('bit_edge_radius_mm'):.2f} mm</strong> from Hertz contact: carbide FOS {LB('bit_edge_contact_fos'):.2f} on a basalt clast, yet {LB('bit_crushing_ratio'):.0f}&times; the strength of the hardest ice.",
+    f"<strong>Junk slots:</strong> two {LB('bit_junk_slot_width_mm'):.0f} mm slots ahead of each rake face, sized so their area equals the sampling-flute channel (never the bottleneck). Carbide gauge pads with back-reaming chamfers on the trailing quadrants.",
+    f"<strong>Indexing:</strong> the bit turns {LB('bit_index_angle_deg'):.1f}&deg; between hammer blows, so each blow lands {LB('bit_index_spacing_gauge_mm'):.1f} mm from the last crater at the gauge.",
+    f"<strong>Sensing &amp; joint:</strong> thermocouple pocket ends 0.5 mm above the inserts (carbide conducts the edge heat). M12&times;1 right-hand joint: drilling torque tightens it, and impact passes through the shoulder ({LB('bit_joint_shoulder_stress_mpa'):.0f} MPa), not the thread.",
+]
+B["drill_bit_exploded"] = [
+    "<strong>Exploded view:</strong> inserts, gauge pads, thermocouple probe, crown body, sampling sub and coupling pulled apart to show how the bit is built and brazed.",
+]
+B["auger_bit"] = [
+    f"<strong>Flights:</strong> {L['auger_od_mm']:.0f} mm OD over the full length. The upper transport flight runs on a {L['auger_tube_od_mm']:.0f}/{L['auger_tube_id_mm']:.0f} mm hollow tube at {L['transport_pitch_mm']:.1f} mm pitch ({L['transport_helix_deg']:.1f}&deg; helix, the screw-efficiency optimum 45&deg; &minus; &phi;/2).",
+    f"<strong>Flight attachment:</strong> the root carries the stall plug pressure ({LB('flight_stall_plug_pressure_kpa')/1000:.1f} MPa, {LB('flight_root_bending_mpa'):.0f} MPa bending) plus an inertial load at every blow's stress-wave front ({LB('flight_impact_inertia_mpa'):.0f} MPa, {LB('flight_required_cycles'):.1e} cycles). Fillet welds are strong enough statically, but the weld toe would last only {LB('flight_weld_fatigue_life_cycles'):.1e} cycles (IIW FAT 63), so the flight is <strong>machined integral</strong> with the tube with a root fillet of t/2: Goodman FOS {LB('flight_root_fatigue_fos'):.2f}.",
+    f"<strong>String dynamics:</strong> a beam model of the {L['auger_length_mm']:.0f} mm string (sampling root, joint, tube, hex) gives a first lateral mode of {LB('string_lateral_f1_hz'):.0f} Hz at the start of the hole ({LB('string_lateral_f1_hz')/des['hammer']['blow_frequency_hz']:.2f}&times; the blow rate). <strong>Without the mast-foot guide bushing</strong> ({L['guide_bushing_bore_mm']:.0f} mm Vespel liner) it would be {LB('string_lateral_no_bushing_hz'):.0f} Hz, inside the &plusmn;20&nbsp;% resonance band. Buckling {LB('string_buckling_load_n'):,.0f} N vs a {des['string']['beam']['p_design_n']:.0f} N lift-off WOB; first torsional mode {LB('string_torsional_f1_hz'):.0f} Hz; wind-up {LB('string_windup_deg'):.1f}&deg; at {P_ROT['max_safe_torque_nm']} N&middot;m, mostly in the 6 mm sampling root.",
+    f"<strong>Drive interface:</strong> a 16 mm hex sits {LB('hex_shank_engagement_mm'):.0f} mm deep in the anvil socket (flank pressure {LB('hex_socket_flank_pressure_mpa'):.1f} MPa, torsion {LB('hex_shank_torsion_mpa'):.0f} MPa, impact {LB('hex_shank_impact_stress_mpa'):.0f} MPa at the pin section). The tube is brazed into the collar ({LB('shank_braze_lap_mm'):.0f} mm lap, FOS {LB('shank_braze_fos'):.0f}) and its end bears on the socket floor, so the blow never loads the braze. A cross pin ({LB('retention_pin_shear_mpa'):.0f} MPa at the load-cell rating) carries the hanging string.",
+    f"<strong>Thermocouple path:</strong> a {des['string']['lead_od_m']*1e3:.0f} mm type-T lead runs from the bit probe through a spring-loaded coaxial contact at the bit joint (so the bit screws on without twisting it), up the tube and the chamfered hex bore to the slip ring; it fills {LB('thermocouple_path_fill')*100:.0f} % of the narrowest bore.",
+]
+B["drill_head"] = [
+    f"<strong>Rotary drive:</strong> frameless BLDC sized from the {P_ROT['max_safe_torque_nm']} N&middot;m spindle limit: {LB('rotary_motor_torque_nm'):.2f} N&middot;m at the rotor gives a &Oslash;{LB('rotary_motor_rotor_d_mm'):.0f} mm rotor in a &Oslash;{LB('rotary_motor_stator_od_mm'):.0f} mm stator. It drives an 8:1 planetary ({LB('planetary_teeth')} teeth, 3 planets, module {LB('planetary_module_mm'):.1f}) and a 12T/24T spur stage (module {LB('spur_module_mm'):.2f}). Bending stress is {LB('spur_bending_mpa'):.0f} MPa and contact stress {LB('spur_contact_mpa'):.0f} MPa, both within AGMA limits for carburised 9310.",
+    f"<strong>Percussion:</strong> a second BLDC drives a 54T ring gear on a two-lobe barrel cam. The cycloidal rise lasts {LB('cam_rise_deg'):.0f}&deg;, followed by a {LB('cam_dwell_deg'):.0f}&deg; dwell, twice the {LB('hammer_fall_time_ms'):.1f} ms the hammer takes to fall. The pressure angle peaks at {LB('cam_pressure_angle_deg'):.1f}&deg; and roller contact stress at {LB('cam_roller_contact_mpa'):.0f} MPa. The spring is the thinnest stock wire that passes every check: {LB('hammer_spring_wire_mm'):.1f} mm wire, {LB('hammer_spring_active_coils'):.2f} active coils, {LB('hammer_spring_shear_mpa'):.0f} MPa, fatigue FOS {LB('hammer_spring_fatigue_fos'):.2f}, surge {LB('hammer_spring_surge_hz'):.0f} Hz.",
+    f"<strong>Load paths:</strong> the hammer and anvil both slide on a DIN 5480 spline (flank pressure {LB('spline_flank_pressure_mpa'):.1f} MPa). The {des['hammer']['peak_force_n']/1000:.1f} kN blow travels from hammer to anvil to hex shank and never crosses a bearing. Weight on bit takes a different route: nut, yoke, a {LB('load_cell_capacity_n'):.0f} N load cell (error {des['head']['load_cell_error_n']:.1f} N, well under the 5 N contact threshold), the housing, the 7004 ACD pair, and the spindle end face. The Tr16&times;4 screw is self-locking.",
+    f"<strong>Bearings (SKF catalogue):</strong> 7004 ACD pair L<sub>10</sub> = {LB('spindle_bearing_l10_h'):,.0f} h, 61804 {LB('upper_bearing_l10_h'):,.0f} h, 61812 cam bearing {LB('cam_bearing_l10_h'):,.0f} h. The requirement is {des['head']['bearings']['required_h']:.0f} h, 4&times; the drilling time. <strong>Dust:</strong> labyrinth and PTFE lip seal at the spindle exit, a stationary bellows over the 4 mm anvil float, and rail wipers on the LM16UU bushings.",
+]
+B["drill_head_section"] = [
+    "<strong>Quarter section:</strong> the housing and the coaxial stack are cut away in one quadrant. From the bottom up: anvil with hex socket, hammer with follower rollers on the barrel cam, spring, 7004 bearing pair, slip ring, 61804 bearing, 24T gear, then the planetary and motor in the offset pod, the load cell and the yoke.",
+]
+B["mast_and_brush"] = [
+    f"<strong>Architecture:</strong> the drill rides on the fore edge of a {MG['deck_width']:.1f} &times; {MG['deck_length']:.1f} m lander deck section. It launches folded aft over the deck; a strain-wave hinge actuator swings it 90&deg; to vertical, where spring latch pins on two deck posts lock it {LB('mast_latch_height_mm'):.0f} mm above the hinge. Sequence: SMA hold-down release &rarr; carriage to home &rarr; deploy &rarr; latch &rarr; release the brush arm.",
+    f"<strong>Spine:</strong> {MA['section_mm'][0]:.0f}&times;{MA['section_mm'][1]:.0f}&times;{MA['section_mm'][2]:.0f} mm {MA['label']} box, the lightest of {MA['candidates_total']} (material, section, bracket count, latch height) combinations that passes every check ({MA['candidates_feasible']} pass the deployed ones). Deployed first mode {min(MA['f_deployed_hz']):.1f}&ndash;{max(MA['f_deployed_hz']):.1f} Hz over the drilling stroke: between the cam ({MA['forcing_hz'][1][0]:.0f} Hz) and blow ({MA['forcing_hz'][2][0]:.0f} Hz) bands with &ge;{MA['separation']:.0%} separation, {MA['band_margin']:.0%} from the nearest band edge. Spine {LB('mast_spine_mass_kg'):.1f} kg, rotating assembly {LB('mast_rotating_mass_kg'):.1f} kg incl. {_cfg['drill_mast']['mass_growth_allowance']:.0%} growth allowance. The spine is in tension while drilling; buckling matters only when pulling a stuck string (FOS {MA['buckling_n']/MA['compression_n']:.0f}).",
+    f"<strong>Rails &amp; alignment:</strong> {MA['n_brackets']} brackets support the &Oslash;16 rails every {MA['rail_span_m']*1e3:.0f} mm; their necks pass the slot of open LM16UU-OP bushings. An end-supported rail would be a {MA['rail_f_end_hz']:.0f} Hz string at launch. Under the {MA['wob_design_n']:.0f} N lift-off WOB plus a {LB('bit_side_force_n'):.0f} N single-cutter side load, spine bending, slope and rail flex move the string {LB('mast_alignment_offset_mm'):.2f} mm off the guide-bushing axis (clearance {MA['clearance_m']*1e3:.1f} mm): a {LB('bit_alignment_error_1m_mm'):.1f} mm bit alignment error at 1 m.",
+    f"<strong>Leadscrew:</strong> buckling {LB('leadscrew_buckling_load_n'):,.0f} N on the compression side (FOS {LB('leadscrew_buckling_load_n')/MA['wob_design_n']:.0f}); whirl critical speed {LB('leadscrew_critical_speed_rpm'):.0f} rpm, with retraction at {MA['leadscrew']['n_max_rpm']/MA['leadscrew']['n_cr_rpm']:.0%} of it (limit 80 %). The self-locking Tr16&times;4 nut holds the carriage at launch ({LB('leadscrew_nut_launch_pressure_mpa'):.1f} MPa).",
+    f"<strong>Hinge, latch &amp; actuator:</strong> &Oslash;{LB('hinge_pin_d_mm'):.0f} mm 17-4PH pins in double shear at a {LB('hinge_lug_load_n')/1000:.1f} kN launch lug load (FOS {MA['hinge_pin']['fos_shear']:.1f}). Deploying needs {LB('deploy_gravity_torque_nm'):.0f} N&middot;m against Mars gravity with the mast horizontal. ECSS motorisation (2&times; gravity, friction and harness + 1.25&times; inertia) gives {LB('deploy_actuator_torque_nm'):.0f} N&middot;m, a &Oslash;{LB('deploy_motor_rotor_d_mm'):.0f} mm rotor through a 100:1 strain-wave gear. Earth tests need a g-offload. The latch is sized by stiffness ({LB('latch_pin_load_n'):.0f} N per pin).",
+    f"<strong>Lander tilt:</strong> a side-mounted drill pushes up {MG['y_cg']:.2f} m from the lander CG, so the near legs unload at {LB('lander_tilt_lift_off_ratio'):.2f}&nbsp;m&nbsp;g, before the lander lifts. The set-point stays m&nbsp;g&nbsp;/&nbsp;1.4. The far legs sit {MG['y_leg_far']:.2f} m behind the drill so the tilt limit ({LB('wob_tilt_limit_moon_n'):.0f} N Moon, {LB('wob_tilt_limit_mars_n'):.0f} N Mars) stays above the set-point plus the load-cell error. The tilt margin is {LB('lander_tilt_lift_off_ratio')*1.4:.2f}, against 1.4 for a drill through the CG. Footpad friction alone reacts the torque limit (FOS {LB('lander_torque_reaction_fos_moon'):.1f} on the Moon), so no regolith anchors are needed.",
+]
+B["mast_stowed"] = [
+    f"<strong>Stow pose:</strong> the carriage parks {LB('mast_stow_carriage_drop_mm'):.0f} mm below home, chosen to maximise the weakest local mode. The nut then splits the leadscrew ({MA['stow']['screw_f1_hz']:.0f} Hz) and the guide bushing props the string ({MA['stow']['string_f1_hz']:.0f} Hz); left at home both would be ~{MA['stow']['screw_home_f1_hz']:.0f} Hz. At {MA['stow']['screw_launch_g']:.0f} g (GEVS Miles 3&sigma;) the screw sees {MA['stow']['screw_stress_mpa']:.0f} MPa and the string {MA['stow']['string_stress_mpa']:.0f} MPa.",
+    f"<strong>Stowed primary mode:</strong> {LB('mast_stowed_f1_hz'):.0f} Hz on the hinge plus {MA['n_hold_downs']} hold-downs (requirement {MA['f_required_hz']:.0f} Hz; a single hold-down at the crosshead would give {MA['f_stowed_1hd_hz']:.0f} Hz with this spine). Launch loads are the larger of {_cfg['criteria']['launch_quasi_static_g']:.0f} g quasi-static and the Miles 3&sigma; response; spine stress {LB('mast_launch_stress_mpa'):.0f} MPa (yield FOS {MA['yield_pa']/MA['launch_stress_mpa']/1e6:.1f}).",
+    f"<strong>Hold-downs:</strong> pyro-free SMA-released A-286 {MA['hold_down_bolt']} frangible bolts in cup-cone pedestals. They carry {LB('hold_down_tension_n')/1000:.1f} kN at launch, and the preload keeps the joint closed with NASA-STD-5020 separation and ultimate factors. The cones carry shear, the hinge carries load along the mast, and the actuator gearbox carries none.",
+]
+B["brush_station_exploded"] = [
+    f"<strong>Brush as a worm wheel:</strong> the sampling flight is a single-start worm, and the {LB('brush_tuft_count')} bristle tufts are the wheel teeth on a {LB('brush_pitch_radius_mm'):.1f} mm pitch radius ({LB('brush_axle_offset_mm'):.1f} mm from the auger axis), leaning {LB('brush_tuft_lean_deg'):.1f}&deg; at the flight lead. The tuft count is the smallest that enters and leaves the flute without touching a flight and still leaves a 1 mm hub ligament. The brush turns one tuft per auger revolution. The {L['transport_pitch_mm']:.0f} mm transport pitch is exactly {L['transport_pitch_mm']/L['sampling_pitch_mm']:.0f}&times; the sampling pitch, so the transport flight meshes too.",
+    f"<strong>Bristles:</strong> {LB('bristle_wire_mm'):.2f} mm 17-7PH wire, tips {_cfg['actuators']['brush_station']['min_interference_m']*1e3:.1f} mm past the flute root. Their tip pressure is {LB('bristle_tip_pressure_kpa'):.0f} kPa, {LB('bristle_tip_pressure_kpa')/LB('cuttings_passive_pressure_kpa'):.0f}&times; the cuttings' Rankine passive pressure, at {LB('bristle_stress_mpa'):.0f} MPa (Goodman FOS {des['brush']['bristle']['fos']:.1f}). Thicker wire would wear longer, but with the bit above the guide bushing the string is a {L['auger_length_mm']/1000:.2f} m cantilever. The total contact force ({LB('brush_contact_force_n'):.2f} N) must stay under the {LB('brush_contact_force_budget_n'):.2f} N that would push the bit past the bushing lead-in.",
+    f"<strong>Drag &amp; mission:</strong> derived drag {LB('brush_drag_torque_nm')*1000:.1f} mN&middot;m with full flutes (plough + bristle friction + bushings), {LB('brush_idle_drag_torque_nm')*1000:.2f} mN&middot;m on empty flights. Both feed the state machine. The root-contact patch sets the sweep speed to {LB('brush_sweep_speed_mm_s'):.1f} mm/s ({LB('transfer_duration_s'):.0f} s per bite).",
+    f"<strong>Spring-loaded arm:</strong> two {des['brush']['arm']['length_m']*1e3:.0f} mm arms hang from pivot pins below the axle, so the line-of-centres force acts at 90&deg; to them and the arm load does not depend on gravity. The arm floats on the bristles: a {LB('brush_spring_wire_mm'):.1f} mm torsion spring, wound up {des['brush']['arm']['spring']['preload_deg']:.0f}&deg;, preloads it with exactly the required bristle force ({LB('brush_spring_preload_n'):.2f} N). When the bit crown's gauge step passes, the force rises only {LB('brush_force_rise_crown_pct'):.1f} %. The axle runs in Vespel SP-3 bushings (PV {LB('brush_bushing_pv_pa_m_s'):.0f} Pa&middot;m/s, far below the limit).",
+    f"<strong>Chute &amp; cup:</strong> one bite gives {LB('bite_cuttings_volume_cm3'):.0f} cm&sup3; of bulked cuttings. The bronze chute is pitched at {LB('chute_angle_deg'):.0f}&deg;, 10&deg; steeper than the cuttings-on-bronze friction angle, and its inlet wraps the auger at the bit's largest re-entry excursion. The lunar flow layer is only {LB('chute_flow_depth_mm'):.1f} mm deep. A bronze funnel carries the stream through a port in the mast foot plate into that bite's cup.",
+    f"<strong>Sample carousel:</strong> each bite gets its own cup. The {des['brush']['carousel']['cups']} cups (&Oslash;{LB('sample_cup_id_mm'):.1f} mm &times; {des['brush']['cup']['depth_m']*1e3:.1f} mm, 120 % of one bite) hang on a turntable under the foot plate, on a {LB('carousel_pitch_radius_mm'):.0f} mm pitch radius with one blank station ({LB('carousel_stations')} stations). The cups are as deep as the ground clearance allows, which keeps the bore and the carousel small. The plate is their lid: PTFE face seals on every rim bear on its underside, and only the cup under the port is open. A stepper with a planetary gearhead on the plate indexes one station in {des['brush']['carousel']['index_time_s']:.0f} s while the auger descends for the next bite, so indexing adds no mission time. With every cup full, ECSS motorisation needs {LB('carousel_index_torque_nm'):.2f} N&middot;m, most of it seal drag, against {des['brush']['carousel']['motor']['rated_torque_nm']:.2f} N&middot;m rated, at {LB('carousel_index_power_w'):.2f} W. The carousel adds {LB('carousel_mass_kg'):.2f} kg to the mast foot, which the mast frequency, hold-down and deployment sizing above already include.",
+    f"<strong>Planetary protection:</strong> the arm swings {LB('brush_stow_angle_deg'):.0f}&deg; to a stowed position that a launch lock holds through launch and the pre-flight dry-heat bake-out, with the tips clear of the bit. Every brush-station material (17-4PH, 17-7PH, phosphor bronze, Vespel, Ti) tolerates the bake-out temperature. Open risk: a thin layer of cohesive fines may still cling to the chute in lunar gravity. Every cup except the one being filled stays sealed, and the blank station keeps all ten sealed through launch, bake-out and after the last bite, which limits cross-contamination between samples.",
+]
+B["power_system"] = [
+    f"<strong>Solar (selected by trade study):</strong> two 2-axis sun-tracking wings, each two 0.68 m&sup2; GaInP/GaAs/Ge panels ({L['wing_size_mm'][0]:.0f} &times; {L['wing_size_mm'][1]:.0f} mm), on azimuth turntables at the ends of deck outriggers {L['wing_separation_mm']/1000:.2f} m apart at the lander CG station (derived so a wing tilted to the steepest Mars sun clears the legs), with an elevation yoke through each wing centre. Tracking gives about 2.8&times; the output of fixed vertical panels at the lunar pole.",
+    "<strong>Storage &amp; avionics:</strong> Kapton-wrapped warm box with top radiator, plus four clamped H<sub>2</sub>/O<sub>2</sub> reactant tanks for the 1375 Wh store (see the storage trade on the Derivations &amp; Design page).",
+]
+
+subsection("Drill bit", [
+    card("drill_bit_crown", "Crown, sampling sub &amp; joint", "25deg 110deg 0.075m", "Drill bit close-up",
+         'camera-target="0m 0.015m 0m" field-of-view="28deg" min-camera-orbit="auto auto 0.02m"'),
+    card("drill_bit_exploded", "Exploded view", "35deg 80deg auto", "Exploded drill bit"),
+], B["drill_bit_crown"] + B["drill_bit_exploded"])
+
+subsection("Dual-zone auger string", [
+    card("auger_bit", "Auger string, bit to hex drive", "25deg 80deg auto", "20 mm auger"),
+], B["auger_bit"])
+
+subsection("Rotary-percussive drill head", [
+    card("drill_head", "Enclosed drill head", "-35deg 70deg auto", "Drill head"),
+    card("drill_head_section", "Quarter section", "40deg 72deg 0.5m", "Drill head quarter section",
+         f'camera-target="0m {man["kinematics"]["home_tip_m"] + L["auger_length_mm"] / 1000 + 0.16:.3f}m 0m"'),
+], B["drill_head"] + B["drill_head_section"])
+
+subsection("Deployable mast and lander interface", [
+    card("mast_and_brush", "Deployed, on the lander deck", "-35deg 72deg auto", "Deployed mast on the lander deck"),
+    card("mast_stowed", "Launch configuration (stowed)", "-60deg 65deg auto", "Stowed mast on the lander deck"),
+], B["mast_and_brush"] + B["mast_stowed"])
+
+subsection("Brushing station and sample carousel", [
+    card("brush_station_exploded", "Brushing station, exploded", "-30deg 70deg auto", "Exploded brushing station",
+         'camera-target="0m 0.15m 0.045m"'),
+], B["brush_station_exploded"])
+
+subsection("Power system", [
+    card("power_system", "Sun-tracking wings and energy storage", "30deg 75deg auto", "Sun-tracking solar wings and energy storage"),
+], B["power_system"])
+```
+
+---
+
+## Integrated drill rig and kinematic structure
+
+```{python}
+#| output: asis
+emit_html('<div class="cad-viewer-single cad-viewer-tall">' + card(
+    "full_drill_rig", "Complete drill rig, home pose", "-25deg 75deg auto", "Complete drill rig") + "</div>")
+```
+
+The complete assembly brings every subassembly above onto the lander at its true position. It is stored as a **scene graph**: a tree of nodes, each holding a coordinate frame (a position and an orientation relative to its *parent node*) and the parts attached to that frame [@foley1990]. A node inherits every motion of its parent and adds its own. A part's pose in the world is therefore the product of the transforms along the path from the root of the tree to the node that holds it:
+
+$$
+\mathbf{T}_\text{world} = \mathbf{T}_1\,\mathbf{T}_2 \cdots \mathbf{T}_n
+$$
+
+::: {.symbols}
+- $\mathbf{T}_\text{world}$: $4\times4$ homogeneous transform giving the part's position (m) and orientation in the world frame
+- $\mathbf{T}_1 \ldots \mathbf{T}_n$: transform of each node relative to its parent, from the root ($1$) down to the node that holds the part ($n$); each combines a $3\times3$ rotation and a translation (m)
+:::
+
+This is the forward-kinematics rule used for serial robot arms [@craig2005robotics]. The tree follows the physical joints of the machine: parts that are bolted together share one node, because a rigid body has a single pose, and a new node starts wherever a joint lets one group move relative to another. The solar wings show the nesting most clearly. Each elevation node is the child of an azimuth node, which is the child of the static power-system node, so turning a turntable carries the yoke and panels round with it, and the elevation tilt is then applied in the turned frame, exactly as in a two-axis gimbal. The drill-head nodes (carriage, auger, hammer, cam) sit side by side under the root and receive the same feed displacement, which is equivalent to a rigid attachment to the carriage. With this structure, one number per joint is enough to pose the whole machine.
+
+The numbers come from **state-machine telemetry**. The drill's autonomy software is a finite-state machine: at every instant it is in exactly one of six states (IDLE, ACTIVE, SEARCH, DRILL, RETRACTION, TRANSFER) and it moves to another only when a defined physical condition is met [@harel1987statecharts]. For example, SEARCH becomes DRILL when the load cell reads the contact force, and DRILL becomes RETRACTION when the bite reaches its length or when a temperature or torque limit trips. The mission simulation steps this machine forward once per second, solving the cutting mechanics, the bit's heat balance and the sun geometry at each step. It records the result as telemetry, a time series of `{python} f"{N_TEL}"` columns that include bit-tip depth, weight on bit, spindle speed and torque, percussion duty, bit temperature, sun azimuth and elevation, and carousel station. The digital twin on the Results &amp; Digital Twin page [@grieves2017twin] reads this record and turns each channel into a joint coordinate: depth sets the carriage translation, spindle speed is integrated over time into the auger's spin angle, the sun angles set the wing gimbals and the bite counter sets the carousel index. The animation is therefore a replay of what the simulated controller did, not a scripted sequence.
+
+```{python}
+#| output: asis
+dof = {
+    "Frame_Node": "Static. Lander deck, legs, hinge, latch posts and the deployed mast, latched on its posts.",
+    "Solar_Node": "Static. Tanks, warm box, outriggers and turntable housings.",
+    "Solar_Wing_Port_Az_Node": "Azimuth rotation about the turntable axis, following the computed sun azimuth.",
+    "Solar_Wing_Port_Elev_Node": "Elevation tilt about the yoke axis, so the cell normal follows the sun elevation.",
+    "Solar_Wing_Starboard_Az_Node": "As port.",
+    "Solar_Wing_Starboard_Elev_Node": "As port.",
+    "Carriage_Node": f"Vertical translation along the rails: {(man['kinematics']['home_tip_m'] + 1.0):.2f} m stroke (home &rarr; 1.0 m bit depth).",
+    "Auger_Node": "Same translation as the carriage, plus spin about the auger axis at the commanded RPM.",
+    "Hammer_Cam_Node": f"Carriage translation, plus spindle rotation (splined hammer) and a {des['hammer']['blow_frequency_hz']:.0f} Hz cam-lift / drop stroke while percussing.",
+    "Cam_Ring_Node": "Carriage translation, plus barrel-cam spin while percussing.",
+    "Brush_Gear_Node": f"Worm-wheel spin about its own axle: one tuft per auger revolution ({LB('brush_speed_ratio')}:1), plus the axial auger speed over the {LB('brush_pitch_radius_mm'):.0f} mm pitch radius.",
+    "Carousel_Node": f"Index rotation about the carousel axis under the foot plate: one station ({360 / LB('carousel_stations'):.1f}&deg;) per bite, so bite n always fills cup n.",
+}
+rows = "\n".join(
+    f"<tr><td><code>{k}</code></td><td>{len(v)}</td><td>{', '.join(n.replace('_', ' ') for n in v[:6])}{' &hellip;' if len(v) > 6 else ''}</td><td>{dof[k]}</td></tr>"
+    for k, v in N.items()
+)
+emit_html(f"""
+<div class="mbse-table-wrap">
+  <table class="mbse-table">
+    <thead><tr><th>glTF node</th><th>Parts</th><th>Contents</th><th>Motion in the digital twin</th></tr></thead>
+    <tbody>{rows}</tbody>
+  </table>
+</div>
+""")
+```
+
+The table lists each node of the scene graph: how many parts it carries, what they are, and the motion the digital twin gives it. Two nodes are static. The frame node (lander deck, legs, hinge, latch and the deployed, latched mast) and the power-system base carry loads but do not move while drilling. Counting the remaining joints gives the mobility of the machine. **Eight coordinates are independent**, each driven by its own actuator: the carriage feed (a prismatic joint, leadscrew motor), the spindle rotation (rotary motor), the barrel-cam rotation (percussion motor), the carousel index (stepper) and the azimuth and elevation of both solar wings (four gimbal motors). **The other motions are dependent**, fixed by kinematic constraints rather than by motors. The auger, hammer and cam translate with the carriage. The hammer turns with the spindle through its spline and rises and drops as a function of the cam angle. The brush has no motor at all: it is a worm wheel meshing with the auger flight, so its speed follows from the flight lead and the motion of the string,
+
+$$
+\omega_b = \frac{1}{r_p}\left(\frac{\omega_a\,p}{2\pi} + v_z\right)
+$$
+
+::: {.symbols}
+- $\omega_b$: angular speed of the brush (rad/s)
+- $r_p$: pitch radius of the brush tufts, `{python} f"{LB('brush_pitch_radius_mm'):.1f}"` mm
+- $\omega_a$: angular speed of the auger (rad/s)
+- $p$: lead of the flight passing the brush, `{python} f"{L['sampling_pitch_mm']:.1f}"` mm in the sampling zone and `{python} f"{L['transport_pitch_mm']:.1f}"` mm in the transport zone
+- $v_z$: axial speed of the string past the brush (m/s)
+:::
+
+This split between independent and dependent motions is why the controller needs only eight commanded set-points to pose a `{python} f"{A['full_drill_rig']['parts']}"`-part machine. The barrel cam's spin is drawn at a reduced rate so it stays readable. The hammer stroke is drawn at the true blow rate of `{python} f"{des['hammer']['blow_frequency_hz']:.0f}"` Hz, which a 60 Hz display can only just resolve: about `{python} f"{60 / des['hammer']['blow_frequency_hz']:.1f}"` frames per blow, against the minimum of two samples per cycle set by the sampling theorem [@shannon1949].
+
+## References {.unnumbered}
+
+::: {#refs}
+:::
